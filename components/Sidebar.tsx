@@ -8,6 +8,7 @@ import {
   LayoutDashboard, CloudSun, Sprout, Wheat, FlaskConical,
   BarChart3, Users, LogOut
 } from 'lucide-react'
+import ThemeToggle from './ThemeToggle'
 
 const farmerLinks = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -35,10 +36,13 @@ export default function Sidebar({ role }: { role: string }) {
   }
 
   return (
-    <aside className="w-56 bg-green-900 min-h-screen flex flex-col">
-      <div className="px-5 py-6">
-        <h2 className="text-white font-bold text-lg leading-tight">Agri Platform</h2>
-        <p className="text-green-300 text-xs mt-0.5">Polar en el Campo</p>
+    <aside className="w-56 bg-green-900 dark:bg-gray-900 min-h-screen flex flex-col">
+      <div className="px-5 py-6 flex items-start justify-between gap-2">
+        <div>
+          <h2 className="text-white font-bold text-lg leading-tight">Agri Platform</h2>
+          <p className="text-green-300 dark:text-gray-400 text-xs mt-0.5">Polar en el Campo</p>
+        </div>
+        <ThemeToggle />
       </div>
 
       <nav className="flex-1 px-3 space-y-0.5">
@@ -50,8 +54,8 @@ export default function Sidebar({ role }: { role: string }) {
               href={href}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
                 active
-                  ? 'bg-green-700 text-white font-medium'
-                  : 'text-green-200 hover:bg-green-800 hover:text-white'
+                  ? 'bg-green-700 dark:bg-green-800 text-white font-medium'
+                  : 'text-green-200 dark:text-gray-300 hover:bg-green-800 dark:hover:bg-gray-800 hover:text-white'
               }`}
             >
               <Icon size={17} />
@@ -64,7 +68,7 @@ export default function Sidebar({ role }: { role: string }) {
       <div className="p-3 pb-6">
         <button
           onClick={handleLogout}
-          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-green-300 hover:bg-green-800 hover:text-white w-full transition-colors"
+          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-green-300 dark:text-gray-400 hover:bg-green-800 dark:hover:bg-gray-800 hover:text-white w-full transition-colors"
         >
           <LogOut size={17} />
           Cerrar sesión

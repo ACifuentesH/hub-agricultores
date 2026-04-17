@@ -66,17 +66,17 @@ export default function ClimaDashboard({ lecturas, forecast }: { lecturas: Lectu
             { label: 'Lluvia hoy', value: `${latest.lluvia_mm} mm` },
             { label: 'Última lectura', value: latest.fecha_hora ? new Date(latest.fecha_hora).toLocaleTimeString('es-VE', { hour: '2-digit', minute: '2-digit' }) : '—' },
           ].map(({ label, value }) => (
-            <div key={label} className="bg-white rounded-xl border border-gray-200 p-4">
-              <p className="text-xs text-gray-500">{label}</p>
-              <p className="text-xl font-bold text-green-800 mt-1">{value}</p>
+            <div key={label} className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-4">
+              <p className="text-xs text-gray-500 dark:text-gray-400">{label}</p>
+              <p className="text-xl font-bold text-green-800 dark:text-green-300 mt-1">{value}</p>
             </div>
           ))}
         </div>
       )}
 
       {/* Temperature history */}
-      <div className="bg-white rounded-xl border border-gray-200 p-5">
-        <h3 className="font-semibold text-gray-700 mb-4">Temperatura últimos 30 días (°C)</h3>
+      <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-5">
+        <h3 className="font-semibold text-gray-700 dark:text-gray-200 mb-4">Temperatura últimos 30 días (°C)</h3>
         <ResponsiveContainer width="100%" height={220}>
           <LineChart data={daily}>
             <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
@@ -89,8 +89,8 @@ export default function ClimaDashboard({ lecturas, forecast }: { lecturas: Lectu
       </div>
 
       {/* Rainfall history */}
-      <div className="bg-white rounded-xl border border-gray-200 p-5">
-        <h3 className="font-semibold text-gray-700 mb-4">Lluvia últimos 30 días (mm)</h3>
+      <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-5">
+        <h3 className="font-semibold text-gray-700 dark:text-gray-200 mb-4">Lluvia últimos 30 días (mm)</h3>
         <ResponsiveContainer width="100%" height={180}>
           <BarChart data={daily}>
             <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
@@ -104,8 +104,8 @@ export default function ClimaDashboard({ lecturas, forecast }: { lecturas: Lectu
 
       {/* 7-day forecast */}
       {forecastData.length > 0 && (
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
-          <h3 className="font-semibold text-gray-700 mb-4">Pronóstico 7 días</h3>
+        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-5">
+          <h3 className="font-semibold text-gray-700 dark:text-gray-200 mb-4">Pronóstico 7 días</h3>
           <ResponsiveContainer width="100%" height={200}>
             <LineChart data={forecastData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />

@@ -21,8 +21,8 @@ export default async function CosechaPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-gray-800">Cosecha</h1>
-      <p className="text-gray-500 text-sm">Estado estimado del cultivo y fechas de cosecha proyectadas por lote.</p>
+      <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Cosecha</h1>
+      <p className="text-gray-500 dark:text-gray-400 text-sm">Estado estimado del cultivo y fechas de cosecha proyectadas por lote.</p>
 
       <div className="space-y-4">
         {lotes?.map(l => {
@@ -36,15 +36,15 @@ export default async function CosechaPage() {
           const pctCrecimiento = diasDesde !== null ? Math.min(100, Math.round((diasDesde / DIAS_COSECHA) * 100)) : 0
 
           return (
-            <div key={l.lote_id} className="bg-white rounded-xl border border-gray-200 p-5">
+            <div key={l.lote_id} className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-5">
               <div className="flex flex-col sm:flex-row gap-5">
                 <CornGrowthSimulator diasDesde={diasDesde ?? 0} />
 
                 <div className="flex-1 space-y-3">
                   <div className="flex items-start justify-between">
                     <div>
-                      <h3 className="font-semibold text-gray-800">{l.nombre_lote}</h3>
-                      <p className="text-xs text-gray-400">{l.codigo_lote}</p>
+                      <h3 className="font-semibold text-gray-800 dark:text-gray-100">{l.nombre_lote}</h3>
+                      <p className="text-xs text-gray-400 dark:text-gray-500">{l.codigo_lote}</p>
                     </div>
                     <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full font-medium">
                       {pctCrecimiento}% desarrollo
@@ -52,7 +52,7 @@ export default async function CosechaPage() {
                   </div>
 
                   {/* Progress bar */}
-                  <div className="w-full bg-gray-100 rounded-full h-2">
+                  <div className="w-full bg-gray-100 dark:bg-gray-800 rounded-full h-2">
                     <div
                       className="bg-green-600 h-2 rounded-full transition-all"
                       style={{ width: `${pctCrecimiento}%` }}
@@ -69,7 +69,7 @@ export default async function CosechaPage() {
                   </div>
 
                   {/* Recomendaciones */}
-                  <div className="bg-green-50 rounded-lg p-3 text-xs text-green-800 space-y-1">
+                  <div className="bg-green-50 dark:bg-green-950 rounded-lg p-3 text-xs text-green-800 dark:text-green-300 space-y-1">
                     <p className="font-medium">Fechas recomendadas</p>
                     {diasDesde !== null && fechaReal && (
                       <>
@@ -93,7 +93,7 @@ export default async function CosechaPage() {
 function Stat({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
   return (
     <div>
-      <p className="text-xs text-gray-400">{label}</p>
+      <p className="text-xs text-gray-400 dark:text-gray-500">{label}</p>
       <p className={`text-sm font-medium ${highlight ? 'text-green-700' : 'text-gray-800'}`}>{value}</p>
     </div>
   )

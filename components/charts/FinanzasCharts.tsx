@@ -33,7 +33,7 @@ export default function FinanzasCharts({ unidad }: { unidad: UnidadData }) {
   return (
     <div className="grid sm:grid-cols-2 gap-5">
       <div>
-        <p className="text-xs font-medium text-gray-500 mb-2">Distribución de costos</p>
+        <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">Distribución de costos</p>
         <ResponsiveContainer width="100%" height={180}>
           <BarChart data={costos} layout="vertical">
             <CartesianGrid strokeDasharray="3 3" horizontal={false} />
@@ -48,7 +48,7 @@ export default function FinanzasCharts({ unidad }: { unidad: UnidadData }) {
       </div>
 
       <div>
-        <p className="text-xs font-medium text-gray-500 mb-2">P&L resumen</p>
+        <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">P&L resumen</p>
         <ResponsiveContainer width="100%" height={180}>
           <BarChart data={plData}>
             <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />

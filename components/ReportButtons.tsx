@@ -25,7 +25,7 @@ export default function ReportButtons({ loteId, loteName }: { loteId: string; lo
       </button>
       <button
         onClick={() => downloadReport('excel')}
-        className="flex items-center gap-1.5 text-xs px-3 py-1.5 bg-green-50 text-green-700 hover:bg-green-100 rounded-lg transition-colors"
+        className="flex items-center gap-1.5 text-xs px-3 py-1.5 bg-green-50 dark:bg-green-950 text-green-700 dark:text-green-400 hover:bg-green-100 rounded-lg transition-colors"
       >
         <FileSpreadsheet size={13} /> Excel
       </button>

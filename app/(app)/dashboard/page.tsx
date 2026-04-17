@@ -37,7 +37,7 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-gray-800">Dashboard</h1>
+      <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Dashboard</h1>
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -52,13 +52,13 @@ export default async function DashboardPage() {
       </div>
 
       {/* Tabla de lotes */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        <div className="px-5 py-4 border-b border-gray-100">
-          <h2 className="font-semibold text-gray-700">Mis Lotes</h2>
+      <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden">
+        <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-800">
+          <h2 className="font-semibold text-gray-700 dark:text-gray-200">Mis Lotes</h2>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 text-gray-500 text-xs uppercase">
+            <thead className="bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400 text-xs uppercase">
               <tr>
                 <th className="px-4 py-3 text-left">Lote</th>
                 <th className="px-4 py-3 text-left">Ha sembradas</th>
@@ -70,12 +70,12 @@ export default async function DashboardPage() {
             <tbody className="divide-y divide-gray-100">
               {lotes?.map(l => (
                 <tr key={l.lote_id} className="hover:bg-gray-50">
-                  <td className="px-4 py-3 font-medium text-gray-800">{l.nombre_lote}</td>
-                  <td className="px-4 py-3 text-gray-600">{l.ha_sembradas ?? '—'}</td>
-                  <td className="px-4 py-3 text-gray-600">{l.fecha_inicio_siembra_real ?? '—'}</td>
-                  <td className="px-4 py-3 text-gray-600">{l.ha_perdidas ?? '—'}</td>
+                  <td className="px-4 py-3 font-medium text-gray-800 dark:text-gray-100">{l.nombre_lote}</td>
+                  <td className="px-4 py-3 text-gray-600 dark:text-gray-300">{l.ha_sembradas ?? '—'}</td>
+                  <td className="px-4 py-3 text-gray-600 dark:text-gray-300">{l.fecha_inicio_siembra_real ?? '—'}</td>
+                  <td className="px-4 py-3 text-gray-600 dark:text-gray-300">{l.ha_perdidas ?? '—'}</td>
                   <td className="px-4 py-3">
-                    <span className="px-2 py-0.5 rounded-full text-xs bg-green-100 text-green-700">
+                    <span className="px-2 py-0.5 rounded-full text-xs bg-green-100 text-green-700 dark:text-green-400">
                       {l.edo_gral_cultivo_v ?? 'Activo'}
                     </span>
                   </td>
@@ -91,11 +91,11 @@ export default async function DashboardPage() {
 
 function KpiCard({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-5 flex items-center gap-4">
-      <div className="p-2.5 bg-gray-50 rounded-lg">{icon}</div>
+    <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-5 flex items-center gap-4">
+      <div className="p-2.5 bg-gray-50 dark:bg-gray-800 rounded-lg">{icon}</div>
       <div>
-        <p className="text-xs text-gray-500">{label}</p>
-        <p className="text-xl font-bold text-gray-800">{value}</p>
+        <p className="text-xs text-gray-500 dark:text-gray-400">{label}</p>
+        <p className="text-xl font-bold text-gray-800 dark:text-gray-100">{value}</p>
       </div>
     </div>
   )

@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import AnimatedLeaves from '@/components/AnimatedLeaves'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -42,13 +43,15 @@ export default function LoginPage() {
 
   return (
     <div
-      className="min-h-screen bg-cover bg-center flex items-center justify-center"
+      className="relative min-h-screen bg-cover bg-center flex items-center justify-center overflow-hidden"
       style={{ backgroundImage: "url('/login-bg.jpg')" }}
     >
-      <div className="absolute inset-0 bg-black/30" />
+      {/* Overlay con gradiente verde para mejor contraste y atmósfera */}
+      <div className="absolute inset-0 bg-gradient-to-b from-green-950/40 via-green-900/30 to-emerald-950/60" />
+      <AnimatedLeaves />
 
-      <div className="relative z-10 bg-white rounded-2xl shadow-2xl p-10 w-full max-w-sm mx-4">
-        <h1 className="text-2xl font-semibold text-gray-800 text-center mb-6 leading-tight">
+      <div className="relative z-10 bg-white dark:bg-gray-900 rounded-2xl shadow-2xl p-10 w-full max-w-sm mx-4">
+        <h1 className="text-2xl font-semibold text-gray-800 dark:text-gray-100 text-center mb-6 leading-tight">
           Sustainable Agri-Platform Login
         </h1>
 
@@ -59,7 +62,7 @@ export default function LoginPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-700 text-gray-700"
+            className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-700 text-gray-700 dark:text-gray-200"
           />
           <div className="relative">
             <input
@@ -68,12 +71,12 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full px-4 py-2.5 pr-20 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-700 text-gray-700"
+              className="w-full px-4 py-2.5 pr-20 border border-gray-300 dark:border-gray-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-700 text-gray-700 dark:text-gray-200"
             />
             <button
               type="button"
               onClick={() => setShowPassword((v) => !v)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-500 hover:text-green-800 font-medium"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-500 dark:text-gray-400 hover:text-green-800 font-medium"
             >
               {showPassword ? 'Ocultar' : 'Mostrar'}
             </button>
@@ -92,7 +95,7 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <p className="text-center mt-4 text-xs text-gray-500 cursor-pointer hover:underline">
+        <p className="text-center mt-4 text-xs text-gray-500 dark:text-gray-400 cursor-pointer hover:underline">
           Forgot Password?
         </p>
       </div>

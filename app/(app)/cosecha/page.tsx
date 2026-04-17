@@ -12,7 +12,7 @@ export default async function CosechaPage() {
   const { data: lotes } = await supabase
     .from('lote')
     .select('lote_id, nombre_lote, codigo_lote, ha_sembradas, fecha_inicio_siembra_real, ha_cosechadas, rendimiento_real, ha_perdidas')
-    .eq('"AgricultorKey"', profile.agricultor_key ?? '')
+    .eq('AgricultorKey', profile.agricultor_key ?? '')
 
   // unidades not needed for this page's display
 

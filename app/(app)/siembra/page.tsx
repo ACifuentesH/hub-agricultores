@@ -10,7 +10,7 @@ export default async function SiembraPage() {
   const { data: lotes } = await supabase
     .from('lote')
     .select('lote_id, nombre_lote, codigo_lote, ha_sembradas, fecha_inicio_siembra, fecha_inicio_siembra_real, ha_sembradas_agro, unidad_produccion_v')
-    .eq('"AgricultorKey"', profile.agricultor_key ?? '')
+    .eq('AgricultorKey', profile.agricultor_key ?? '')
     .order('fecha_inicio_siembra_real', { ascending: true })
 
   return (

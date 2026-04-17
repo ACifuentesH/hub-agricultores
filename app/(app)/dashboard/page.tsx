@@ -13,7 +13,7 @@ export default async function DashboardPage() {
   const { data: lotes } = await supabase
     .from('lote')
     .select('lote_id, nombre_lote, ha_sembradas, fecha_inicio_siembra_real, ha_perdidas, edo_gral_cultivo_v')
-    .eq('"AgricultorKey"', profile.agricultor_key ?? '')
+    .eq('AgricultorKey', profile.agricultor_key ?? '')
 
   // Último dato de clima
   const { data: climaMap } = await supabase

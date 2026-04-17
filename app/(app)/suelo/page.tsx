@@ -11,7 +11,7 @@ export default async function SueloPage() {
   const { data: lotes } = await supabase
     .from('lote')
     .select('lote_id, nombre_lote, codigo_lote, compactacion, segmentacion_particulas, drenajes_internos, condicion_drenaje')
-    .eq('"AgricultorKey"', profile.agricultor_key ?? '')
+    .eq('AgricultorKey', profile.agricultor_key ?? '')
 
   const loteIds = lotes?.map(l => l.lote_id) ?? []
 

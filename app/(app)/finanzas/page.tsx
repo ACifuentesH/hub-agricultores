@@ -111,7 +111,7 @@ async function getAgroId(supabase: Awaited<ReturnType<typeof import('@/lib/supab
   const { data } = await supabase
     .from('agropecuaria')
     .select('agropecuaria_id')
-    .eq('"AgricultorKey"', agriKey)
+    .eq('AgricultorKey', agriKey)
     .single()
   return data?.agropecuaria_id ? [data.agropecuaria_id] : []
 }

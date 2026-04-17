@@ -17,7 +17,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     ? await supabase
         .from('agropecuaria')
         .select('nombre_agropecuaria')
-        .eq('"AgricultorKey"', profile.agricultor_key)
+        .eq('AgricultorKey', profile.agricultor_key)
         .single()
     : { data: null }
 

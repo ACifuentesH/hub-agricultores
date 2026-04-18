@@ -4,28 +4,42 @@ import { redirect } from 'next/navigation'
 import CultivoTimeline from '@/components/CultivoTimeline'
 import { getCurrentStageInfo } from '@/lib/corn-stages'
 import { getCurrentConditions, getClimateSeries } from '@/lib/clima'
+import { resolveAgricultorScope, listAgricultores } from '@/lib/access'
+import MasterAgricultorSelector from '@/components/MasterAgricultorSelector'
 import IrrigationRing from '@/components/IrrigationRing'
 import ClimateSparkline from '@/components/ClimateSparkline'
 import ReportButtons from '@/components/ReportButtons'
-import { CloudSun, CloudRain, Sun, Cloud, Sprout } from 'lucide-react'
+import { CloudSun, CloudRain, Sun, Cloud, Sprout, Users } from 'lucide-react'
 
 const DIAS_CICLO = 120
 
-export default async function CultivoPage() {
+export default async function CultivoPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ agricultor?: string }>
+}) {
   const profile = await getUserProfile()
   if (!profile) redirect('/login')
 
-  const supabase = await createClient()
-  const agricultorKey = profile.agricultor_key ?? ''
+  const params = await searchParams
+  const scope = await resolveAgricultorScope(profile, params)
 
-  const [{ data: lotes }, conditions, series] = await Promise.all([
-    supabase
+  // Master with no selection: show selector + prompt, no data fetch
+  if (scope.isMaster && !scope.agricultorKey) {
+    const agricultores = await listAgricultores()
+    return <MasterEmptyState agricultores={agricultores} selected={null} />
+  }
+
+  const agricultorKey = scope.agricultorKey ?? ''
+  const [{ data: lotes }, conditions, series, agricultores] = await Promise.all([
+    (await createClient())
       .from('lote')
       .select('lote_id, nombre_lote, codigo_lote, ha_sembradas, fecha_inicio_siembra, fecha_inicio_siembra_real, ha_cosechadas, rendimiento_real, ha_perdidas, unidad_produccion_v')
       .eq('AgricultorKey', agricultorKey)
       .order('fecha_inicio_siembra_real', { ascending: true }),
     getCurrentConditions(agricultorKey),
     getClimateSeries(agricultorKey, 14),
+    scope.isMaster ? listAgricultores() : Promise.resolve([]),
   ])
 
   const WeatherIcon = pickWeatherIcon(conditions.descripcion)
@@ -41,19 +55,29 @@ export default async function CultivoPage() {
           </h1>
           <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
             Ciclo completo del maíz — desde siembra hasta cosecha — por lote.
+            {scope.isMaster && scope.agropecuariaName && (
+              <span className="ml-2 text-green-700 dark:text-green-400 font-medium">
+                · {scope.agropecuariaName}
+              </span>
+            )}
           </p>
         </div>
-        <div
-          className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-gradient-to-r from-gray-900 to-gray-800 border border-green-500/30 text-white text-sm shadow-lg"
-          style={{ boxShadow: '0 0 20px rgba(34, 197, 94, 0.15)' }}
-          title={conditions.fecha ? `Última lectura: ${new Date(conditions.fecha).toLocaleString('es-VE')}` : 'Sin estación asignada'}
-        >
-          <span className="text-gray-400 text-xs">Condiciones actuales:</span>
-          <span className="font-semibold">{tempDisplay}</span>
-          {conditions.humPct != null && (
-            <span className="text-gray-400 text-xs">· {conditions.humPct.toFixed(0)}% HR</span>
+        <div className="flex flex-wrap items-center gap-3">
+          {scope.isMaster && (
+            <MasterAgricultorSelector agricultores={agricultores} selected={scope.agricultorKey} />
           )}
-          <WeatherIcon size={16} className="text-green-400" />
+          <div
+            className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-gradient-to-r from-gray-900 to-gray-800 border border-green-500/30 text-white text-sm shadow-lg"
+            style={{ boxShadow: '0 0 20px rgba(34, 197, 94, 0.15)' }}
+            title={conditions.fecha ? `Última lectura: ${new Date(conditions.fecha).toLocaleString('es-VE')}` : 'Sin estación asignada'}
+          >
+            <span className="text-gray-400 text-xs">Condiciones actuales:</span>
+            <span className="font-semibold">{tempDisplay}</span>
+            {conditions.humPct != null && (
+              <span className="text-gray-400 text-xs">· {conditions.humPct.toFixed(0)}% HR</span>
+            )}
+            <WeatherIcon size={16} className="text-green-400" />
+          </div>
         </div>
       </div>
 
@@ -147,6 +171,39 @@ export default async function CultivoPage() {
             </p>
           </div>
         )}
+      </div>
+    </div>
+  )
+}
+
+function MasterEmptyState({
+  agricultores,
+  selected,
+}: {
+  agricultores: { key: string; nombre: string }[]
+  selected: string | null
+}) {
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
+            Línea de tiempo del cultivo
+          </h1>
+          <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
+            Vista master — selecciona un agricultor para ver sus lotes y clima.
+          </p>
+        </div>
+        <MasterAgricultorSelector agricultores={agricultores} selected={selected} />
+      </div>
+      <div className="bg-white dark:bg-gray-900 rounded-xl border border-dashed border-gray-300 dark:border-gray-700 p-12 text-center">
+        <Users size={32} className="mx-auto text-gray-300 dark:text-gray-600 mb-3" />
+        <p className="text-sm text-gray-600 dark:text-gray-300 font-medium">
+          Selecciona un agricultor en el menú superior
+        </p>
+        <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+          {agricultores.length} agricultores disponibles
+        </p>
       </div>
     </div>
   )

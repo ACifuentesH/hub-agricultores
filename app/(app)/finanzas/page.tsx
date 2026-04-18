@@ -2,12 +2,40 @@ import { createClient } from '@/lib/supabase/server'
 import { getUserProfile } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import FinanzasCharts from '@/components/charts/FinanzasCharts'
+import { resolveAgricultorScope, listAgricultores } from '@/lib/access'
+import MasterAgricultorSelector from '@/components/MasterAgricultorSelector'
+import MasterEmptyState from '@/components/MasterEmptyState'
 
-export default async function FinanzasPage() {
+export default async function FinanzasPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ agricultor?: string }>
+}) {
   const profile = await getUserProfile()
   if (!profile) redirect('/login')
 
+  const params = await searchParams
+  const scope = await resolveAgricultorScope(profile, params)
+
+  if (scope.isMaster && !scope.agricultorKey) {
+    const agricultores = await listAgricultores()
+    return (
+      <MasterEmptyState
+        title="Finanzas (P&L)"
+        subtitle="Vista master — selecciona un agricultor para ver su P&L."
+        agricultores={agricultores}
+        selected={null}
+      />
+    )
+  }
+
+  const agricultorKey = scope.agricultorKey ?? ''
   const supabase = await createClient()
+
+  const [agroIds, agricultores] = await Promise.all([
+    getAgroId(supabase, agricultorKey),
+    scope.isMaster ? listAgricultores() : Promise.resolve([]),
+  ])
 
   const { data: unidades } = await supabase
     .from('unidad_produccion')
@@ -19,7 +47,7 @@ export default async function FinanzasPage() {
       numero_total_ha_unidad, rendimiento_ha, valor_meta_rend_ha, precio_maiz_usd_ton,
       ha_perdidas_acumuladas
     `)
-    .in('agropecuaria_id', await getAgroId(supabase, profile.agricultor_key ?? ''))
+    .in('agropecuaria_id', agroIds)
 
   const totales = {
     inversion: unidades?.reduce((s, u) => s + parseFloat(String(u.costo_total ?? '0')), 0) ?? 0,
@@ -29,7 +57,19 @@ export default async function FinanzasPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Finanzas (P&L)</h1>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Finanzas (P&L)</h1>
+          {scope.isMaster && scope.agropecuariaName && (
+            <p className="text-sm text-green-700 dark:text-green-400 font-medium mt-1">
+              {scope.agropecuariaName}
+            </p>
+          )}
+        </div>
+        {scope.isMaster && (
+          <MasterAgricultorSelector agricultores={agricultores} selected={scope.agricultorKey} />
+        )}
+      </div>
 
       {/* Summary cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -112,6 +152,6 @@ async function getAgroId(supabase: Awaited<ReturnType<typeof import('@/lib/supab
     .from('agropecuaria')
     .select('agropecuaria_id')
     .eq('AgricultorKey', agriKey)
-    .single()
+    .maybeSingle()
   return data?.agropecuaria_id ? [data.agropecuaria_id] : []
 }

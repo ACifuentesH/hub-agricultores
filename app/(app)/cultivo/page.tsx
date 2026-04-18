@@ -6,10 +6,11 @@ import { getCurrentStageInfo } from '@/lib/corn-stages'
 import { getCurrentConditions, getClimateSeries } from '@/lib/clima'
 import { resolveAgricultorScope, listAgricultores } from '@/lib/access'
 import MasterAgricultorSelector from '@/components/MasterAgricultorSelector'
+import MasterEmptyState from '@/components/MasterEmptyState'
 import IrrigationRing from '@/components/IrrigationRing'
 import ClimateSparkline from '@/components/ClimateSparkline'
 import ReportButtons from '@/components/ReportButtons'
-import { CloudSun, CloudRain, Sun, Cloud, Sprout, Users } from 'lucide-react'
+import { CloudSun, CloudRain, Sun, Cloud, Sprout } from 'lucide-react'
 
 const DIAS_CICLO = 120
 
@@ -27,7 +28,14 @@ export default async function CultivoPage({
   // Master with no selection: show selector + prompt, no data fetch
   if (scope.isMaster && !scope.agricultorKey) {
     const agricultores = await listAgricultores()
-    return <MasterEmptyState agricultores={agricultores} selected={null} />
+    return (
+      <MasterEmptyState
+        title="Línea de tiempo del cultivo"
+        subtitle="Vista master — selecciona un agricultor para ver sus lotes y fases."
+        agricultores={agricultores}
+        selected={null}
+      />
+    )
   }
 
   const agricultorKey = scope.agricultorKey ?? ''
@@ -171,39 +179,6 @@ export default async function CultivoPage({
             </p>
           </div>
         )}
-      </div>
-    </div>
-  )
-}
-
-function MasterEmptyState({
-  agricultores,
-  selected,
-}: {
-  agricultores: { key: string; nombre: string }[]
-  selected: string | null
-}) {
-  return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
-            Línea de tiempo del cultivo
-          </h1>
-          <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
-            Vista master — selecciona un agricultor para ver sus lotes y clima.
-          </p>
-        </div>
-        <MasterAgricultorSelector agricultores={agricultores} selected={selected} />
-      </div>
-      <div className="bg-white dark:bg-gray-900 rounded-xl border border-dashed border-gray-300 dark:border-gray-700 p-12 text-center">
-        <Users size={32} className="mx-auto text-gray-300 dark:text-gray-600 mb-3" />
-        <p className="text-sm text-gray-600 dark:text-gray-300 font-medium">
-          Selecciona un agricultor en el menú superior
-        </p>
-        <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
-          {agricultores.length} agricultores disponibles
-        </p>
       </div>
     </div>
   )

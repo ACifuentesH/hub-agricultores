@@ -1,17 +1,43 @@
 import { createClient } from '@/lib/supabase/server'
 import { getUserProfile } from '@/lib/auth'
 import { redirect } from 'next/navigation'
+import { resolveAgricultorScope, listAgricultores } from '@/lib/access'
+import MasterAgricultorSelector from '@/components/MasterAgricultorSelector'
+import MasterEmptyState from '@/components/MasterEmptyState'
 
-export default async function SueloPage() {
+export default async function SueloPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ agricultor?: string }>
+}) {
   const profile = await getUserProfile()
   if (!profile) redirect('/login')
 
+  const params = await searchParams
+  const scope = await resolveAgricultorScope(profile, params)
+
+  if (scope.isMaster && !scope.agricultorKey) {
+    const agricultores = await listAgricultores()
+    return (
+      <MasterEmptyState
+        title="Análisis de Suelo"
+        subtitle="Vista master — selecciona un agricultor para ver sus condiciones de suelo e insumos."
+        agricultores={agricultores}
+        selected={null}
+      />
+    )
+  }
+
+  const agricultorKey = scope.agricultorKey ?? ''
   const supabase = await createClient()
 
-  const { data: lotes } = await supabase
-    .from('lote')
-    .select('lote_id, nombre_lote, codigo_lote, compactacion, segmentacion_particulas, drenajes_internos, condicion_drenaje')
-    .eq('AgricultorKey', profile.agricultor_key ?? '')
+  const [{ data: lotes }, agricultores] = await Promise.all([
+    supabase
+      .from('lote')
+      .select('lote_id, nombre_lote, codigo_lote, compactacion, segmentacion_particulas, drenajes_internos, condicion_drenaje')
+      .eq('AgricultorKey', agricultorKey),
+    scope.isMaster ? listAgricultores() : Promise.resolve([]),
+  ])
 
   const loteIds = lotes?.map(l => l.lote_id) ?? []
 
@@ -34,8 +60,22 @@ export default async function SueloPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Análisis de Suelo</h1>
-      <p className="text-gray-500 dark:text-gray-400 text-sm">Condiciones del suelo e insumos aplicados por lote.</p>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Análisis de Suelo</h1>
+          <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
+            Condiciones del suelo e insumos aplicados por lote.
+            {scope.isMaster && scope.agropecuariaName && (
+              <span className="ml-2 text-green-700 dark:text-green-400 font-medium">
+                · {scope.agropecuariaName}
+              </span>
+            )}
+          </p>
+        </div>
+        {scope.isMaster && (
+          <MasterAgricultorSelector agricultores={agricultores} selected={scope.agricultorKey} />
+        )}
+      </div>
 
       {lotes?.map(l => (
         <div key={l.lote_id} className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden">

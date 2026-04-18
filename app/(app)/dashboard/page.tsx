@@ -2,25 +2,48 @@ import { createClient } from '@/lib/supabase/server'
 import { getUserProfile } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { Sprout, Wheat, CloudSun, AlertTriangle } from 'lucide-react'
+import { resolveAgricultorScope, listAgricultores } from '@/lib/access'
+import MasterAgricultorSelector from '@/components/MasterAgricultorSelector'
+import MasterEmptyState from '@/components/MasterEmptyState'
 
-export default async function DashboardPage() {
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ agricultor?: string }>
+}) {
   const profile = await getUserProfile()
   if (!profile) redirect('/login')
 
+  const params = await searchParams
+  const scope = await resolveAgricultorScope(profile, params)
+
+  if (scope.isMaster && !scope.agricultorKey) {
+    const agricultores = await listAgricultores()
+    return (
+      <MasterEmptyState
+        title="Dashboard"
+        subtitle="Vista master — selecciona un agricultor para ver sus KPIs y lotes."
+        agricultores={agricultores}
+        selected={null}
+      />
+    )
+  }
+
+  const agricultorKey = scope.agricultorKey ?? ''
   const supabase = await createClient()
 
-  // Lotes del agricultor
-  const { data: lotes } = await supabase
-    .from('lote')
-    .select('lote_id, nombre_lote, ha_sembradas, fecha_inicio_siembra_real, ha_perdidas, edo_gral_cultivo_v')
-    .eq('AgricultorKey', profile.agricultor_key ?? '')
-
-  // Último dato de clima
-  const { data: climaMap } = await supabase
-    .from('mapa_productor_clima')
-    .select('productor_clima')
-    .eq('agricultor_key', profile.agricultor_key ?? '')
-    .single()
+  const [{ data: lotes }, { data: climaMap }, agricultores] = await Promise.all([
+    supabase
+      .from('lote')
+      .select('lote_id, nombre_lote, ha_sembradas, fecha_inicio_siembra_real, ha_perdidas, edo_gral_cultivo_v')
+      .eq('AgricultorKey', agricultorKey),
+    supabase
+      .from('mapa_productor_clima')
+      .select('productor_clima')
+      .eq('agricultor_key', agricultorKey)
+      .maybeSingle(),
+    scope.isMaster ? listAgricultores() : Promise.resolve([]),
+  ])
 
   const { data: climaReciente } = climaMap
     ? await supabase
@@ -29,7 +52,7 @@ export default async function DashboardPage() {
         .eq('productor', climaMap.productor_clima)
         .order('fecha_hora', { ascending: false })
         .limit(1)
-        .single()
+        .maybeSingle()
     : { data: null }
 
   const totalHa = lotes?.reduce((s, l) => s + parseFloat(l.ha_sembradas ?? '0'), 0) ?? 0
@@ -37,7 +60,19 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Dashboard</h1>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Dashboard</h1>
+          {scope.isMaster && scope.agropecuariaName && (
+            <p className="text-sm text-green-700 dark:text-green-400 font-medium mt-1">
+              {scope.agropecuariaName}
+            </p>
+          )}
+        </div>
+        {scope.isMaster && (
+          <MasterAgricultorSelector agricultores={agricultores} selected={scope.agricultorKey} />
+        )}
+      </div>
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

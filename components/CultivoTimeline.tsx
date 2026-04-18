@@ -1,7 +1,8 @@
 'use client'
 
 import { useMemo } from 'react'
-import CornStage, { getStageFromDays, getStageMeta } from './CornStage'
+import CornStage from './CornStage'
+import { getStageFromDays } from '@/lib/corn-stages'
 
 interface Props {
   fechaSiembra: string | null
@@ -182,9 +183,3 @@ function getCicloName(siembra: Date): string {
   return 'Verano'
 }
 
-export function getCurrentStageInfo(fechaSiembra: string | null) {
-  if (!fechaSiembra) return null
-  const dias = Math.floor((Date.now() - new Date(fechaSiembra).getTime()) / 86400000)
-  const stage = getStageFromDays(dias)
-  return { dias, stage, meta: getStageMeta(stage) }
-}

@@ -5,11 +5,13 @@ import CultivoTimeline from '@/components/CultivoTimeline'
 import { getCurrentStageInfo } from '@/lib/corn-stages'
 import { getCurrentConditions, getClimateSeries } from '@/lib/clima'
 import { resolveAgricultorScope, listAgricultores } from '@/lib/access'
+import { getPredictorContext } from '@/lib/predictor'
 import MasterAgricultorSelector from '@/components/MasterAgricultorSelector'
 import MasterEmptyState from '@/components/MasterEmptyState'
 import IrrigationRing from '@/components/IrrigationRing'
 import ClimateSparkline from '@/components/ClimateSparkline'
 import ReportButtons from '@/components/ReportButtons'
+import PredictorSiembraPanel from '@/components/PredictorSiembraPanel'
 import { CloudSun, CloudRain, Sun, Cloud, Sprout } from 'lucide-react'
 
 const DIAS_CICLO = 120
@@ -39,7 +41,7 @@ export default async function CultivoPage({
   }
 
   const agricultorKey = scope.agricultorKey ?? ''
-  const [{ data: lotes }, conditions, series, agricultores] = await Promise.all([
+  const [{ data: lotes }, conditions, series, agricultores, predictorCtx] = await Promise.all([
     (await createClient())
       .from('lote')
       .select('lote_id, nombre_lote, codigo_lote, ha_sembradas, fecha_inicio_siembra, fecha_inicio_siembra_real, ha_cosechadas, rendimiento_real, ha_perdidas, unidad_produccion_v')
@@ -48,6 +50,7 @@ export default async function CultivoPage({
     getCurrentConditions(agricultorKey),
     getClimateSeries(agricultorKey, 14),
     scope.isMaster ? listAgricultores() : Promise.resolve([]),
+    getPredictorContext(agricultorKey),
   ])
 
   const WeatherIcon = pickWeatherIcon(conditions.descripcion)
@@ -88,6 +91,9 @@ export default async function CultivoPage({
           </div>
         </div>
       </div>
+
+      {/* Predictor de siembra (on-demand) */}
+      <PredictorSiembraPanel context={predictorCtx} />
 
       {/* Per-lote panels */}
       <div className="space-y-6">

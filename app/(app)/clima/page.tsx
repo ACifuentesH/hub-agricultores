@@ -2,9 +2,12 @@ import { createClient } from '@/lib/supabase/server'
 import { getUserProfile } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import ClimaDashboard from '@/components/charts/ClimaDashboard'
+import ForecastStrip from '@/components/ForecastStrip'
+import AlertsPanel from '@/components/AlertsPanel'
 import { resolveAgricultorScope, listAgricultores } from '@/lib/access'
 import MasterAgricultorSelector from '@/components/MasterAgricultorSelector'
 import MasterEmptyState from '@/components/MasterEmptyState'
+import { getForecast, computeAlerts } from '@/lib/clima'
 
 export default async function ClimaPage({
   searchParams,
@@ -32,35 +35,27 @@ export default async function ClimaPage({
   const agricultorKey = scope.agricultorKey ?? ''
   const supabase = await createClient()
 
-  const [{ data: climaMap }, agricultores] = await Promise.all([
+  const [{ data: climaMap }, agricultores, forecast] = await Promise.all([
     supabase
       .from('mapa_productor_clima')
       .select('productor_clima')
       .eq('agricultor_key', agricultorKey)
       .maybeSingle(),
     scope.isMaster ? listAgricultores() : Promise.resolve([]),
+    getForecast(agricultorKey, 7),
   ])
 
   const productorClima = climaMap?.productor_clima ?? null
+  const alerts = computeAlerts(forecast.rows)
 
-  // Últimos 30 días de lecturas diarias (agrupado)
+  // Últimos 30 días de lecturas (horarias)
   const { data: lecturas } = productorClima
     ? await supabase
         .from('clima_lecturas')
         .select('fecha_hora, temp_c, temp_max_c, temp_min_c, hum_pct, lluvia_mm')
         .eq('productor', productorClima)
         .order('fecha_hora', { ascending: false })
-        .limit(720) // ~30 días de lecturas horarias
-    : { data: [] }
-
-  // Pronóstico 7 días
-  const { data: forecast } = productorClima
-    ? await supabase
-        .from('clima_forecast')
-        .select('fecha, temp_max_c, temp_min_c, lluvia_mm, prob_lluvia_pct, hum_avg_pct')
-        .eq('productor_clima', productorClima)
-        .order('fecha', { ascending: true })
-        .limit(7)
+        .limit(720)
     : { data: [] }
 
   return (
@@ -78,8 +73,24 @@ export default async function ClimaPage({
           <MasterAgricultorSelector agricultores={agricultores} selected={scope.agricultorKey} />
         )}
       </div>
+
       {productorClima ? (
-        <ClimaDashboard lecturas={lecturas ?? []} forecast={forecast ?? []} />
+        <>
+          {/* Pronóstico + alertas en grid 2 columnas en lg */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <div className="lg:col-span-2">
+              <ForecastStrip
+                rows={forecast.rows}
+                descargadoEn={forecast.descargadoEn}
+                isStale={forecast.isStale}
+              />
+            </div>
+            <AlertsPanel alerts={alerts} />
+          </div>
+
+          {/* Histórico (lecturas reales) */}
+          <ClimaDashboard lecturas={lecturas ?? []} />
+        </>
       ) : (
         <p className="text-gray-500 dark:text-gray-400">No hay datos de clima disponibles para esta ubicación.</p>
       )}

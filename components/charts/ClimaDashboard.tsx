@@ -1,6 +1,6 @@
 'use client'
 
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts'
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 
 interface Lectura {
   fecha_hora: string
@@ -9,15 +9,6 @@ interface Lectura {
   temp_min_c: number
   hum_pct: number
   lluvia_mm: number
-}
-
-interface Forecast {
-  fecha: string
-  temp_max_c: number
-  temp_min_c: number
-  lluvia_mm: number
-  prob_lluvia_pct: number
-  hum_avg_pct: number
 }
 
 // Aggregate hourly readings to daily
@@ -42,17 +33,8 @@ function toDailyData(lecturas: Lectura[]) {
     .slice(-30)
 }
 
-export default function ClimaDashboard({ lecturas, forecast }: { lecturas: Lectura[]; forecast: Forecast[] }) {
+export default function ClimaDashboard({ lecturas }: { lecturas: Lectura[] }) {
   const daily = toDailyData(lecturas)
-  const forecastData = forecast.map(f => ({
-    fecha: f.fecha?.slice(5),
-    temp_max: f.temp_max_c,
-    temp_min: f.temp_min_c,
-    lluvia: f.lluvia_mm,
-    prob_lluvia: f.prob_lluvia_pct,
-  }))
-
-  // Latest reading stats
   const latest = lecturas[0]
 
   return (
@@ -101,24 +83,6 @@ export default function ClimaDashboard({ lecturas, forecast }: { lecturas: Lectu
           </BarChart>
         </ResponsiveContainer>
       </div>
-
-      {/* 7-day forecast */}
-      {forecastData.length > 0 && (
-        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-5">
-          <h3 className="font-semibold text-gray-700 dark:text-gray-200 mb-4">Pronóstico 7 días</h3>
-          <ResponsiveContainer width="100%" height={200}>
-            <LineChart data={forecastData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-              <XAxis dataKey="fecha" tick={{ fontSize: 11 }} />
-              <YAxis tick={{ fontSize: 11 }} />
-              <Tooltip />
-              <Legend />
-              <Line type="monotone" dataKey="temp_max" stroke="#ef4444" strokeWidth={2} dot={false} name="T. máx (°C)" />
-              <Line type="monotone" dataKey="temp_min" stroke="#3b82f6" strokeWidth={2} dot={false} name="T. mín (°C)" />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      )}
     </div>
   )
 }

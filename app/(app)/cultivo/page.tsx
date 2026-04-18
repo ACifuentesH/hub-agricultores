@@ -3,10 +3,11 @@ import { getUserProfile } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import CultivoTimeline from '@/components/CultivoTimeline'
 import { getCurrentStageInfo } from '@/lib/corn-stages'
+import { getCurrentConditions, getClimateSeries } from '@/lib/clima'
 import IrrigationRing from '@/components/IrrigationRing'
 import ClimateSparkline from '@/components/ClimateSparkline'
 import ReportButtons from '@/components/ReportButtons'
-import { CloudSun, Sprout } from 'lucide-react'
+import { CloudSun, CloudRain, Sun, Cloud, Sprout } from 'lucide-react'
 
 const DIAS_CICLO = 120
 
@@ -15,11 +16,20 @@ export default async function CultivoPage() {
   if (!profile) redirect('/login')
 
   const supabase = await createClient()
-  const { data: lotes } = await supabase
-    .from('lote')
-    .select('lote_id, nombre_lote, codigo_lote, ha_sembradas, fecha_inicio_siembra, fecha_inicio_siembra_real, ha_cosechadas, rendimiento_real, ha_perdidas, unidad_produccion_v')
-    .eq('AgricultorKey', profile.agricultor_key ?? '')
-    .order('fecha_inicio_siembra_real', { ascending: true })
+  const agricultorKey = profile.agricultor_key ?? ''
+
+  const [{ data: lotes }, conditions, series] = await Promise.all([
+    supabase
+      .from('lote')
+      .select('lote_id, nombre_lote, codigo_lote, ha_sembradas, fecha_inicio_siembra, fecha_inicio_siembra_real, ha_cosechadas, rendimiento_real, ha_perdidas, unidad_produccion_v')
+      .eq('AgricultorKey', agricultorKey)
+      .order('fecha_inicio_siembra_real', { ascending: true }),
+    getCurrentConditions(agricultorKey),
+    getClimateSeries(agricultorKey, 14),
+  ])
+
+  const WeatherIcon = pickWeatherIcon(conditions.descripcion)
+  const tempDisplay = conditions.tempC != null ? `${conditions.tempC.toFixed(1)}°C` : '—'
 
   return (
     <div className="space-y-6">
@@ -36,10 +46,14 @@ export default async function CultivoPage() {
         <div
           className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-gradient-to-r from-gray-900 to-gray-800 border border-green-500/30 text-white text-sm shadow-lg"
           style={{ boxShadow: '0 0 20px rgba(34, 197, 94, 0.15)' }}
+          title={conditions.fecha ? `Última lectura: ${new Date(conditions.fecha).toLocaleString('es-VE')}` : 'Sin estación asignada'}
         >
           <span className="text-gray-400 text-xs">Condiciones actuales:</span>
-          <span className="font-semibold">18°C</span>
-          <CloudSun size={16} className="text-green-400" />
+          <span className="font-semibold">{tempDisplay}</span>
+          {conditions.humPct != null && (
+            <span className="text-gray-400 text-xs">· {conditions.humPct.toFixed(0)}% HR</span>
+          )}
+          <WeatherIcon size={16} className="text-green-400" />
         </div>
       </div>
 
@@ -52,10 +66,6 @@ export default async function CultivoPage() {
 
           // Mock irrigation: derived from days-since-planting (placeholder until DB has it)
           const irrigation = Math.max(50, Math.min(98, 95 - (idx * 3)))
-
-          // Mock climate sparklines (placeholder — to be wired to weatherlink)
-          const tempSeries = [0.4, 0.5, 0.55, 0.62, 0.6, 0.7, 0.75, 0.72, 0.8, 0.78]
-          const humSeries  = [0.3, 0.45, 0.5, 0.48, 0.55, 0.6, 0.58, 0.65, 0.62, 0.7]
 
           return (
             <div key={l.lote_id} className="space-y-4">
@@ -99,7 +109,16 @@ export default async function CultivoPage() {
                 </StatCard>
 
                 <StatCard title="Clima del lote">
-                  <ClimateSparkline series1={tempSeries} series2={humSeries} label1="Temp" label2="Humedad" />
+                  {series.tempSeries.length > 0 ? (
+                    <>
+                      <ClimateSparkline series1={series.tempSeries} series2={series.humSeries} label1="Temp" label2="Humedad" />
+                      <p className="text-[10px] text-gray-400 mt-1">
+                        Rango: {series.tempMin.toFixed(1)}° → {series.tempMax.toFixed(1)}° (14d)
+                      </p>
+                    </>
+                  ) : (
+                    <p className="text-xs text-gray-400 dark:text-gray-500 py-6 text-center">Sin datos de clima.</p>
+                  )}
                 </StatCard>
 
                 <StatCard title="Resumen de fase">
@@ -150,6 +169,15 @@ function Chip({ children }: { children: React.ReactNode }) {
       {children}
     </span>
   )
+}
+
+function pickWeatherIcon(descripcion: string) {
+  switch (descripcion) {
+    case 'Lluvioso': return CloudRain
+    case 'Soleado':  return Sun
+    case 'Nublado':  return Cloud
+    default:         return CloudSun
+  }
 }
 
 function getPhaseDescription(stage: 0 | 1 | 2 | 3 | 4 | 5): string {

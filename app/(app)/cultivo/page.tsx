@@ -12,6 +12,7 @@ import IrrigationRing from '@/components/IrrigationRing'
 import ClimateSparkline from '@/components/ClimateSparkline'
 import ReportButtons from '@/components/ReportButtons'
 import PredictorSiembraPanel from '@/components/PredictorSiembraPanel'
+import DataSourceBadge from '@/components/DataSourceBadge'
 import { CloudSun, CloudRain, Sun, Cloud, Sprout, AlertCircle, CalendarOff } from 'lucide-react'
 import { freshnessLevel, freshnessTextClass, formatDateShort } from '@/lib/freshness'
 
@@ -84,22 +85,25 @@ export default async function CultivoPage({
           {scope.isMaster && (
             <MasterAgricultorSelector agricultores={agricultores} selected={scope.agricultorKey} />
           )}
-          <div
-            className={`inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-gradient-to-r from-gray-900 to-gray-800 text-white text-sm shadow-lg ${
-              tempLevel === 'stale' ? 'border border-red-500/40' : tempLevel === 'warn' ? 'border border-amber-500/40' : 'border border-green-500/30'
-            }`}
-            style={{ boxShadow: tempIsStale ? '0 0 20px rgba(245, 158, 11, 0.18)' : '0 0 20px rgba(34, 197, 94, 0.15)' }}
-            title={conditions.fecha ? `Última lectura: ${new Date(conditions.fecha).toLocaleString('es-VE')}` : 'Sin estación asignada'}
-          >
-            <span className="text-gray-400 text-xs">Condiciones {tempIsStale ? 'registradas:' : 'actuales:'}</span>
-            <span className={`font-semibold ${tempIsStale ? freshnessTextClass(tempLevel) : ''}`}>{tempDisplay}</span>
-            {tempIsStale && conditions.fecha && (
-              <span className="text-amber-300 text-[11px]">({formatDateShort(conditions.fecha)})</span>
-            )}
-            {conditions.humPct != null && (
-              <span className="text-gray-400 text-xs">· {conditions.humPct.toFixed(0)}% HR</span>
-            )}
-            <WeatherIcon size={16} className={tempIsStale ? 'text-amber-400' : 'text-green-400'} />
+          <div className="flex flex-col items-end gap-1.5">
+            <div
+              className={`inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-gradient-to-r from-gray-900 to-gray-800 text-white text-sm shadow-lg ${
+                tempLevel === 'stale' ? 'border border-red-500/40' : tempLevel === 'warn' ? 'border border-amber-500/40' : 'border border-green-500/30'
+              }`}
+              style={{ boxShadow: tempIsStale ? '0 0 20px rgba(245, 158, 11, 0.18)' : '0 0 20px rgba(34, 197, 94, 0.15)' }}
+              title={conditions.fecha ? `Última lectura: ${new Date(conditions.fecha).toLocaleString('es-VE')}` : 'Sin estación asignada'}
+            >
+              <span className="text-gray-400 text-xs">Condiciones {tempIsStale ? 'registradas:' : 'actuales:'}</span>
+              <span className={`font-semibold ${tempIsStale ? freshnessTextClass(tempLevel) : ''}`}>{tempDisplay}</span>
+              {tempIsStale && conditions.fecha && (
+                <span className="text-amber-300 text-[11px]">({formatDateShort(conditions.fecha)})</span>
+              )}
+              {conditions.humPct != null && (
+                <span className="text-gray-400 text-xs">· {conditions.humPct.toFixed(0)}% HR</span>
+              )}
+              <WeatherIcon size={16} className={tempIsStale ? 'text-amber-400' : 'text-green-400'} />
+            </div>
+            <DataSourceBadge source={conditions.source} fecha={conditions.fecha} size="sm" />
           </div>
         </div>
       </div>

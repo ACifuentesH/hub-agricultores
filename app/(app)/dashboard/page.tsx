@@ -6,6 +6,8 @@ import { resolveAgricultorScope, listAgricultores } from '@/lib/access'
 import MasterAgricultorSelector from '@/components/MasterAgricultorSelector'
 import MasterEmptyState from '@/components/MasterEmptyState'
 import { valueWithFreshness, freshnessTextClass } from '@/lib/freshness'
+import { getCurrentConditions } from '@/lib/clima'
+import DataSourceBadge from '@/components/DataSourceBadge'
 
 export default async function DashboardPage({
   searchParams,
@@ -33,28 +35,14 @@ export default async function DashboardPage({
   const agricultorKey = scope.agricultorKey ?? ''
   const supabase = await createClient()
 
-  const [{ data: lotes }, { data: climaMap }, agricultores] = await Promise.all([
+  const [{ data: lotes }, conditions, agricultores] = await Promise.all([
     supabase
       .from('lote')
       .select('lote_id, nombre_lote, ha_sembradas, fecha_inicio_siembra_real, ha_perdidas, edo_gral_cultivo_v')
       .eq('AgricultorKey', agricultorKey),
-    supabase
-      .from('mapa_productor_clima')
-      .select('productor_clima')
-      .eq('agricultor_key', agricultorKey)
-      .maybeSingle(),
+    getCurrentConditions(agricultorKey),
     scope.isMaster ? listAgricultores() : Promise.resolve([]),
   ])
-
-  const { data: climaReciente } = climaMap
-    ? await supabase
-        .from('clima_lecturas')
-        .select('temp_c, hum_pct, lluvia_mm, fecha_hora')
-        .eq('productor', climaMap.productor_clima)
-        .order('fecha_hora', { ascending: false })
-        .limit(1)
-        .maybeSingle()
-    : { data: null }
 
   const totalHa = lotes?.reduce((s, l) => s + parseFloat(l.ha_sembradas ?? '0'), 0) ?? 0
   // Política: ha_perdidas null/vacío = 0 hectáreas perdidas (no fue reportado pero asumimos sin pérdidas).
@@ -68,8 +56,8 @@ export default async function DashboardPage({
   const lotesSinFechaReal = lotes?.filter(l => l.fecha_inicio_siembra_real == null || l.fecha_inicio_siembra_real === '').length ?? 0
 
   const tempKpi = valueWithFreshness(
-    climaReciente?.temp_c != null ? `${climaReciente.temp_c}°C` : null,
-    climaReciente?.fecha_hora ?? null,
+    conditions.tempC != null ? `${conditions.tempC}°C` : null,
+    conditions.fecha,
   )
 
   return (
@@ -82,6 +70,9 @@ export default async function DashboardPage({
               {scope.agropecuariaName}
             </p>
           )}
+          <div className="mt-2">
+            <DataSourceBadge source={conditions.source} fecha={conditions.fecha} size="sm" />
+          </div>
         </div>
         {scope.isMaster && (
           <MasterAgricultorSelector agricultores={agricultores} selected={scope.agricultorKey} />

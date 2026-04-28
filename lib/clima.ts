@@ -1,5 +1,22 @@
 import { createClient } from './supabase/server'
 
+/** Origen de los datos de clima para un agricultor. */
+export type ClimaFuente = 'davis' | 'triangulated' | 'sin_datos'
+export type ClimaPrecision = 'aceptable' | 'media' | 'baja' | 'sin_estaciones_cercanas'
+
+export interface ClimaSourceMeta {
+  fuente: ClimaFuente
+  davisKey: string | null
+  /** Solo para triangulated: cuántas estaciones se usaron */
+  nEstaciones?: number
+  distMinKm?: number
+  distMaxKm?: number
+  estacionesUsadas?: string
+  precision?: ClimaPrecision
+  lat?: number | null
+  lon?: number | null
+}
+
 export interface CurrentConditions {
   tempC: number | null
   humPct: number | null
@@ -7,6 +24,7 @@ export interface CurrentConditions {
   fecha: string | null
   descripcion: string
   productorClima: string | null
+  source: ClimaSourceMeta
 }
 
 export interface ClimateSeries {
@@ -62,34 +80,117 @@ async function resolveProductorClima(agricultorKey: string): Promise<string | nu
   return data?.productor_clima ?? null
 }
 
-/** Latest reading from clima_lecturas. Falls back to nulls. */
-export async function getCurrentConditions(agricultorKey: string): Promise<CurrentConditions> {
-  const productor = await resolveProductorClima(agricultorKey)
-  if (!productor) {
-    return { tempC: null, humPct: null, lluviaMm: null, fecha: null, descripcion: 'Sin estación', productorClima: null }
-  }
+const SIN_DATOS: CurrentConditions = {
+  tempC: null,
+  humPct: null,
+  lluviaMm: null,
+  fecha: null,
+  descripcion: 'Sin datos',
+  productorClima: null,
+  source: { fuente: 'sin_datos', davisKey: null },
+}
 
+/**
+ * Latest current reading for an agricultor — uses `v_clima_efectivo` to decide:
+ *   - davis: query clima_lecturas directly (full reading incl. solar_rad)
+ *   - triangulated: call triangulate_clima(lat, lon) RPC (IDW over nearest stations)
+ *   - sin_datos: return empty state with source meta
+ *
+ * The returned `source` field tells the UI how to render origin/precision badges.
+ */
+export async function getCurrentConditions(agricultorKey: string): Promise<CurrentConditions> {
+  if (!agricultorKey) return SIN_DATOS
   const supabase = await createClient()
-  const { data } = await supabase
-    .from('clima_lecturas')
-    .select('temp_c, hum_pct, lluvia_mm, fecha_hora, solar_rad_wm2')
-    .eq('productor', productor)
-    .order('fecha_hora', { ascending: false })
-    .limit(1)
+
+  const { data: efectivo } = await supabase
+    .from('v_clima_efectivo')
+    .select('fuente, davis_key, fecha_real, temp_real, hum_real, lat, lon')
+    .eq('agricultor_key', agricultorKey)
     .maybeSingle()
 
-  if (!data) {
-    return { tempC: null, humPct: null, lluviaMm: null, fecha: null, descripcion: 'Sin datos', productorClima: productor }
+  if (!efectivo) return SIN_DATOS
+
+  // Path A — davis directo (estación propia mapeada)
+  if (efectivo.fuente === 'davis' && efectivo.davis_key) {
+    const { data: full } = await supabase
+      .from('clima_lecturas')
+      .select('temp_c, hum_pct, lluvia_mm, fecha_hora, solar_rad_wm2')
+      .eq('productor', efectivo.davis_key)
+      .order('fecha_hora', { ascending: false })
+      .limit(1)
+      .maybeSingle()
+
+    if (!full) {
+      return {
+        ...SIN_DATOS,
+        productorClima: efectivo.davis_key,
+        source: { fuente: 'davis', davisKey: efectivo.davis_key },
+      }
+    }
+
+    return {
+      tempC: full.temp_c,
+      humPct: full.hum_pct,
+      lluviaMm: full.lluvia_mm,
+      fecha: full.fecha_hora,
+      descripcion: describeCondition(full.lluvia_mm, full.solar_rad_wm2, full.hum_pct),
+      productorClima: efectivo.davis_key,
+      source: { fuente: 'davis', davisKey: efectivo.davis_key },
+    }
   }
 
-  return {
-    tempC: data.temp_c,
-    humPct: data.hum_pct,
-    lluviaMm: data.lluvia_mm,
-    fecha: data.fecha_hora,
-    descripcion: describeCondition(data.lluvia_mm, data.solar_rad_wm2, data.hum_pct),
-    productorClima: productor,
+  // Path B — triangulado por IDW desde estaciones cercanas
+  if (efectivo.fuente === 'triangulated' && efectivo.lat != null && efectivo.lon != null) {
+    const { data: tri } = await supabase.rpc('triangulate_clima', {
+      target_lat: efectivo.lat,
+      target_lon: efectivo.lon,
+      k_stations: 3,
+      max_dist_km: 200,
+    })
+
+    const t = Array.isArray(tri) && tri.length > 0 ? tri[0] : null
+    if (!t || t.out_n_estaciones === 0) {
+      return {
+        ...SIN_DATOS,
+        descripcion: 'Sin estaciones cercanas',
+        source: {
+          fuente: 'triangulated',
+          davisKey: null,
+          nEstaciones: 0,
+          precision: 'sin_estaciones_cercanas',
+          lat: efectivo.lat,
+          lon: efectivo.lon,
+        },
+      }
+    }
+
+    const tempC = t.out_temp_c != null ? Number(t.out_temp_c) : null
+    const humPct = t.out_hum_pct != null ? Number(t.out_hum_pct) : null
+    const lluviaMm = t.out_lluvia_mm != null ? Number(t.out_lluvia_mm) : null
+
+    return {
+      tempC,
+      humPct,
+      lluviaMm,
+      fecha: t.out_fecha_hora ?? null,
+      descripcion: describeCondition(lluviaMm, null, humPct),
+      productorClima: null,
+      source: {
+        fuente: 'triangulated',
+        davisKey: null,
+        nEstaciones: t.out_n_estaciones,
+        distMinKm: t.out_dist_min_km != null ? Number(t.out_dist_min_km) : undefined,
+        distMaxKm: t.out_dist_max_km != null ? Number(t.out_dist_max_km) : undefined,
+        estacionesUsadas: t.out_estaciones_usadas ?? undefined,
+        precision: (t.out_precision_estimada as ClimaPrecision) ?? undefined,
+        lat: efectivo.lat,
+        lon: efectivo.lon,
+      },
+    }
   }
+
+  // Path C — sin lat/lon: nada que triangular
+  return SIN_DATOS
 }
 
 /** Daily aggregated series for the last N days. */

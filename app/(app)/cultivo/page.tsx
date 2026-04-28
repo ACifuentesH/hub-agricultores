@@ -12,7 +12,8 @@ import IrrigationRing from '@/components/IrrigationRing'
 import ClimateSparkline from '@/components/ClimateSparkline'
 import ReportButtons from '@/components/ReportButtons'
 import PredictorSiembraPanel from '@/components/PredictorSiembraPanel'
-import { CloudSun, CloudRain, Sun, Cloud, Sprout } from 'lucide-react'
+import { CloudSun, CloudRain, Sun, Cloud, Sprout, AlertCircle, CalendarOff } from 'lucide-react'
+import { freshnessLevel, freshnessTextClass, formatDateShort } from '@/lib/freshness'
 
 const DIAS_CICLO = 120
 
@@ -55,6 +56,12 @@ export default async function CultivoPage({
 
   const WeatherIcon = pickWeatherIcon(conditions.descripcion)
   const tempDisplay = conditions.tempC != null ? `${conditions.tempC.toFixed(1)}°C` : '—'
+  const tempLevel = freshnessLevel(conditions.fecha)
+  const tempIsStale = tempLevel === 'warn' || tempLevel === 'stale'
+
+  // Separar lotes con / sin fecha de siembra real (decisión 2026-04-18: marcar diferente)
+  const lotesConFecha = (lotes ?? []).filter(l => l.fecha_inicio_siembra_real != null && l.fecha_inicio_siembra_real !== '')
+  const lotesSinFecha = (lotes ?? []).filter(l => l.fecha_inicio_siembra_real == null || l.fecha_inicio_siembra_real === '')
 
   return (
     <div className="space-y-6">
@@ -78,16 +85,21 @@ export default async function CultivoPage({
             <MasterAgricultorSelector agricultores={agricultores} selected={scope.agricultorKey} />
           )}
           <div
-            className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-gradient-to-r from-gray-900 to-gray-800 border border-green-500/30 text-white text-sm shadow-lg"
-            style={{ boxShadow: '0 0 20px rgba(34, 197, 94, 0.15)' }}
+            className={`inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-gradient-to-r from-gray-900 to-gray-800 text-white text-sm shadow-lg ${
+              tempLevel === 'stale' ? 'border border-red-500/40' : tempLevel === 'warn' ? 'border border-amber-500/40' : 'border border-green-500/30'
+            }`}
+            style={{ boxShadow: tempIsStale ? '0 0 20px rgba(245, 158, 11, 0.18)' : '0 0 20px rgba(34, 197, 94, 0.15)' }}
             title={conditions.fecha ? `Última lectura: ${new Date(conditions.fecha).toLocaleString('es-VE')}` : 'Sin estación asignada'}
           >
-            <span className="text-gray-400 text-xs">Condiciones actuales:</span>
-            <span className="font-semibold">{tempDisplay}</span>
+            <span className="text-gray-400 text-xs">Condiciones {tempIsStale ? 'registradas:' : 'actuales:'}</span>
+            <span className={`font-semibold ${tempIsStale ? freshnessTextClass(tempLevel) : ''}`}>{tempDisplay}</span>
+            {tempIsStale && conditions.fecha && (
+              <span className="text-amber-300 text-[11px]">({formatDateShort(conditions.fecha)})</span>
+            )}
             {conditions.humPct != null && (
               <span className="text-gray-400 text-xs">· {conditions.humPct.toFixed(0)}% HR</span>
             )}
-            <WeatherIcon size={16} className="text-green-400" />
+            <WeatherIcon size={16} className={tempIsStale ? 'text-amber-400' : 'text-green-400'} />
           </div>
         </div>
       </div>
@@ -95,9 +107,9 @@ export default async function CultivoPage({
       {/* Predictor de siembra (on-demand) */}
       <PredictorSiembraPanel context={predictorCtx} />
 
-      {/* Per-lote panels */}
+      {/* Per-lote panels — solo lotes con fecha de siembra real */}
       <div className="space-y-6">
-        {lotes?.map((l, idx) => {
+        {lotesConFecha.map((l, idx) => {
           const fechaReal = l.fecha_inicio_siembra_real
           const stageInfo = getCurrentStageInfo(fechaReal)
           const diasDesde = stageInfo?.dias ?? 0
@@ -186,6 +198,46 @@ export default async function CultivoPage({
           </div>
         )}
       </div>
+
+      {/* Lotes pendientes de cargar fecha de siembra real */}
+      {lotesSinFecha.length > 0 && (
+        <div className="bg-amber-50/40 dark:bg-amber-950/20 rounded-xl border border-amber-200/60 dark:border-amber-900/40 overflow-hidden">
+          <div className="px-5 py-4 border-b border-amber-200/60 dark:border-amber-900/40 flex items-center gap-2">
+            <CalendarOff size={16} className="text-amber-700 dark:text-amber-400" />
+            <h2 className="font-semibold text-amber-900 dark:text-amber-200 text-sm">
+              Pendientes de cargar fecha de siembra confirmada · {lotesSinFecha.length} lote{lotesSinFecha.length === 1 ? '' : 's'}
+            </h2>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="bg-amber-100/40 dark:bg-amber-950/30 text-amber-800 dark:text-amber-300 text-[11px] uppercase">
+                <tr>
+                  <th className="px-4 py-2 text-left">Lote</th>
+                  <th className="px-4 py-2 text-left">Código</th>
+                  <th className="px-4 py-2 text-left">Unidad</th>
+                  <th className="px-4 py-2 text-left">Fecha planeada</th>
+                  <th className="px-4 py-2 text-right">Ha sembradas</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-amber-200/60 dark:divide-amber-900/40">
+                {lotesSinFecha.map(l => (
+                  <tr key={l.lote_id} className="hover:bg-amber-100/30 dark:hover:bg-amber-950/30">
+                    <td className="px-4 py-2 font-medium text-gray-800 dark:text-gray-100">{l.nombre_lote}</td>
+                    <td className="px-4 py-2 text-gray-500 dark:text-gray-400">{l.codigo_lote ?? '—'}</td>
+                    <td className="px-4 py-2 text-gray-500 dark:text-gray-400">{l.unidad_produccion_v ?? '—'}</td>
+                    <td className="px-4 py-2 text-gray-500 dark:text-gray-400">{l.fecha_inicio_siembra ?? '—'}</td>
+                    <td className="px-4 py-2 text-right text-gray-600 dark:text-gray-300">{l.ha_sembradas ?? '—'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className="px-5 py-3 text-[11px] text-amber-800 dark:text-amber-300 flex items-center gap-1.5">
+            <AlertCircle size={12} />
+            Estos lotes no aparecen en la línea de tiempo porque no tienen fecha de siembra real registrada. Pídale al equipo agronómico que la complete.
+          </div>
+        </div>
+      )}
     </div>
   )
 }

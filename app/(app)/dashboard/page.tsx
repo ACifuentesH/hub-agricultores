@@ -5,6 +5,7 @@ import { Sprout, Wheat, CloudSun, AlertTriangle } from 'lucide-react'
 import { resolveAgricultorScope, listAgricultores } from '@/lib/access'
 import MasterAgricultorSelector from '@/components/MasterAgricultorSelector'
 import MasterEmptyState from '@/components/MasterEmptyState'
+import { valueWithFreshness, freshnessTextClass } from '@/lib/freshness'
 
 export default async function DashboardPage({
   searchParams,
@@ -56,7 +57,20 @@ export default async function DashboardPage({
     : { data: null }
 
   const totalHa = lotes?.reduce((s, l) => s + parseFloat(l.ha_sembradas ?? '0'), 0) ?? 0
-  const totalPerdidas = lotes?.reduce((s, l) => s + parseFloat(l.ha_perdidas ?? '0'), 0) ?? 0
+  // Política: ha_perdidas null/vacío = 0 hectáreas perdidas (no fue reportado pero asumimos sin pérdidas).
+  // Marcamos como posible outlier los lotes sin reporte explícito.
+  const totalPerdidas = lotes?.reduce((s, l) => {
+    const v = l.ha_perdidas
+    if (v == null || v === '') return s
+    return s + parseFloat(v)
+  }, 0) ?? 0
+  const lotesSinReportePerdidas = lotes?.filter(l => l.ha_perdidas == null || l.ha_perdidas === '').length ?? 0
+  const lotesSinFechaReal = lotes?.filter(l => l.fecha_inicio_siembra_real == null || l.fecha_inicio_siembra_real === '').length ?? 0
+
+  const tempKpi = valueWithFreshness(
+    climaReciente?.temp_c != null ? `${climaReciente.temp_c}°C` : null,
+    climaReciente?.fecha_hora ?? null,
+  )
 
   return (
     <div className="space-y-6">
@@ -77,12 +91,26 @@ export default async function DashboardPage({
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <KpiCard icon={<Sprout className="text-green-600" size={24} />} label="Lotes activos" value={String(lotes?.length ?? 0)} />
-        <KpiCard icon={<Wheat className="text-yellow-600" size={24} />} label="Ha sembradas" value={`${totalHa.toFixed(1)} ha`} />
-        <KpiCard icon={<AlertTriangle className="text-red-500" size={24} />} label="Ha perdidas" value={`${totalPerdidas.toFixed(1)} ha`} />
+        <KpiCard
+          icon={<Wheat className="text-yellow-600" size={24} />}
+          label="Ha sembradas"
+          value={`${totalHa.toFixed(1)} ha`}
+          hint={lotesSinFechaReal > 0 ? `${lotesSinFechaReal} lotes sin fecha de siembra confirmada` : undefined}
+        />
+        <KpiCard
+          icon={<AlertTriangle className="text-red-500" size={24} />}
+          label="Ha perdidas"
+          value={`${totalPerdidas.toFixed(1)} ha`}
+          hint={lotesSinReportePerdidas > 0 ? `${lotesSinReportePerdidas} lotes sin reporte (posible outlier)` : undefined}
+          hintLevel="warn"
+        />
         <KpiCard
           icon={<CloudSun className="text-blue-500" size={24} />}
           label="Temperatura actual"
-          value={climaReciente ? `${climaReciente.temp_c}°C` : 'N/D'}
+          value={tempKpi.text}
+          valueClass={freshnessTextClass(tempKpi.level)}
+          hint={tempKpi.isStale && tempKpi.level !== 'missing' ? 'Lectura con más de 24 h de antigüedad' : undefined}
+          hintLevel={tempKpi.level === 'stale' ? 'danger' : tempKpi.level === 'warn' ? 'warn' : undefined}
         />
       </div>
 
@@ -124,13 +152,36 @@ export default async function DashboardPage({
   )
 }
 
-function KpiCard({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
+function KpiCard({
+  icon,
+  label,
+  value,
+  valueClass,
+  hint,
+  hintLevel,
+}: {
+  icon: React.ReactNode
+  label: string
+  value: string
+  valueClass?: string
+  hint?: string
+  hintLevel?: 'info' | 'warn' | 'danger'
+}) {
+  const hintColor =
+    hintLevel === 'danger'
+      ? 'text-red-600 dark:text-red-400'
+      : hintLevel === 'warn'
+        ? 'text-amber-600 dark:text-amber-400'
+        : 'text-gray-500 dark:text-gray-400'
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-5 flex items-center gap-4">
-      <div className="p-2.5 bg-gray-50 dark:bg-gray-800 rounded-lg">{icon}</div>
-      <div>
+    <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-5 flex items-start gap-4">
+      <div className="p-2.5 bg-gray-50 dark:bg-gray-800 rounded-lg shrink-0">{icon}</div>
+      <div className="min-w-0">
         <p className="text-xs text-gray-500 dark:text-gray-400">{label}</p>
-        <p className="text-xl font-bold text-gray-800 dark:text-gray-100">{value}</p>
+        <p className={`text-xl font-bold text-gray-800 dark:text-gray-100 truncate ${valueClass ?? ''}`}>
+          {value}
+        </p>
+        {hint && <p className={`text-[11px] mt-1 leading-tight ${hintColor}`}>{hint}</p>}
       </div>
     </div>
   )

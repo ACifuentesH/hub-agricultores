@@ -66,18 +66,33 @@ export interface Alert {
 }
 
 /**
- * Resolve the weather station ("productor_clima") for an agricultor.
- * Returns null if no mapping exists yet.
+ * Convenience helper: resolves only the numeric station_id for an agricultor.
+ * Used by pages that need to query weather_readings directly (e.g. histórico).
  */
-async function resolveProductorClima(agricultorKey: string): Promise<string | null> {
+export async function resolveStationId(agricultorKey: string): Promise<string | null> {
+  const { stationId } = await resolveProductorClima(agricultorKey)
+  return stationId
+}
+
+/**
+ * Resolve the weather station for an agricultor. Returns both the legacy text
+ * name (used for `clima_forecast` queries) and the numeric station_id (used
+ * for `weather_readings` queries).
+ */
+async function resolveProductorClima(
+  agricultorKey: string,
+): Promise<{ productor: string | null; stationId: string | null }> {
   const supabase = await createClient()
   const { data } = await supabase
     .from('mapa_productor_clima')
-    .select('productor_clima')
+    .select('productor_clima, station_id')
     .eq('agricultor_key', agricultorKey)
     .limit(1)
     .maybeSingle()
-  return data?.productor_clima ?? null
+  return {
+    productor: data?.productor_clima ?? null,
+    stationId: data?.station_id ?? null,
+  }
 }
 
 const SIN_DATOS: CurrentConditions = {
@@ -104,19 +119,23 @@ export async function getCurrentConditions(agricultorKey: string): Promise<Curre
 
   const { data: efectivo } = await supabase
     .from('v_clima_efectivo')
-    .select('fuente, davis_key, fecha_real, temp_real, hum_real, lat, lon')
+    .select('fuente, davis_key, station_id, fecha_real, temp_real, hum_real, lluvia_real, lat, lon')
     .eq('agricultor_key', agricultorKey)
     .maybeSingle()
 
   if (!efectivo) return SIN_DATOS
 
-  // Path A — davis directo (estación propia mapeada)
-  if (efectivo.fuente === 'davis' && efectivo.davis_key) {
+  // Path A — davis directo (estación propia mapeada en weather_readings via station_id)
+  if (efectivo.fuente === 'davis' && efectivo.station_id) {
+    // Última lectura COMPLETA con sensores válidos (las últimas filas pueden ser
+    // resúmenes horarios sin temp_c si el sensor estaba caído ese intervalo).
+    // Tomamos la fila más reciente que tenga temp_c no-null.
     const { data: full } = await supabase
-      .from('clima_lecturas')
-      .select('temp_c, hum_pct, lluvia_mm, fecha_hora, solar_rad_wm2')
-      .eq('productor', efectivo.davis_key)
-      .order('fecha_hora', { ascending: false })
+      .from('weather_readings')
+      .select('temp_c, hum_pct, lluvia_mm, fecha_hora, ts, radiacion_w_m2')
+      .eq('station_id', efectivo.station_id)
+      .not('temp_c', 'is', null)
+      .order('ts', { ascending: false })
       .limit(1)
       .maybeSingle()
 
@@ -128,12 +147,17 @@ export async function getCurrentConditions(agricultorKey: string): Promise<Curre
       }
     }
 
+    // weather_readings.fecha_hora es text "naive" (sin TZ). Lo tratamos como UTC.
+    const fechaIso = typeof full.fecha_hora === 'string'
+      ? full.fecha_hora.replace(' ', 'T') + 'Z'
+      : full.fecha_hora
+
     return {
       tempC: full.temp_c,
       humPct: full.hum_pct,
       lluviaMm: full.lluvia_mm,
-      fecha: full.fecha_hora,
-      descripcion: describeCondition(full.lluvia_mm, full.solar_rad_wm2, full.hum_pct),
+      fecha: fechaIso,
+      descripcion: describeCondition(full.lluvia_mm, full.radiacion_w_m2, full.hum_pct),
       productorClima: efectivo.davis_key,
       source: { fuente: 'davis', davisKey: efectivo.davis_key },
     }
@@ -195,21 +219,21 @@ export async function getCurrentConditions(agricultorKey: string): Promise<Curre
 
 /** Daily aggregated series for the last N days. */
 export async function getClimateSeries(agricultorKey: string, days = 14): Promise<ClimateSeries> {
-  const productor = await resolveProductorClima(agricultorKey)
-  if (!productor) return emptySeries()
+  const { stationId } = await resolveProductorClima(agricultorKey)
+  if (!stationId) return emptySeries()
 
-  const since = new Date(Date.now() - days * 86400000).toISOString()
+  const sinceTs = Math.floor((Date.now() - days * 86400000) / 1000)
   const supabase = await createClient()
   const { data } = await supabase
-    .from('clima_lecturas')
-    .select('fecha_hora, temp_c, hum_pct')
-    .eq('productor', productor)
-    .gte('fecha_hora', since)
-    .order('fecha_hora', { ascending: true })
+    .from('weather_readings')
+    .select('fecha_hora, temp_c, hum_pct, ts')
+    .eq('station_id', stationId)
+    .gte('ts', sinceTs)
+    .order('ts', { ascending: true })
 
   if (!data || data.length === 0) return emptySeries()
 
-  // Bucket by day
+  // Bucket by day (fecha_hora is "naive" string YYYY-MM-DD HH:MM:SS treated as UTC)
   const byDay = new Map<string, { temps: number[]; hums: number[] }>()
   for (const row of data) {
     if (!row.fecha_hora) continue

@@ -8,7 +8,7 @@ import DataSourceBadge from '@/components/DataSourceBadge'
 import { resolveAgricultorScope, listAgricultores } from '@/lib/access'
 import MasterAgricultorSelector from '@/components/MasterAgricultorSelector'
 import MasterEmptyState from '@/components/MasterEmptyState'
-import { getForecast, computeAlerts, getCurrentConditions } from '@/lib/clima'
+import { getForecast, computeAlerts, getCurrentConditions, resolveStationId } from '@/lib/clima'
 import { Thermometer, Droplets, CloudRain as CloudRainIcon, MapPin, AlertCircle } from 'lucide-react'
 import { formatDateShort, freshnessTextClass, freshnessLevel } from '@/lib/freshness'
 
@@ -48,14 +48,23 @@ export default async function ClimaPage({
   const alerts = computeAlerts(forecast.rows)
 
   // Últimos 30 días de lecturas (horarias) — solo cuando hay Davis directo
-  const { data: lecturas } = productorClima
+  // Usa station_id del nuevo universo weather_readings.
+  const stationId = conditions.source.davisKey ? await resolveStationId(agricultorKey) : null
+  const { data: lecturasRaw } = stationId
     ? await supabase
-        .from('clima_lecturas')
-        .select('fecha_hora, temp_c, temp_max_c, temp_min_c, hum_pct, lluvia_mm')
-        .eq('productor', productorClima)
-        .order('fecha_hora', { ascending: false })
+        .from('weather_readings')
+        .select('fecha_hora, temp_c, temp_max_c, temp_min_c, hum_pct, lluvia_mm, ts')
+        .eq('station_id', stationId)
+        .order('ts', { ascending: false })
         .limit(720)
     : { data: [] }
+
+  // weather_readings.fecha_hora es text "naive" (UTC) — convertimos a ISO con Z
+  // para que el frontend lo trate consistentemente con el resto del sistema.
+  const lecturas = (lecturasRaw ?? []).map(l => ({
+    ...l,
+    fecha_hora: typeof l.fecha_hora === 'string' ? l.fecha_hora.replace(' ', 'T') + 'Z' : l.fecha_hora,
+  }))
 
   const tempLevel = freshnessLevel(conditions.fecha)
 

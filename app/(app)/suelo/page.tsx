@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import { resolveAgricultorScope, listAgricultores } from '@/lib/access'
 import MasterAgricultorSelector from '@/components/MasterAgricultorSelector'
 import MasterEmptyState from '@/components/MasterEmptyState'
+import AnalisisSueloSection from '@/components/AnalisisSueloSection'
 
 export default async function SueloPage({
   searchParams,
@@ -76,6 +77,9 @@ export default async function SueloPage({
           <MasterAgricultorSelector agricultores={agricultores} selected={scope.agricultorKey} />
         )}
       </div>
+
+      {/* Sección de PDFs de análisis de suelo (upload master + descarga farmer/master) */}
+      <AnalisisSueloSection agricultorKey={agricultorKey} isMaster={scope.isMaster} />
 
       {lotes?.map(l => (
         <div key={l.lote_id} className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden">

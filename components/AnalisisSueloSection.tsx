@@ -1,7 +1,7 @@
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 import AnalisisSueloUploader from './AnalisisSueloUploader'
 import AnalisisSueloDownloadBtn from './AnalisisSueloDownloadBtn'
-import { FileText, AlertCircle, Clock } from 'lucide-react'
+import { FileText, AlertCircle } from 'lucide-react'
 
 interface Props {
   agricultorKey: string
@@ -63,16 +63,11 @@ export default async function AnalisisSueloSection({ agricultorKey, isMaster }: 
             </thead>
             <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
               {pdfs.map(p => (
-                <tr key={p.id} className={`hover:bg-gray-50 dark:hover:bg-gray-900/40 ${!p.es_vigente ? 'opacity-60' : ''}`}>
+                <tr key={p.id} className="hover:bg-gray-50 dark:hover:bg-gray-900/40">
                   <td className="px-4 py-2.5">
                     <div className="flex items-center gap-2">
                       <FileText size={14} className="text-red-500 shrink-0" />
                       <span className="font-medium text-gray-800 dark:text-gray-100 truncate max-w-[280px]">{p.nombre_archivo}</span>
-                      {!p.es_vigente && (
-                        <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 inline-flex items-center gap-1">
-                          <Clock size={9} /> versión anterior
-                        </span>
-                      )}
                     </div>
                   </td>
                   <td className="px-4 py-2.5 text-gray-600 dark:text-gray-300">{p.ciclo}</td>

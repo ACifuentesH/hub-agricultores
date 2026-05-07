@@ -105,14 +105,8 @@ export default function AnalisisSueloUploader({ agricultores }: { agricultores: 
       return
     }
 
-    // Marcar versiones anteriores del mismo agricultor+ciclo como no vigentes
-    await supabase
-      .from('lote_analisis_suelo')
-      .update({ es_vigente: false })
-      .eq('agricultor_key', p.finalKey)
-      .eq('ciclo', p.ciclo)
-
-    // Insertar registro
+    // Cada PDF representa un LOTE distinto dentro de la misma finca, no es una
+    // versión del análisis. Todos los registros coexisten como vigentes.
     const { error: insErr } = await supabase
       .from('lote_analisis_suelo')
       .insert({

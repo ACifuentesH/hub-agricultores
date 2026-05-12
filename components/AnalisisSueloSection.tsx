@@ -1,6 +1,7 @@
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 import AnalisisSueloUploader from './AnalisisSueloUploader'
 import AnalisisSueloDownloadBtn from './AnalisisSueloDownloadBtn'
+import AnalisisSueloDeleteBtn from './AnalisisSueloDeleteBtn'
 import { FileText, AlertCircle } from 'lucide-react'
 
 interface Props {
@@ -81,11 +82,21 @@ export default async function AnalisisSueloSection({ agricultorKey, isMaster }: 
                     {p.tamano_bytes ? `${(p.tamano_bytes / 1024).toFixed(0)} KB` : '—'}
                   </td>
                   <td className="px-4 py-2.5 text-right">
-                    <AnalisisSueloDownloadBtn
-                      storagePath={p.storage_path}
-                      filename={p.nombre_archivo}
-                      size="sm"
-                    />
+                    <div className="inline-flex items-center gap-1.5">
+                      <AnalisisSueloDownloadBtn
+                        storagePath={p.storage_path}
+                        filename={p.nombre_archivo}
+                        size="sm"
+                      />
+                      {isMaster && (
+                        <AnalisisSueloDeleteBtn
+                          pdfId={p.id}
+                          storagePath={p.storage_path}
+                          filename={p.nombre_archivo}
+                          size="sm"
+                        />
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}

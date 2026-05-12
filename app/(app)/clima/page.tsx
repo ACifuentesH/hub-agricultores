@@ -5,6 +5,7 @@ import ClimaDashboard from '@/components/charts/ClimaDashboard'
 import ForecastStrip from '@/components/ForecastStrip'
 import AlertsPanel from '@/components/AlertsPanel'
 import DataSourceBadge from '@/components/DataSourceBadge'
+import DescargarHistoricoClimaBtn from '@/components/DescargarHistoricoClimaBtn'
 import { resolveAgricultorScope, listAgricultores } from '@/lib/access'
 import MasterAgricultorSelector from '@/components/MasterAgricultorSelector'
 import MasterEmptyState from '@/components/MasterEmptyState'
@@ -78,8 +79,15 @@ export default async function ClimaPage({
               {scope.agropecuariaName}
             </p>
           )}
-          <div className="mt-2">
+          <div className="mt-2 flex flex-wrap items-center gap-2">
             <DataSourceBadge source={conditions.source} fecha={conditions.fecha} size="sm" />
+            {conditions.source.fuente === 'davis' && (
+              <DescargarHistoricoClimaBtn
+                agricultorKey={scope.isMaster ? scope.agricultorKey : null}
+                agricultorNombre={scope.agropecuariaName}
+                size="sm"
+              />
+            )}
           </div>
         </div>
         {scope.isMaster && (

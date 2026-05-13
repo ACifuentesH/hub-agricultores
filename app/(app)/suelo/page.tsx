@@ -6,6 +6,9 @@ import MasterAgricultorSelector from '@/components/MasterAgricultorSelector'
 import MasterEmptyState from '@/components/MasterEmptyState'
 import AnalisisSueloSection from '@/components/AnalisisSueloSection'
 
+// Datos vivos: nunca cachear
+export const dynamic = 'force-dynamic'
+
 export default async function SueloPage({
   searchParams,
 }: {

@@ -16,6 +16,9 @@ import DataSourceBadge from '@/components/DataSourceBadge'
 import { CloudSun, CloudRain, Sun, Cloud, Sprout, AlertCircle, CalendarOff } from 'lucide-react'
 import { freshnessLevel, freshnessTextClass, formatDateShort } from '@/lib/freshness'
 
+// Datos vivos: nunca cachear (lotes/clima/condiciones cambian frecuentemente)
+export const dynamic = 'force-dynamic'
+
 const DIAS_CICLO = 120
 
 export default async function CultivoPage({

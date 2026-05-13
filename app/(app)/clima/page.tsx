@@ -13,6 +13,9 @@ import { getForecast, computeAlerts, getCurrentConditions, resolveStationId } fr
 import { Thermometer, Droplets, CloudRain as CloudRainIcon, MapPin, AlertCircle } from 'lucide-react'
 import { formatDateShort, freshnessTextClass, freshnessLevel } from '@/lib/freshness'
 
+// Datos vivos: nunca cachear
+export const dynamic = 'force-dynamic'
+
 export default async function ClimaPage({
   searchParams,
 }: {

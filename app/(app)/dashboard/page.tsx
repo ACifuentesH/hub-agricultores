@@ -9,6 +9,9 @@ import { valueWithFreshness, freshnessTextClass } from '@/lib/freshness'
 import { getCurrentConditions } from '@/lib/clima'
 import DataSourceBadge from '@/components/DataSourceBadge'
 
+// Datos vivos: nunca cachear
+export const dynamic = 'force-dynamic'
+
 export default async function DashboardPage({
   searchParams,
 }: {

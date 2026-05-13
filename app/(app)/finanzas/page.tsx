@@ -6,6 +6,9 @@ import { resolveAgricultorScope, listAgricultores } from '@/lib/access'
 import MasterAgricultorSelector from '@/components/MasterAgricultorSelector'
 import MasterEmptyState from '@/components/MasterEmptyState'
 
+// Datos vivos: nunca cachear
+export const dynamic = 'force-dynamic'
+
 export default async function FinanzasPage({
   searchParams,
 }: {

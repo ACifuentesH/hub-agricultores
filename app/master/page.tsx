@@ -3,6 +3,9 @@ import { requireRole } from '@/lib/auth'
 import Link from 'next/link'
 import { Users, Wheat, TrendingUp, AlertCircle, CalendarOff } from 'lucide-react'
 
+// Datos vivos: nunca cachear
+export const dynamic = 'force-dynamic'
+
 export default async function MasterPage() {
   await requireRole('master')
   const supabase = createServiceClient()

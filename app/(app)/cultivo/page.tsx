@@ -111,6 +111,36 @@ export default async function CultivoPage({
       {/* Predictor de siembra (on-demand) */}
       <PredictorSiembraPanel context={predictorCtx} />
 
+      {/* Índice navegable de lotes (chips clicables que saltan al ancla) */}
+      {(lotes?.length ?? 0) > 0 && (
+        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-4">
+          <p className="text-[11px] uppercase tracking-wider text-gray-400 dark:text-gray-500 font-medium mb-2">
+            {lotes!.length} lote{lotes!.length === 1 ? '' : 's'} · click para navegar
+          </p>
+          <div className="flex flex-wrap gap-1.5">
+            {lotes!.map(l => {
+              const tieneFecha = l.fecha_inicio_siembra_real != null && l.fecha_inicio_siembra_real !== ''
+              return (
+                <a
+                  key={l.lote_id}
+                  href={`#lote-${l.lote_id}`}
+                  className={`text-xs px-2.5 py-1 rounded-md border transition-colors ${
+                    tieneFecha
+                      ? 'bg-green-50 dark:bg-green-950/40 text-green-800 dark:text-green-300 border-green-200 dark:border-green-900/50 hover:bg-green-100 dark:hover:bg-green-900/60'
+                      : 'bg-amber-50 dark:bg-amber-950/30 text-amber-800 dark:text-amber-300 border-amber-200/60 dark:border-amber-900/40 hover:bg-amber-100 dark:hover:bg-amber-900/50'
+                  }`}
+                  title={tieneFecha
+                    ? `Sembrado: ${l.fecha_inicio_siembra_real}`
+                    : 'Sin fecha de siembra real'}
+                >
+                  {l.nombre_lote}
+                </a>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
       {/* Per-lote panels — solo lotes con fecha de siembra real */}
       <div className="space-y-6">
         {lotesConFecha.map((l, idx) => {
@@ -122,7 +152,7 @@ export default async function CultivoPage({
           const irrigation = Math.max(50, Math.min(98, 95 - (idx * 3)))
 
           return (
-            <div key={l.lote_id} className="space-y-4">
+            <div key={l.lote_id} id={`lote-${l.lote_id}`} className="space-y-4 scroll-mt-20">
               {/* Lote header strip */}
               <div className="flex flex-wrap items-baseline justify-between gap-2">
                 <div>
@@ -225,7 +255,11 @@ export default async function CultivoPage({
               </thead>
               <tbody className="divide-y divide-amber-200/60 dark:divide-amber-900/40">
                 {lotesSinFecha.map(l => (
-                  <tr key={l.lote_id} className="hover:bg-amber-100/30 dark:hover:bg-amber-950/30">
+                  <tr
+                    key={l.lote_id}
+                    id={`lote-${l.lote_id}`}
+                    className="hover:bg-amber-100/30 dark:hover:bg-amber-950/30 scroll-mt-20"
+                  >
                     <td className="px-4 py-2 font-medium text-gray-800 dark:text-gray-100">{l.nombre_lote}</td>
                     <td className="px-4 py-2 text-gray-500 dark:text-gray-400">{l.codigo_lote ?? '—'}</td>
                     <td className="px-4 py-2 text-gray-500 dark:text-gray-400">{l.unidad_produccion_v ?? '—'}</td>

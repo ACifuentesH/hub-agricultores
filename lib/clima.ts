@@ -68,6 +68,9 @@ export interface Alert {
 /**
  * Convenience helper: resolves only the numeric station_id for an agricultor.
  * Used by pages that need to query weather_readings directly (e.g. histórico).
+ *
+ * Lee de v_clima_efectivo (auto-curativa via codigo_up), NO de mapa_productor_clima
+ * (que solo se usa como override manual y suele estar vacía).
  */
 export async function resolveStationId(agricultorKey: string): Promise<string | null> {
   const { stationId } = await resolveProductorClima(agricultorKey)
@@ -76,22 +79,32 @@ export async function resolveStationId(agricultorKey: string): Promise<string | 
 
 /**
  * Resolve the weather station for an agricultor. Returns both the legacy text
- * name (used for `clima_forecast` queries) and the numeric station_id (used
- * for `weather_readings` queries).
+ * name (productor_clima — usado por clima_forecast queries) y el numeric
+ * station_id (usado por weather_readings).
+ *
+ * La fuente principal es v_clima_efectivo (auto-curativa). mapa_productor_clima
+ * se conserva solo para overrides manuales legacy de productor_clima en forecast.
  */
 async function resolveProductorClima(
   agricultorKey: string,
 ): Promise<{ productor: string | null; stationId: string | null }> {
   const supabase = await createClient()
-  const { data } = await supabase
-    .from('mapa_productor_clima')
-    .select('productor_clima, station_id')
-    .eq('agricultor_key', agricultorKey)
-    .limit(1)
-    .maybeSingle()
+  const [{ data: efectivo }, { data: mapeo }] = await Promise.all([
+    supabase
+      .from('v_clima_efectivo')
+      .select('station_id, davis_key')
+      .eq('agricultor_key', agricultorKey)
+      .maybeSingle(),
+    supabase
+      .from('mapa_productor_clima')
+      .select('productor_clima')
+      .eq('agricultor_key', agricultorKey)
+      .limit(1)
+      .maybeSingle(),
+  ])
   return {
-    productor: data?.productor_clima ?? null,
-    stationId: data?.station_id ?? null,
+    productor: mapeo?.productor_clima ?? efectivo?.davis_key ?? null,
+    stationId: efectivo?.station_id ?? null,
   }
 }
 

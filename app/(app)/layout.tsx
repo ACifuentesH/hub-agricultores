@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import Sidebar from '@/components/Sidebar'
 import AgriChatWidget from '@/components/AgriChatWidget'
+import UserMenu from '@/components/UserMenu'
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient()
@@ -30,7 +31,11 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       <div className="flex-1 flex flex-col">
         <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-6 py-3 flex items-center justify-between">
           <span className="text-sm text-gray-500 dark:text-gray-400">Polar en el Campo</span>
-          <span className="text-sm font-medium text-green-800 dark:text-green-300">{displayName}</span>
+          <UserMenu
+            email={user.email ?? '—'}
+            displayName={displayName}
+            role={(profile?.role ?? 'farmer') as 'master' | 'farmer'}
+          />
         </header>
         <main className="flex-1 p-6">{children}</main>
       </div>

@@ -1,4 +1,14 @@
 import type { NextConfig } from "next";
+import withSerwistInit from "@serwist/next";
+
+const withSerwist = withSerwistInit({
+  swSrc: "app/sw.ts",
+  swDest: "public/sw.js",
+  cacheOnNavigation: true,
+  reloadOnOnline: true,
+  // Disable in dev to avoid SW cache pain durante desarrollo
+  disable: process.env.NODE_ENV === "development",
+});
 
 const nextConfig: NextConfig = {
   async headers() {
@@ -19,12 +29,30 @@ const nextConfig: NextConfig = {
               "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.weatherlink.com",
               "font-src 'self'",
               "frame-ancestors 'none'",
+              // Service workers necesitan poder registrarse
+              "worker-src 'self' blob:",
+              "manifest-src 'self'",
             ].join('; '),
           },
+        ],
+      },
+      // Service worker debe servirse con headers específicos
+      {
+        source: '/sw.js',
+        headers: [
+          { key: 'Service-Worker-Allowed', value: '/' },
+          { key: 'Cache-Control', value: 'public, max-age=0, must-revalidate' },
+        ],
+      },
+      {
+        source: '/manifest.json',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=3600' },
+          { key: 'Content-Type', value: 'application/manifest+json' },
         ],
       },
     ]
   },
 };
 
-export default nextConfig;
+export default withSerwist(nextConfig);

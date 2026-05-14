@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#1a6e2c"/>
+  <g fill="#fff">
+    <!-- Tallo -->
+    <rect x="246" y="180" width="20" height="230" rx="4"/>
+    <!-- Hojas -->
+    <path d="M256 230 Q160 200 130 280 Q200 270 256 260 Z"/>
+    <path d="M256 280 Q352 250 382 330 Q312 320 256 310 Z"/>
+    <path d="M256 320 Q160 290 130 370 Q200 360 256 350 Z"/>
+    <!-- Mazorca top -->
+    <ellipse cx="256" cy="170" rx="32" ry="56"/>
+    <!-- Granos en mazorca -->
+    <circle cx="246" cy="148" r="5" fill="#1a6e2c"/>
+    <circle cx="266" cy="148" r="5" fill="#1a6e2c"/>
+    <circle cx="246" cy="168" r="5" fill="#1a6e2c"/>
+    <circle cx="266" cy="168" r="5" fill="#1a6e2c"/>
+    <circle cx="246" cy="188" r="5" fill="#1a6e2c"/>
+    <circle cx="266" cy="188" r="5" fill="#1a6e2c"/>
+  </g>
+</svg>

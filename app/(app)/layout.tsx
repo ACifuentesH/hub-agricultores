@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import Sidebar from '@/components/Sidebar'
 import AgriChatWidget from '@/components/AgriChatWidget'
+import SoporteWhatsAppWidget from '@/components/SoporteWhatsAppWidget'
 import UserMenu from '@/components/UserMenu'
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
@@ -42,6 +43,11 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       <AgriChatWidget
         defaultAgricultorKey={profile?.agricultor_key ?? null}
         isMaster={(profile?.role ?? 'farmer') === 'master'}
+      />
+      <SoporteWhatsAppWidget
+        agricultorNombre={displayName}
+        agricultorKey={profile?.agricultor_key ?? 'sin_key'}
+        role={(profile?.role ?? 'farmer') as 'master' | 'farmer'}
       />
     </div>
   )

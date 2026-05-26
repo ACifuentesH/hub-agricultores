@@ -6,7 +6,7 @@ import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import {
   LayoutDashboard, CloudSun, Sprout, FlaskConical,
-  BarChart3, Users, LogOut
+  Users, LogOut
 } from 'lucide-react'
 import ThemeToggle from './ThemeToggle'
 
@@ -15,7 +15,6 @@ const farmerLinks = [
   { href: '/clima', label: 'Clima', icon: CloudSun },
   { href: '/cultivo', label: 'Cultivo', icon: Sprout },
   { href: '/suelo', label: 'Suelo', icon: FlaskConical },
-  { href: '/finanzas', label: 'Finanzas', icon: BarChart3 },
 ]
 
 const masterLinks = [

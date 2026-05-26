@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 
 const APP_NAME = "Polar en el Campo";
 const APP_DESCRIPTION =
-  "Plataforma digital del Programa de Agricultura por Contrato — clima, cultivo, finanzas y suelo.";
+  "Plataforma digital del Programa de Agricultura por Contrato — clima, cultivo y suelo.";
 
 export const metadata: Metadata = {
   applicationName: APP_NAME,

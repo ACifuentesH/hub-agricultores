@@ -1,10 +1,13 @@
 -- ============================================================================
 -- CARGADOR EN LOTE — Mapeo clima/predicción ciclo 2026
 -- ----------------------------------------------------------------------------
--- Para cada agricultor pendiente, hace DOS cosas (igual que el arreglo manual
--- de Francisco/Oscar):
+-- Para cada agricultor pendiente:
 --   1) OVERRIDE de estación en mapa_productor_clima   -> enciende el MÓDULO CLIMA
---   2) COORDENADAS en su unidad_produccion (UP)        -> enciende la PREDICCIÓN
+--      Y ADEMÁS la PREDICCIÓN: desde 2026-06-05 la predicción toma lat/lon de la
+--      estación asignada (tabla estaciones_davis), así que asignar la estación ya
+--      enciende ambos módulos. NO hace falta llenar lat/lon para agricultores Davis.
+--   2) COORDENADAS en el UP  ->  SOLO para agricultores SIN estación (satélite),
+--      o para forzar una ubicación distinta a la de la estación.
 --
 -- Es IDEMPOTENTE: puedes correrlo varias veces; re-aplica sin duplicar.
 -- No toca el frontend ni el edge function. Cambios en vivo al instante
@@ -21,10 +24,13 @@
 -- Formato de cada fila:
 --   ('AGRICULTOR_KEY', 'CODIGO_ESTACION', 'STATION_ID_OPCIONAL', LAT, LON)
 --   - CODIGO_ESTACION: ej. 'G05'. Si el agricultor NO tiene estación Davis
---     (solo satélite), déjalo NULL -> solo se cargan coords (predicción satelital).
+--     (solo satélite), déjalo NULL y llena LAT/LON (predicción satelital).
 --   - STATION_ID_OPCIONAL: pégalo del CATALOGO si quieres máxima precisión;
 --     si lo dejas NULL se resuelve por CODIGO_ESTACION.
---   - LAT/LON: en grados decimales. Si NULL, no se tocan las coords.
+--   - LAT/LON: en grados decimales. OPCIONAL si el agricultor tiene estación
+--     (la predicción usa las coords de la estación). OBLIGATORIO solo para
+--     satelitales (sin estación). Si llenas lat/lon CON estación, sobreescriben
+--     la ubicación del UP pero la predicción seguirá usando la de la estación.
 -- ============================================================================
 
 
@@ -46,9 +52,10 @@ SELECT
        ELSE 'ESTACION_NO_ENCONTRADA' END                       AS estado_estacion,
   st.station_id                                                AS station_id_resuelto,
   st.station_name                                              AS estacion_resuelta,
-  CASE WHEN up.codigo_up IS NULL THEN 'SIN_UP (crear UP primero)'
-       WHEN m.lat IS NULL OR m.lon IS NULL THEN 'sin_coords_en_fila'
-       ELSE 'ok' END                                           AS estado_coords,
+  CASE WHEN st.station_id IS NOT NULL THEN 'predic auto desde estación'
+       WHEN m.lat IS NOT NULL AND m.lon IS NOT NULL AND up.codigo_up IS NOT NULL THEN 'coords manuales -> UP'
+       WHEN m.lat IS NOT NULL AND m.lon IS NOT NULL AND up.codigo_up IS NULL THEN 'SIN_UP (crear UP para coords satelitales)'
+       ELSE 'FALTAN coords (satélite sin estación y sin lat/lon)' END AS estado_predic,
   up.codigo_up                                                 AS up_destino
 FROM mapping m
 LEFT JOIN agropecuaria a            ON a."AgricultorKey" = m.agricultor_key
@@ -61,8 +68,10 @@ LEFT JOIN LATERAL (
          AND upper(trim(split_part(ss.station_name, '-', 1))) = upper(trim(m.codigo_estacion)))
   LIMIT 1
 ) st ON true;
--- Revisa: key_existe=true, estado_estacion ∈ {ok, solo_coords}, estado_coords ∈ {ok, ...}.
--- Si ves ESTACION_NO_ENCONTRADA o SIN_UP, corrige esa fila antes del PASO 1.
+-- Revisa: key_existe=true, estado_estacion ∈ {ok, solo_coords},
+-- estado_predic ∈ {predic auto desde estación, coords manuales -> UP}.
+-- 'FALTAN coords' = satélite sin lat/lon. 'SIN_UP' = crear UP antes (solo satélite).
+-- 'ESTACION_NO_ENCONTRADA' = revisa el código contra CATALOGO_estaciones.csv.
 
 
 -- ╔══════════════════════════════════════════════════════════════════════════╗

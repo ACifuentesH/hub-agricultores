@@ -1,0 +1,45 @@
+﻿codigo,station_name,lugar,city,region,country,latitude,longitude,elevation_m,station_id,station_id_uuid,product_number,active,finca_agroven_cercana,dist_km
+B01,B01-Saturno-La Campesina,Saturno-La Campesina,Caño Hondo,Barinas,Venezuela,8.66616,-69.994255,472.5,235263,7cad6faa-bf13-4c18-8922-f687f5d09080,6100,True,Ezequiel Fontiveros,125.7
+C01,C01-Las Majaguas-Saturno,Las Majaguas,Quebrada Honda,Portuguesa,Venezuela,9.61,-68.96979,479.8,212761,582b9e60-9d9b-4fdd-b169-2a8af7874d44,6803A,True,Ezequiel Fontiveros,30.2
+EXPG01,EXPG01 - Mahomito - Saturno,Mahomito,Jácome Arriba,Guárico,Venezuela,9.148761,-66.09765,553.4,218876,2beb7641-8500-44bb-a9ac-189d3a25020b,6100,True,Pedro Solano,21.9
+EXPP02,EXPP02-Parcela 392-Saturno,Parcela 392,El Aji,Portuguesa,Venezuela,9.168804,-69.04817,340.1,217861,3a12deb5-8bfb-48e4-b734-93948880c9fc,6100,True,Antonio Pestana,18.9
+EXPP1,EXPP1-La Diluccia,La Diluccia,Villa Bruzual,Portuguesa,Venezuela,9.326978,-69.14307,438.0,216784,09376363-9760-46be-91a9-1d1322c1915b,6100,True,Ezequiel Fontiveros,21.1
+EXPY02,EXPY02-La Vega-Saturno,La Vega,Sabana de Parra,Yaracuy,Venezuela,10.095456,-69.03054,1121.1,218046,c95da6b4-6aaf-43f2-aac9-cb20694bfb4c,6100,True,Ezequiel Fontiveros,69.4
+G01,G01-San Geronimo - Saturno,San Geronimo,Camacho,Guárico,Venezuela,9.16992,-65.75194,428.5,185450,184719b0-318a-42a1-94e7-f758a89b2ba0,6803A,True,Giusfelys Ricca,2.4
+G02,G02-Los Espinitos-Saturno,Los Espinitos,Agua Blanca,Guárico,Venezuela,8.99576,-65.51944,351.6,186669,eb3a29e8-8783-49bd-a896-b2bffd12c5ed,6100,True,Charlys Solano,9.3
+G03,G03-Memo-Saturno,Memo,Memo,Aragua,Venezuela,9.41514,-66.64495,606.1,186361,a333eaf8-7700-4b43-8d9b-872bcdc7fdc0,6100,True,Celso Fantinel,25.1
+G04,G04-Las Mercedes-Saturno,Las Mercedes,Rosario,Guárico,Venezuela,9.28141,-66.45505,624.7,186730,820b7324-c02a-413f-ad7a-df53757e4c92,6100,True,Manuel Gonzalez,16.1
+G05,G05-La Peñita - Saturno,La Peñita,Las Peñitas,Aragua,Venezuela,9.6420355,-66.654366,866.5,213735,363eda6f-041a-41b2-9e0d-ed0ab669706f,6100,True,Celso Fantinel,1.9
+G06,G06-Mahomal-Saturno,Mahomal,Palma Sola,Guárico,Venezuela,9.05184,-65.47527,363.9,213617,ee55aafa-22d0-4933-920c-2c4886447dc3,6100,True,Charlys Solano,6.7
+G07,G07-El Apamate-Saturno,El Apamate,Las Mercedes del Llano,Guárico,Venezuela,9.16913,-66.40726,565.4,220773,76a69b63-9083-4bde-8ef7-45089f0485ab,6100,True,Manuel Gonzalez,5.8
+G08,G08 - La Mata - Saturno,La Mata,Los Roblecitos,Guárico,Venezuela,9.17318,-65.65039,373.3,217402,ef2d72f7-9d33-4e5e-ace9-dc6dfe167772,6100,True,Giusfelys Ricca,10.2
+G09,G09-Saturno-Mochuelo,Saturno-Mochuelo,Tucupido,Guárico,Venezuela,9.28491,-65.7433,419.8,238308,bfc86f23-2c29-4134-8e74-818adba0eb30,6100,True,Pedro Gomez,0.6
+G10,G10-San Pedro-Saturno,San Pedro,Las Lomas,Guárico,Venezuela,9.243261,-65.660194,340.0,238339,6e8a7bc3-f5e4-42cc-b562-d2ac79fe36b9,6100,True,Rolando Caldera,8.3
+G11,G11-La Graciosa-Saturno,La Graciosa,El Caro de la Negra,Guárico,Venezuela,9.270751,-65.58421,316.7,238350,30646a8a-6b77-409a-baa4-06ff256531af,6100,True,Rolando Caldera,2.3
+G12,G12-Buenavista-Saturno,Buenavista,Cenicero,Guárico,Venezuela,9.15103,-65.81198,464.5,238383,49caf1b7-b28b-4a9f-ae56-5c6be9d36d31,6100,True,Meyz Tohme,0.5
+G13,G13-Palmartupío-Saturno,Palmartupío,Agua Blanca,Guárico,Venezuela,8.97136,-65.58844,460.6,238407,3a9afcbc-4b48-40c0-afd2-b1fe25053701,6100,True,Jose Solano,9.9
+P01,P01-Pajones-Saturno,Pajones,Casa de Tejas,Cojedes,Venezuela,9.53432,-68.88757,404.0,184921,1d8f4536-e1ef-4ce7-84c0-97f8a5183dbf,6803A,True,Antonio Pestana,35.4
+P02,P02-Cojedito-Saturno,Cojedito,Casa de Tejas,Cojedes,Venezuela,9.55823,-68.88436,419.4,184965,ea7655d6-c03f-4721-9604-694aeaff03d1,6803A,True,Ezequiel Fontiveros,37.5
+P03,P03-Queseras-Saturno,Queseras,San Lorenzo,Portuguesa,Venezuela,9.037815,-69.34211,374.7,200814,76440a13-c47e-49ff-831b-61c34ef8cd30,6100,True,Gianni Gasperin,52.1
+P04,P04-Chaconera-Saturno,Chaconera,Santa Rosa,Portuguesa,Venezuela,9.07344,-68.70325,260.8,187561,d5807d8c-4ff1-4717-9a6a-0a85bef26a53,6100,True,Gianni Gasperin,24.9
+P05,P05-Santa Cruz-Saturno,Santa Cruz,Santa Cruz,Portuguesa,Venezuela,9.26501,-68.78048,313.4,212477,00d8085a-fa98-44e6-8e1a-fc5e9696b9d1,6100,True,Antonio Pestana,12.5
+P06,P06-Esteros de Canoita-Saturno,Esteros de Canoita,Poblado Tres,Portuguesa,Venezuela,9.12093,-68.84783,293.8,212516,c72a5987-6b1d-43d6-a96c-eca14bcab3a6,6100,True,Antonio Pestana,11.2
+P07,P07-Turen-Saturno,Turen,Villa Bruzual,Portuguesa,Venezuela,9.29285,-69.07387,405.1,212533,cc8011f3-7ceb-4579-ae5a-53daed111dab,6100,True,Antonio Pestana,22.6
+P08,P08-Turen La Colonia-Saturno,Turen La Colonia,Villa Bruzual,Portuguesa,Venezuela,9.31064,-69.10249,423.2,212609,73cb26a8-f2ca-456f-9792-8200e76b027b,6100,True,Ezequiel Fontiveros,24.8
+P09,P09-Chorrerones-Saturno ,Chorrerones,Chorrerones,Portuguesa,Venezuela,9.19404,-68.9556,337.3,212641,7cc51094-45c6-48d8-9236-2e46af61b964,6100,True,Antonio Pestana,8.3
+P10,P10-Turen Las Cúpulas-Saturno,Turen Las Cúpulas,Villa Bruzual,Portuguesa,Venezuela,9.27254,-69.15076,406.8,212695,617934f9-05b4-4686-be18-188d7276833d,6100,True,Ezequiel Fontiveros,26.5
+P11,P11-La Ensenada-Saturno,La Ensenada,La Ceiba,Portuguesa,Venezuela,9.39531,-69.09518,442.4,212723,3a250649-af29-47eb-8355-1f97fc99a7a0,6100,True,Ezequiel Fontiveros,18.1
+P12,P12-Rio Acarigua-Saturno,Rio Acarigua,Balona,Portuguesa,Venezuela,9.49422,-69.28926,733.8,213450,f2d2b657-1663-4b2d-8618-c1bd94c5ec7e,6100,True,Ezequiel Fontiveros,7.4
+P14,P14 - El Palmar - Saturno,El Palmar,El Palmar,Portuguesa,Venezuela,9.22739,-68.98392,345.7,215150,939a0f32-09db-474e-9e1d-8d6c27f42f1c,6100,True,Antonio Pestana,11.2
+P15,P15 Saturno Don Fonti,Saturno Don Fonti,Araure,Portuguesa,Venezuela,9.50405,-69.224655,674.8,235225,4b0de93b-7406-47c4-a132-2ca01369e1c4,6100,True,Ezequiel Fontiveros,0.5
+P16,P16-Saturno La Padillera,Saturno La Padillera,Araure,Portuguesa,Venezuela,9.495216,-69.24176,686.1,235240,0d6a7697-9fdc-4e65-a92f-e062d8882f8d,6100,True,Ezequiel Fontiveros,2.3
+P17,P17-Saturno-Monte De Luna,Saturno-Monte De Luna,La Flecha,Portuguesa,Venezuela,9.221124,-68.87559,323.4,235347,f0b6422f-8734-4f9d-b80f-c522ae1c5f92,6100,True,Antonio Pestana,1.0
+P18,P18-Saturno-San Francisco,Saturno-San Francisco,Madre Viejo,Portuguesa,Venezuela,8.726597,-69.6746,390.6,235418,d799174f-8ce5-4918-8d31-37f9bc064aa7,6100,True,Gianni Gasperin,90.3
+P19,P19-Saturno-Los Caminos,Saturno-Los Caminos,Araure,Portuguesa,Venezuela,9.577318,-69.27581,863.5,236176,69ac1525-4b97-4d3c-b82e-7f5d74da6703,6100,True,Ezequiel Fontiveros,10.4
+Y01,Y01-Danac-Saturno,Danac,San Javier,Yaracuy,Venezuela,10.36844,-68.66325,393.9,197214,3c0a78e8-4f3c-4bd2-8eca-fb7b4a21fe29,6803A,True,Ezequiel Fontiveros,114.3
+Y02,Y02-Saturno- La Ceiba,Saturno- La Ceiba,Barranca Amarilla,Lara,Venezuela,9.96753,-69.05368,905.5,235411,a5a115b3-875c-4a45-8156-6156e15eb161,6100,True,Ezequiel Fontiveros,55.1
+Y03,Y03-Saturno-La Fé,Saturno-La Fé,Barranca Amarilla,Lara,Venezuela,9.978434,-69.04178,884.6,235420,4520ae26-ede0-4f3b-968c-7acd7bf73b39,6100,True,Ezequiel Fontiveros,56.7
+Y04,Y04-Saturno-La Vaquera,Saturno-La Vaquera,La Virgen,Yaracuy,Venezuela,10.181393,-68.956635,1562.1,235597,21c8449b-50f3-4a22-8a5b-31c5b9f00279,6100,True,Ezequiel Fontiveros,81.1
+Y05,Y05-La Victoriana,La Victoriana,Platanales,Yaracuy,Venezuela,10.08871,-69.04026,1135.7,237976,daa775e5-5b20-4236-8675-5f214163ed07,6803A,True,Ezequiel Fontiveros,68.4
+Y06,Y06-Saturno-Radio Faro,Saturno-Radio Faro,Yaritagua,Yaracuy,Venezuela,10.048904,-69.07636,1025.9,238060,f1278526-fbe9-46e9-bc64-2fbf7057493c,6803A,True,Ezequiel Fontiveros,63.0
+Y07,Y07-Finca Galo- Saturno,Finca Galo,La Bartola,Yaracuy,Venezuela,10.196259,-68.868286,994.7,238570,04a2d0c3-b71b-4d2c-9b0a-551aac1b3543,6100,True,Ezequiel Fontiveros,86.5

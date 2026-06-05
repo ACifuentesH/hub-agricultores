@@ -1,29 +1,45 @@
-codigo_estacion,station_name,station_id,estado_dato
-C01,C01-Las Majaguas,212761,fresca
-EXPG01,EXPG01 - Mahomito - Saturno,218876,desactualizada
-EXPP02,EXPP02-Parcela 392-Saturno,217861,fresca
-EXPP1,EXPP1-Don Tomás-Saturno,216784,fresca
-EXPY02,EXPY02-La Vega-Saturno,218046,fresca
-G01,G01-San Geronimo,185450,fresca
-G02,G02-Los Espinitos-Saturno,186669,fresca
-G03,G03-Memo,186361,fresca
-G04,G04-Las Mercedes,186730,fresca
-G05,G05-La Peñita - Saturno,213735,fresca
-G06,G06-Mahomal-Saturno,213617,fresca
-G07,G07-El Apamate-Saturno,220773,fresca
-G08,G08 - El Caro - Saturno,217402,fresca
-P01,P01-Pajones-Saturno,184921,fresca
-P02,P02-Cojedito-Saturno,184965,fresca
-P03,P03-Queseras-Saturno,200814,fresca
-P04,P04-Chaconera,187561,fresca
-P05,P05-Santa Cruz-Saturno,212477,fresca
-P06,P06-Esteros de Canoita-Saturno,212516,fresca
-P07,P07-Turen-Saturno,212533,fresca
-P08,P08-Turen La Colonia-Saturno,212609,fresca
-P09,P09-Chorrerones-Saturno,212641,fresca
-P10,P10-Turen Las Cupulas,212695,fresca
-P11,P11-La Ensenada-Saturno,212723,fresca
-P12,P12-Rio Acarigua-Saturno,213450,fresca
-P14,P14 - El Palmar - Saturno,215150,fresca
-Y01,Y01-Danac-Saturno,197214,fresca
-Y04,Y04-Saturno-La Vaquera,235597,fresca
+codigo,station_name,station_id,region,latitud,longitud,elevacion_m,estado_pipeline,finca_cercana
+B01,B01-Saturno-La Campesina,235263,Barinas,8.666160,-69.994255,472.5,fresca,Ezequiel Fontiveros
+C01,C01-Las Majaguas-Saturno,212761,Portuguesa,9.610000,-68.969790,479.8,fresca,Ezequiel Fontiveros
+EXPG01,EXPG01 - Mahomito - Saturno,218876,Guárico,9.148761,-66.097650,553.4,desactualizada,Pedro Solano
+EXPP02,EXPP02-Parcela 392-Saturno,217861,Portuguesa,9.168804,-69.048170,340.1,fresca,Antonio Pestana
+EXPP1,EXPP1-La Diluccia,216784,Portuguesa,9.326978,-69.143070,438.0,fresca,Ezequiel Fontiveros
+EXPY02,EXPY02-La Vega-Saturno,218046,Yaracuy,10.095456,-69.030540,1121.1,fresca,Ezequiel Fontiveros
+G01,G01-San Geronimo - Saturno,185450,Guárico,9.169920,-65.751940,428.5,fresca,Giusfelys Ricca
+G02,G02-Los Espinitos-Saturno,186669,Guárico,8.995760,-65.519440,351.6,fresca,Charlys Solano
+G03,G03-Memo-Saturno,186361,Aragua,9.415140,-66.644950,606.1,fresca,Celso Fantinel
+G04,G04-Las Mercedes-Saturno,186730,Guárico,9.281410,-66.455050,624.7,fresca,Manuel Gonzalez
+G05,G05-La Peñita - Saturno,213735,Aragua,9.642036,-66.654366,866.5,fresca,Celso Fantinel
+G06,G06-Mahomal-Saturno,213617,Guárico,9.051840,-65.475270,363.9,fresca,Charlys Solano
+G07,G07-El Apamate-Saturno,220773,Guárico,9.169130,-66.407260,565.4,fresca,Manuel Gonzalez
+G08,G08 - La Mata - Saturno,217402,Guárico,9.173180,-65.650390,373.3,fresca,Giusfelys Ricca
+G09,G09-Saturno-Mochuelo,238308,Guárico,9.284910,-65.743300,419.8,fresca,Pedro Gomez
+G10,G10-San Pedro-Saturno,238339,Guárico,9.243261,-65.660194,340.0,fresca,Rolando Caldera
+G11,G11-La Graciosa-Saturno,238350,Guárico,9.270751,-65.584210,316.7,fresca,Rolando Caldera
+G12,G12-Buenavista-Saturno,238383,Guárico,9.151030,-65.811980,464.5,fresca,Meyz Tohme
+G13,G13-Palmartupío-Saturno,238407,Guárico,8.971360,-65.588440,460.6,fresca,Jose Solano
+P01,P01-Pajones-Saturno,184921,Cojedes,9.534320,-68.887570,404.0,fresca,Antonio Pestana
+P02,P02-Cojedito-Saturno,184965,Cojedes,9.558230,-68.884360,419.4,fresca,Ezequiel Fontiveros
+P03,P03-Queseras-Saturno,200814,Portuguesa,9.037815,-69.342110,374.7,fresca,Gianni Gasperin
+P04,P04-Chaconera-Saturno,187561,Portuguesa,9.073440,-68.703250,260.8,fresca,Gianni Gasperin
+P05,P05-Santa Cruz-Saturno,212477,Portuguesa,9.265010,-68.780480,313.4,fresca,Antonio Pestana
+P06,P06-Esteros de Canoita-Saturno,212516,Portuguesa,9.120930,-68.847830,293.8,fresca,Antonio Pestana
+P07,P07-Turen-Saturno,212533,Portuguesa,9.292850,-69.073870,405.1,fresca,Antonio Pestana
+P08,P08-Turen La Colonia-Saturno,212609,Portuguesa,9.310640,-69.102490,423.2,fresca,Ezequiel Fontiveros
+P09,P09-Chorrerones-Saturno,212641,Portuguesa,9.194040,-68.955600,337.3,fresca,Antonio Pestana
+P10,P10-Turen Las Cúpulas-Saturno,212695,Portuguesa,9.272540,-69.150760,406.8,fresca,Ezequiel Fontiveros
+P11,P11-La Ensenada-Saturno,212723,Portuguesa,9.395310,-69.095180,442.4,fresca,Ezequiel Fontiveros
+P12,P12-Rio Acarigua-Saturno,213450,Portuguesa,9.494220,-69.289260,733.8,fresca,Ezequiel Fontiveros
+P14,P14 - El Palmar - Saturno,215150,Portuguesa,9.227390,-68.983920,345.7,fresca,Antonio Pestana
+P15,P15 Saturno Don Fonti,235225,Portuguesa,9.504050,-69.224655,674.8,fresca,Ezequiel Fontiveros
+P16,P16-Saturno La Padillera,235240,Portuguesa,9.495216,-69.241760,686.1,fresca,Ezequiel Fontiveros
+P17,P17-Saturno-Monte De Luna,235347,Portuguesa,9.221124,-68.875590,323.4,fresca,Antonio Pestana
+P18,P18-Saturno-San Francisco,235418,Portuguesa,8.726597,-69.674600,390.6,fresca,Gianni Gasperin
+P19,P19-Saturno-Los Caminos,236176,Portuguesa,9.577318,-69.275810,863.5,fresca,Ezequiel Fontiveros
+Y01,Y01-Danac-Saturno,197214,Yaracuy,10.368440,-68.663250,393.9,fresca,Ezequiel Fontiveros
+Y02,Y02-Saturno- La Ceiba,235411,Lara,9.967530,-69.053680,905.5,fresca,Ezequiel Fontiveros
+Y03,Y03-Saturno-La Fé,235420,Lara,9.978434,-69.041780,884.6,fresca,Ezequiel Fontiveros
+Y04,Y04-Saturno-La Vaquera,235597,Yaracuy,10.181393,-68.956635,1562.1,fresca,Ezequiel Fontiveros
+Y05,Y05-La Victoriana,237976,Yaracuy,10.088710,-69.040260,1135.7,fresca,Ezequiel Fontiveros
+Y06,Y06-Saturno-Radio Faro,238060,Yaracuy,10.048904,-69.076360,1025.9,fresca,Ezequiel Fontiveros
+Y07,Y07-Finca Galo,238570,Yaracuy,10.196259,-68.868286,994.7,fresca,Ezequiel Fontiveros

@@ -1,0 +1,32 @@
+agricultor_key,nombre,codigo_up_actual,codigo_estacion,station_id,latitud,longitud,nota
+ANGELAROSAGUEDEZMORALES,Angela Rosa Guedez Morales,AUTO-001,,,,,
+ANTONIOLUISZAMBRANOACUNA,Antonio Luis Zambrano Acuña,AUTO-002,,,,,
+CELSOFANTINELFURLANIS,Celso Fantinel Furlanis,AUTO-003,,,,,
+CESARIGORPADILLAMARTINEZ,Cesar Igor Padilla Martinez,AUTO-004,,,,,
+ELISABUSTAMANTE,Elisa Bustamante,AUTO-006,,,,,
+EZEQUIELJOSEFONTIVEROSBRICENO,Ezequiel Jose Fontiveros Briceño,AUTO-007,,,,,
+FRANCISCOJOSEMARQUEZ,Francisco Jose Márquez,AUTO-009,,,,,
+HECTORDAVIDPEREZGONZALEZ,Hector David Perez Gonzalez,,,,,,SIN UNIDAD_PRODUCCION: crear UP antes de cargar coords
+HENRYJOSECORDONESLINAREZ,Henry Jose Cordones Linarez,AUTO-010,,,,,
+JOSEDARIOGALLUCCIREQUENA,Jose Dario Gallucci Requena,AUTO-011,,,,,
+JOSEGREGORIOSANCHEZMENDOZA,Jose Gregorio Sanchez Mendoza,AUTO-013,,,,,
+JOSEROLANDOCALDERAARVELAIZ,Jose Rolando Caldera Arvelaiz,AUTO-014,,,,,
+JOSEROLANDOCALDERARONDON,Jose Rolando Caldera Rondon,AUTO-015,,,,,
+JUANHERNANDEZDIAZ,Juan Hernández Díaz,AUTO-016,,,,,
+JUANVICENTERISSO,Juan Vicente Risso,AUTO-017,,,,,
+JULIOANTONIOCOLMENAREZMENDOZA,Julio Antonio Colmenarez Mendoza,AUTO-018,,,,,
+LEOSCARMACHADOSILVEIRA,Leoscar Machado Silveira,AUTO-019,,,,,
+LORENAJOHANAORLANDOTESTI,Lorena Johana Orlando Testi,AUTO-020,,,,,
+MARIAANGELICAESPARRAGOZASALAZAR,Maria Angelica Esparragoza Salazar,AUTO-023,,,,,
+MEIZTOHMEELCHAIR,Meiz Tohme Elchair,AUTO-024,,,,,
+MIGUELANGELTOHMELEDEZMA,Miguel Ángel Tohme Ledezma,,,,,,SIN UNIDAD_PRODUCCION: crear UP antes de cargar coords
+PEDROVICENTEGOMEZARVELAEZ,Pedro Vicente Gomez Arvelaez,AUTO-027,,,,,
+RICHARDJOSEAPOSTOLNUNEZ,Richard Jose Apostol Nuñez,AUTO-028,,,,,
+TONYALEJANDROPESTANAPEREZ,Tony Alejandro Pestana Perez,AUTO-030,,,,,
+VICTORRAMONOROPEZAORTIZ,Victor Ramon Oropeza Ortiz,AUTO-031,,,,,
+VIRBELJOSEGRIMANALFIN,Virbel Jose Griman Alfin,AUTO-032,,,,,
+WILLIAMSMANUELCANELONGONZALEZ,Williams Manuel Canelon Gonzalez,AUTO-033,,,,,
+WOLFGANGSTEGER,Wolfgang Steger,AUTO-034,,,,,
+YAROELCHAER,Yaro El Chaer,AUTO-035,,,,,
+ANTONIOFABIOCECCARELLO,Antonio Fabio Ceccarello,P13,,,,,sin usuario login (solo data)
+MARCOFANTINELFURLANIS,Marco Fantinel Furlanis,,,,,,sin usuario + SIN UNIDAD_PRODUCCION

@@ -43,7 +43,7 @@ export default function LoginPage() {
         className="relative lg:col-span-3 hidden lg:flex flex-col justify-between p-12 text-white bg-cover bg-center"
         style={{ backgroundImage: "url('/login-bg.jpg')" }}
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-green-950/85 via-green-900/75 to-emerald-950/90" />
+        <div className="absolute inset-0 bg-gradient-to-br from-green-950/80 via-green-900/50 to-emerald-950/85" />
 
         <div className="relative z-10 flex items-center gap-2.5">
           <div className="w-9 h-9 rounded-lg bg-white/15 backdrop-blur flex items-center justify-center border border-white/20">
@@ -66,16 +66,16 @@ export default function LoginPage() {
 
           <div className="flex items-center gap-8 pt-4 border-t border-white/15">
             <div>
-              <p className="text-2xl font-semibold">200+</p>
+              <p className="text-2xl font-semibold">50+</p>
               <p className="text-xs text-green-200/70 mt-0.5">Agricultores</p>
             </div>
             <div>
-              <p className="text-2xl font-semibold">15K</p>
+              <p className="text-2xl font-semibold">10K+</p>
               <p className="text-xs text-green-200/70 mt-0.5">Hectáreas</p>
             </div>
             <div>
-              <p className="text-2xl font-semibold">24/7</p>
-              <p className="text-xs text-green-200/70 mt-0.5">Datos en vivo</p>
+              <p className="text-2xl font-semibold">44</p>
+              <p className="text-xs text-green-200/70 mt-0.5">Estaciones en vivo</p>
             </div>
           </div>
         </div>

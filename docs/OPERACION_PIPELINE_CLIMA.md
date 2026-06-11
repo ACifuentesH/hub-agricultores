@@ -189,3 +189,30 @@ El override prevalece sobre el auto-match.
 Antes la conexión agricultor↔estación vivía en `mapa_productor_clima` como filas pre-cargadas. Si se agregaba un agricultor o una estación, no había nada que actualizara la tabla → quedaba desconectado hasta intervención humana.
 
 Decisión del 5-may-2026: derivar la conexión en tiempo de query usando la convención de naming `codigo_up = prefijo de station_name`. Beneficio: cero mantenimiento manual cuando el equipo agronómico carga datos nuevos. La tabla `mapa_productor_clima.station_id` queda solo para overrides excepcionales.
+
+---
+
+## Hardening de seguridad (11-jun-2026)
+
+Aplicado vía 3 migraciones (`hardening_rls_tablas_expuestas`, `hardening_search_path_funciones`,
+`hardening_vistas_security_invoker`):
+
+1. **Escrituras anónimas cerradas.** `chirps_lluvia`, `modis_ndvi`, `faostat_benchmarks` y
+   `usda_psd` tenían INSERT/UPDATE abiertos a `anon` (riesgo de envenenar el predictor).
+   Eliminadas. Cargas futuras de esos datasets: usar **service_role** (bypassa RLS).
+2. **RLS habilitado** en `mapa_productor_clima`, `productor_coordenadas`, `clima_diario_raw`,
+   `clima_percentiles_enso` (lectura pública, escritura solo service_role) y
+   `load_historic_queue` (sin políticas: solo service_role/cron).
+   ⚠️ Consecuencia operativa: los **overrides de estación** ahora se cargan con service_role
+   (SQL editor del dashboard o el cargador de `docs/imports/2026/`), ya no con la anon key.
+3. **`sync_all_stations()` revocada** para `anon`/`authenticated` — solo el cron (postgres)
+   puede dispararla. Evita tormentas de sync que quemen el rate limit de WeatherLink.
+4. **21 vistas pasadas a `security_invoker`** — antes saltaban el RLS del consultante
+   (un farmer podía leer lotes/UP de otros vía `v_compat_*`). Verificado post-cambio:
+   anon (edge functions) ve todo lo necesario, farmer ve solo lo suyo, master ve todo.
+5. **`search_path` fijado** en las 16 funciones propias (mitiga hijacking en SECURITY DEFINER).
+6. **Next.js 16.2.4 → 16.2.9** (13 advisories) y `ws` parcheado.
+
+Pendiente manual (dashboard Supabase): **Auth → Passwords → Leaked password protection: ON**.
+Pendiente antes de rollout real: rotar la contraseña uniforme de los usuarios farmer de prueba.
+Deuda aceptada: `xlsx` (2 high sin fix; solo procesa data propia server-side — migrar a exceljs).

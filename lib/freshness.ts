@@ -41,16 +41,19 @@ export function freshnessTextClass(level: ReturnType<typeof freshnessLevel>): st
   }
 }
 
-/** "20 mar" / "20 mar 25" depending on whether the year matches current. */
+/**
+ * "5 abr 2026" — siempre con año. Estas fechas solo se muestran cuando el dato
+ * es viejo, y una fecha vieja sin año es ambigua para el usuario (feedback
+ * 12-jun-2026: "última lectura el 5 de abril" no decía de qué año).
+ */
 export function formatDateShort(fecha: string | Date | null): string {
   if (!fecha) return ''
   const d = typeof fecha === 'string' ? new Date(fecha) : fecha
   if (!Number.isFinite(d.getTime())) return ''
-  const sameYear = d.getFullYear() === new Date().getFullYear()
   return d.toLocaleDateString('es-VE', {
     day: 'numeric',
     month: 'short',
-    ...(sameYear ? {} : { year: '2-digit' }),
+    year: 'numeric',
   })
 }
 

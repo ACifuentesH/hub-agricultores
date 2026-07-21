@@ -1,4 +1,8 @@
 @import "tailwindcss";
+/* HeroUI v3 base styles — debe ir DESPUÉS de tailwindcss (el orden importa).
+   Piloto de UI: por ahora solo lo consume la tarjeta de "Lectura más reciente"
+   en /clima (components/clima/CurrentConditionsCard.tsx). */
+@import "@heroui/styles";
 
 @variant dark (&:where(.dark, .dark *));
 

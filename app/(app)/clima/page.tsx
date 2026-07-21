@@ -10,8 +10,8 @@ import { resolveAgricultorScope, listAgricultores } from '@/lib/access'
 import MasterAgricultorSelector from '@/components/MasterAgricultorSelector'
 import MasterEmptyState from '@/components/MasterEmptyState'
 import { getForecast, computeAlerts, getCurrentConditions, resolveStationId } from '@/lib/clima'
-import { Thermometer, Droplets, CloudRain as CloudRainIcon, MapPin, AlertCircle } from 'lucide-react'
-import { formatDateShort, freshnessTextClass, freshnessLevel } from '@/lib/freshness'
+import { AlertCircle } from 'lucide-react'
+import CurrentConditionsCard from '@/components/clima/CurrentConditionsCard'
 
 // Datos vivos: nunca cachear
 export const dynamic = 'force-dynamic'
@@ -70,8 +70,6 @@ export default async function ClimaPage({
     fecha_hora: typeof l.fecha_hora === 'string' ? l.fecha_hora.replace(' ', 'T') + 'Z' : l.fecha_hora,
   }))
 
-  const tempLevel = freshnessLevel(conditions.fecha)
-
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
@@ -98,57 +96,8 @@ export default async function ClimaPage({
         )}
       </div>
 
-      {/* Tarjeta de lectura ACTUAL — siempre visible cuando hay datos (davis o triangulado) */}
-      {conditions.tempC != null && (
-        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-5">
-          <div className="flex flex-wrap items-baseline justify-between gap-3 mb-4">
-            <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-200">Lectura más reciente</h2>
-            {conditions.fecha && (
-              <span className={`text-xs ${freshnessTextClass(tempLevel)}`}>
-                {tempLevel === 'fresh' ? 'Actualizada' : 'Última lectura'}: {formatDateShort(conditions.fecha)}
-              </span>
-            )}
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <ClimaStat
-              icon={<Thermometer size={18} className="text-orange-500" />}
-              label="Temperatura"
-              value={`${conditions.tempC.toFixed(1)}°C`}
-            />
-            {conditions.humPct != null && (
-              <ClimaStat
-                icon={<Droplets size={18} className="text-blue-500" />}
-                label="Humedad"
-                value={`${conditions.humPct.toFixed(0)}%`}
-              />
-            )}
-            {conditions.lluviaMm != null && (
-              <ClimaStat
-                icon={<CloudRainIcon size={18} className="text-sky-500" />}
-                label="Lluvia"
-                value={`${conditions.lluviaMm.toFixed(1)} mm`}
-              />
-            )}
-            <ClimaStat
-              icon={<MapPin size={18} className="text-green-600" />}
-              label="Origen"
-              value={
-                conditions.source.fuente === 'davis'
-                  ? conditions.source.davisKey ?? 'Davis'
-                  : conditions.source.fuente === 'triangulated'
-                    ? `IDW · ${conditions.source.nEstaciones ?? 0} est.`
-                    : 'Sin estación'
-              }
-            />
-          </div>
-          {conditions.source.fuente === 'triangulated' && conditions.source.estacionesUsadas && (
-            <p className="mt-4 text-[11px] text-amber-700 dark:text-amber-300 bg-amber-50/50 dark:bg-amber-950/30 border border-amber-200/50 dark:border-amber-900/40 rounded p-2.5">
-              <strong>Estimación triangulada:</strong> {conditions.source.estacionesUsadas}.
-              {conditions.source.precision && ` Precisión estimada: ${conditions.source.precision}.`}
-            </p>
-          )}
-        </div>
-      )}
+      {/* Tarjeta de lectura ACTUAL — piloto HeroUI v3 (Card + Chip) */}
+      <CurrentConditionsCard conditions={conditions} />
 
       {productorClima ? (
         <>
@@ -191,18 +140,6 @@ export default async function ClimaPage({
           </div>
         </div>
       )}
-    </div>
-  )
-}
-
-function ClimaStat({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
-  return (
-    <div className="flex items-start gap-3">
-      <div className="p-2 bg-gray-50 dark:bg-gray-800 rounded-lg shrink-0">{icon}</div>
-      <div className="min-w-0">
-        <p className="text-[11px] uppercase tracking-wider text-gray-500 dark:text-gray-400">{label}</p>
-        <p className="text-base font-semibold text-gray-800 dark:text-gray-100 truncate">{value}</p>
-      </div>
     </div>
   )
 }

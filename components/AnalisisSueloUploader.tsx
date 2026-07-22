@@ -11,6 +11,11 @@ interface Agricultor {
   ciclo: string | null
 }
 
+interface LoteOption {
+  lote_id: string
+  nombre_lote: string | null
+}
+
 interface PendingFile {
   id: string
   file: File
@@ -19,6 +24,8 @@ interface PendingFile {
   similitud: number | null
   finalKey: string  // selected by user
   ciclo: string
+  /** '' = análisis a nivel finca; si no, lote.lote_id específico */
+  loteId: string
   status: 'pending' | 'uploading' | 'done' | 'error'
   errorMsg?: string
 }
@@ -42,6 +49,22 @@ export default function AnalisisSueloUploader({ agricultores }: { agricultores: 
 
   const supabase = createBrowserClient(SUPABASE_URL, SUPABASE_KEY)
 
+  // Lotes por agricultor, cargados bajo demanda para el selector opcional
+  // de lote (un PDF puede cubrir toda la finca o un lote específico).
+  const lotesCache = useRef<Record<string, LoteOption[]>>({})
+  const [, bumpLotes] = useState(0)
+  const ensureLotes = useCallback(async (key: string) => {
+    if (!key || lotesCache.current[key]) return
+    const { data } = await supabase
+      .from('lote')
+      .select('lote_id, nombre_lote')
+      .eq('AgricultorKey', key)
+      .order('nombre_lote')
+    lotesCache.current[key] = (data ?? []) as LoteOption[]
+    bumpLotes(n => n + 1)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   const onFiles = useCallback(async (files: FileList | File[]) => {
     const arr = Array.from(files).filter(f => f.type === 'application/pdf' || f.name.toLowerCase().endsWith('.pdf'))
     if (arr.length === 0) return
@@ -59,13 +82,18 @@ export default function AnalisisSueloUploader({ agricultores }: { agricultores: 
           similitud: top?.similitud ?? null,
           finalKey: top?.agricultor_key ?? '',
           ciclo: top?.ciclo?.includes('2026') ? '2026' : (top?.ciclo ?? '2026'),
+          loteId: '',
           status: 'pending',
         }
       })
     )
 
+    // Precargar lotes de los agricultores sugeridos (para el selector de lote)
+    newPending.forEach(p => { if (p.finalKey) void ensureLotes(p.finalKey) })
+
     setPending(prev => [...prev, ...newPending])
-  }, [supabase])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ensureLotes])
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault()
@@ -105,13 +133,14 @@ export default function AnalisisSueloUploader({ agricultores }: { agricultores: 
       return
     }
 
-    // Cada PDF representa un LOTE distinto dentro de la misma finca, no es una
-    // versión del análisis. Todos los registros coexisten como vigentes.
+    // Cada PDF puede cubrir toda la finca (lote_id null) o un lote específico
+    // si el master lo asignó en el selector. Todos coexisten como vigentes.
     const { error: insErr } = await supabase
       .from('lote_analisis_suelo')
       .insert({
         agricultor_key: p.finalKey,
         ciclo: p.ciclo,
+        lote_id: p.loteId || null,
         storage_path: path,
         nombre_archivo: p.file.name,
         tamano_bytes: p.file.size,
@@ -210,7 +239,11 @@ export default function AnalisisSueloUploader({ agricultores }: { agricultores: 
                     {/* Selector de agricultor */}
                     <select
                       value={p.finalKey}
-                      onChange={(e) => updateRow(p.id, { finalKey: e.target.value })}
+                      onChange={(e) => {
+                        // Cambiar de agricultor invalida el lote elegido
+                        updateRow(p.id, { finalKey: e.target.value, loteId: '' })
+                        void ensureLotes(e.target.value)
+                      }}
                       disabled={p.status === 'uploading' || p.status === 'done'}
                       className="text-xs px-2 py-1 rounded border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 max-w-[280px] truncate"
                     >
@@ -219,6 +252,20 @@ export default function AnalisisSueloUploader({ agricultores }: { agricultores: 
                         <option key={a.AgricultorKey} value={a.AgricultorKey}>
                           {a.nombre_agropecuaria}
                           {a.ciclo && ` (${a.ciclo})`}
+                        </option>
+                      ))}
+                    </select>
+                    {/* Lote (opcional): vacío = análisis de toda la finca */}
+                    <select
+                      value={p.loteId}
+                      onChange={(e) => updateRow(p.id, { loteId: e.target.value })}
+                      disabled={p.status === 'uploading' || p.status === 'done' || !p.finalKey}
+                      className="text-xs px-2 py-1 rounded border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 max-w-[180px] truncate"
+                    >
+                      <option value="">Toda la finca</option>
+                      {(lotesCache.current[p.finalKey] ?? []).map(l => (
+                        <option key={l.lote_id} value={l.lote_id}>
+                          {l.nombre_lote ?? l.lote_id}
                         </option>
                       ))}
                     </select>

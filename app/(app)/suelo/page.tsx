@@ -35,11 +35,22 @@ export default async function SueloPage({
   const agricultorKey = scope.agricultorKey ?? ''
   const supabase = await createClient()
 
+  // Ciclo vigente del perfil: sin este filtro se mezclaban los lotes 2025 con
+  // los 2026 del mismo agricultor y "aparecían lotes que no eran".
+  const { data: agroCiclo } = await supabase
+    .from('agropecuaria')
+    .select('ciclo')
+    .eq('AgricultorKey', agricultorKey)
+    .maybeSingle()
+
+  let loteQuery = supabase
+    .from('lote')
+    .select('lote_id, nombre_lote, codigo_lote, compactacion, segmentacion_particulas, drenajes_internos, condicion_drenaje')
+    .eq('AgricultorKey', agricultorKey)
+  if (agroCiclo?.ciclo) loteQuery = loteQuery.eq('ciclo', agroCiclo.ciclo)
+
   const [{ data: lotes }, agricultores] = await Promise.all([
-    supabase
-      .from('lote')
-      .select('lote_id, nombre_lote, codigo_lote, compactacion, segmentacion_particulas, drenajes_internos, condicion_drenaje')
-      .eq('AgricultorKey', agricultorKey),
+    loteQuery,
     scope.isMaster ? listAgricultores() : Promise.resolve([]),
   ])
 

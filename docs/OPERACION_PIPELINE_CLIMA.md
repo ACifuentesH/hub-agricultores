@@ -172,6 +172,26 @@ where agricultor_key = '<KEY>';
 
 El override prevalece sobre el auto-match.
 
+### F. Herencia entre ciclos (perfiles nuevos sin mapeo)
+
+Cada ciclo crea perfiles nuevos de agropecuaria (key distinta, `codigo_up`
+placeholder `AUTO-%`, sin coords), y el mapeo de estación queda huérfano en el
+perfil del ciclo anterior. Desde el 22-jul-2026, `v_clima_efectivo` resuelve en
+3 niveles: **override → auto_codigo_up → herencia_ciclo**.
+
+La herencia matchea el perfil sin estación contra un perfil hermano CON estación
+del mismo productor, por contención de tokens del nombre normalizado (ej:
+"Angela Guedez" ⊂ "Angela Rosa Guedez Morales"), con doble unicidad: exactamente
+1 donante por huérfano Y 1 huérfano por donante. Homónimos parciales (dos
+"Jose Rolando Caldera …") quedan fuera y requieren override manual.
+
+### G. Contador de lecturas (true-up diario)
+
+`sync_status.total_records` se re-sincroniza cada madrugada desde
+`weather_readings` (cron `trueup-sync-counters`, 04:40 UTC). Las vistas ya NO
+deciden "¿tiene Davis?" con ese contador — usan `fecha_real` (lecturas reales);
+el contador es solo informativo (`davis_dias`).
+
 ---
 
 ## Glosario
@@ -180,7 +200,7 @@ El override prevalece sobre el auto-match.
 - **station_id** — identificador numérico de la estación en WeatherLink (ej: `186669`).
 - **station_name** — nombre canónico en `weather_readings`, formato `<codigo_up>-<lugar>` (ej: `G02-Los Espinitos`).
 - **fuente** — `davis` (lectura directa) | `triangulated` (IDW de cercanas) | `sin_datos`.
-- **match_type** — `auto_codigo_up` (vía convención) | `override` (asignación manual).
+- **match_type** — `auto_codigo_up` (vía convención) | `override` (asignación manual) | `herencia_ciclo` (heredado del perfil hermano de otro ciclo).
 
 ---
 

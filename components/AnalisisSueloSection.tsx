@@ -18,11 +18,21 @@ export default async function AnalisisSueloSection({ agricultorKey, isMaster }: 
   const supabase = await createClient()
 
   // Lista de PDFs ya subidos para el agricultor en contexto
-  const { data: pdfs } = await supabase
-    .from('lote_analisis_suelo')
-    .select('id, ciclo, storage_path, nombre_archivo, tamano_bytes, uploaded_at, es_vigente, observaciones')
-    .eq('agricultor_key', agricultorKey)
-    .order('uploaded_at', { ascending: false })
+  const [{ data: pdfs }, { data: lotesRef }] = await Promise.all([
+    supabase
+      .from('lote_analisis_suelo')
+      .select('id, ciclo, lote_id, storage_path, nombre_archivo, tamano_bytes, uploaded_at, es_vigente, observaciones')
+      .eq('agricultor_key', agricultorKey)
+      .order('uploaded_at', { ascending: false }),
+    // Para resolver lote_id → nombre legible en la columna "Lote"
+    supabase
+      .from('lote')
+      .select('lote_id, nombre_lote')
+      .eq('AgricultorKey', agricultorKey),
+  ])
+  const nombreLote = new Map(
+    (lotesRef ?? []).map(l => [l.lote_id as string, (l.nombre_lote as string | null) ?? (l.lote_id as string)])
+  )
 
   // Para master: lista global de agricultores (para el dropdown del uploader)
   let agricultoresParaMaster: { AgricultorKey: string; nombre_agropecuaria: string; ciclo: string | null }[] = []
@@ -57,6 +67,7 @@ export default async function AnalisisSueloSection({ agricultorKey, isMaster }: 
               <tr>
                 <th className="px-4 py-3 text-left">Archivo</th>
                 <th className="px-4 py-3 text-left">Ciclo</th>
+                <th className="px-4 py-3 text-left">Lote</th>
                 <th className="px-4 py-3 text-left">Subido</th>
                 <th className="px-4 py-3 text-right">Tamaño</th>
                 <th className="px-4 py-3 text-right">Acción</th>
@@ -72,6 +83,15 @@ export default async function AnalisisSueloSection({ agricultorKey, isMaster }: 
                     </div>
                   </td>
                   <td className="px-4 py-2.5 text-gray-600 dark:text-gray-300">{p.ciclo}</td>
+                  <td className="px-4 py-2.5">
+                    {p.lote_id ? (
+                      <span className="px-2 py-0.5 rounded-full text-xs bg-green-50 text-green-700 dark:bg-green-950/40 dark:text-green-300">
+                        {nombreLote.get(p.lote_id) ?? p.lote_id}
+                      </span>
+                    ) : (
+                      <span className="text-xs text-gray-400 dark:text-gray-500">Toda la finca</span>
+                    )}
+                  </td>
                   <td className="px-4 py-2.5 text-xs text-gray-500 dark:text-gray-400">
                     {new Date(p.uploaded_at).toLocaleString('es-VE', {
                       day: 'numeric', month: 'short', year: '2-digit',

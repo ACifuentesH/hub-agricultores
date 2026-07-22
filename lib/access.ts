@@ -53,10 +53,17 @@ export async function listAgricultores(): Promise<AgricultorOption[]> {
   const supabase = await createClient()
   const { data } = await supabase
     .from('agropecuaria')
-    .select('AgricultorKey, nombre_agropecuaria')
+    .select('AgricultorKey, nombre_agropecuaria, ciclo')
     .order('nombre_agropecuaria', { ascending: true })
-  return (data ?? []).map((a) => ({
-    key: a.AgricultorKey as string,
-    nombre: (a.nombre_agropecuaria as string | null) ?? (a.AgricultorKey as string),
-  }))
+  return (data ?? []).map((a) => {
+    const base = (a.nombre_agropecuaria as string | null) ?? (a.AgricultorKey as string)
+    // El mismo productor existe como DOS perfiles (2025 y 2026) con keys
+    // distintas; sin el ciclo en la etiqueta el master elegía el perfil
+    // equivocado y "no le salían" los PDFs/lotes cargados en el otro.
+    const ciclo = a.ciclo as string | null
+    return {
+      key: a.AgricultorKey as string,
+      nombre: ciclo ? `${base} · ${ciclo}` : base,
+    }
+  })
 }

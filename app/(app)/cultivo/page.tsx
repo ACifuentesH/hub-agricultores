@@ -15,6 +15,7 @@ import PredictorSiembraPanel from '@/components/PredictorSiembraPanel'
 import DataSourceBadge from '@/components/DataSourceBadge'
 import { CloudSun, CloudRain, Sun, Cloud, Sprout, AlertCircle, CalendarOff } from 'lucide-react'
 import { freshnessLevel, freshnessTextClass, formatDateShort } from '@/lib/freshness'
+import { resolveCiclo } from '@/lib/ciclo'
 
 // Datos vivos: nunca cachear (lotes/clima/condiciones cambian frecuentemente)
 export const dynamic = 'force-dynamic'
@@ -24,13 +25,14 @@ const DIAS_CICLO = 120
 export default async function CultivoPage({
   searchParams,
 }: {
-  searchParams: Promise<{ agricultor?: string }>
+  searchParams: Promise<{ agricultor?: string; ciclo?: string }>
 }) {
   const profile = await getUserProfile()
   if (!profile) redirect('/login')
 
   const params = await searchParams
   const scope = await resolveAgricultorScope(profile, params)
+  const ciclo = resolveCiclo(params.ciclo)
 
   // Master with no selection: show selector + prompt, no data fetch
   if (scope.isMaster && !scope.agricultorKey) {
@@ -51,6 +53,7 @@ export default async function CultivoPage({
       .from('lote')
       .select('lote_id, nombre_lote, codigo_lote, ha_sembradas, fecha_inicio_siembra, fecha_inicio_siembra_real, ha_cosechadas, rendimiento_real, ha_perdidas, unidad_produccion_v')
       .eq('AgricultorKey', agricultorKey)
+      .eq('ciclo', ciclo)
       .order('fecha_inicio_siembra_real', { ascending: true }),
     getCurrentConditions(agricultorKey),
     getClimateSeries(agricultorKey, 14),

@@ -5,6 +5,7 @@ import { resolveAgricultorScope, listAgricultores } from '@/lib/access'
 import MasterAgricultorSelector from '@/components/MasterAgricultorSelector'
 import MasterEmptyState from '@/components/MasterEmptyState'
 import AnalisisSueloSection from '@/components/AnalisisSueloSection'
+import { resolveCiclo } from '@/lib/ciclo'
 
 // Datos vivos: nunca cachear
 export const dynamic = 'force-dynamic'
@@ -12,13 +13,14 @@ export const dynamic = 'force-dynamic'
 export default async function SueloPage({
   searchParams,
 }: {
-  searchParams: Promise<{ agricultor?: string }>
+  searchParams: Promise<{ agricultor?: string; ciclo?: string }>
 }) {
   const profile = await getUserProfile()
   if (!profile) redirect('/login')
 
   const params = await searchParams
   const scope = await resolveAgricultorScope(profile, params)
+  const ciclo = resolveCiclo(params.ciclo)
 
   if (scope.isMaster && !scope.agricultorKey) {
     const agricultores = await listAgricultores()
@@ -35,22 +37,12 @@ export default async function SueloPage({
   const agricultorKey = scope.agricultorKey ?? ''
   const supabase = await createClient()
 
-  // Ciclo vigente del perfil: sin este filtro se mezclaban los lotes 2025 con
-  // los 2026 del mismo agricultor y "aparecían lotes que no eran".
-  const { data: agroCiclo } = await supabase
-    .from('agropecuaria')
-    .select('ciclo')
-    .eq('AgricultorKey', agricultorKey)
-    .maybeSingle()
-
-  let loteQuery = supabase
-    .from('lote')
-    .select('lote_id, nombre_lote, codigo_lote, compactacion, segmentacion_particulas, drenajes_internos, condicion_drenaje')
-    .eq('AgricultorKey', agricultorKey)
-  if (agroCiclo?.ciclo) loteQuery = loteQuery.eq('ciclo', agroCiclo.ciclo)
-
   const [{ data: lotes }, agricultores] = await Promise.all([
-    loteQuery,
+    supabase
+      .from('lote')
+      .select('lote_id, nombre_lote, codigo_lote, compactacion, segmentacion_particulas, drenajes_internos, condicion_drenaje')
+      .eq('AgricultorKey', agricultorKey)
+      .eq('ciclo', ciclo),
     scope.isMaster ? listAgricultores() : Promise.resolve([]),
   ])
 
@@ -93,7 +85,7 @@ export default async function SueloPage({
       </div>
 
       {/* Sección de PDFs de análisis de suelo (upload master + descarga farmer/master) */}
-      <AnalisisSueloSection agricultorKey={agricultorKey} isMaster={scope.isMaster} />
+      <AnalisisSueloSection agricultorKey={agricultorKey} isMaster={scope.isMaster} ciclo={ciclo} />
 
       {lotes?.map(l => (
         <div key={l.lote_id} className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden">

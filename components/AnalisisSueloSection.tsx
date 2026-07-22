@@ -7,6 +7,8 @@ import { FileText, AlertCircle } from 'lucide-react'
 interface Props {
   agricultorKey: string
   isMaster: boolean
+  /** Ciclo activo del selector lateral: filtra PDFs y lotes mostrados. */
+  ciclo: string
 }
 
 /**
@@ -14,7 +16,7 @@ interface Props {
  *  - Master: ve uploader (drag&drop) + lista de TODOS sus PDFs (filtrada por agricultor seleccionado)
  *  - Farmer: solo ve su lista descargable
  */
-export default async function AnalisisSueloSection({ agricultorKey, isMaster }: Props) {
+export default async function AnalisisSueloSection({ agricultorKey, isMaster, ciclo }: Props) {
   const supabase = await createClient()
 
   // Lista de PDFs ya subidos para el agricultor en contexto
@@ -23,12 +25,14 @@ export default async function AnalisisSueloSection({ agricultorKey, isMaster }: 
       .from('lote_analisis_suelo')
       .select('id, ciclo, lote_id, storage_path, nombre_archivo, tamano_bytes, uploaded_at, es_vigente, observaciones')
       .eq('agricultor_key', agricultorKey)
+      .eq('ciclo', ciclo)
       .order('uploaded_at', { ascending: false }),
     // Para resolver lote_id → nombre legible en la columna "Lote"
     supabase
       .from('lote')
       .select('lote_id, nombre_lote')
-      .eq('AgricultorKey', agricultorKey),
+      .eq('AgricultorKey', agricultorKey)
+      .eq('ciclo', ciclo),
   ])
   const nombreLote = new Map(
     (lotesRef ?? []).map(l => [l.lote_id as string, (l.nombre_lote as string | null) ?? (l.lote_id as string)])
@@ -128,7 +132,9 @@ export default async function AnalisisSueloSection({ agricultorKey, isMaster }: 
           <AlertCircle size={18} className="text-gray-400 mt-0.5 shrink-0" />
           <div className="text-sm text-gray-600 dark:text-gray-400">
             <p className="font-semibold text-gray-700 dark:text-gray-300">
-              {isMaster ? 'No hay análisis de suelo cargados para este agricultor todavía.' : 'No hay análisis de suelo cargados todavía.'}
+              {isMaster
+                ? `No hay análisis de suelo del ciclo ${ciclo} para este agricultor.`
+                : `No hay análisis de suelo del ciclo ${ciclo} todavía.`}
             </p>
             <p className="text-xs mt-1 leading-relaxed">
               {isMaster

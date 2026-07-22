@@ -1,13 +1,14 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import {
   LayoutDashboard, CloudSun, Sprout, FlaskConical,
   Users, LogOut, Leaf,
 } from 'lucide-react'
 import ThemeToggle from './ThemeToggle'
+import CicloSelector from './CicloSelector'
 
 const farmerLinks = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -24,7 +25,13 @@ const masterLinks = [
 export default function Sidebar({ role }: { role: string }) {
   const pathname = usePathname()
   const router = useRouter()
+  const searchParams = useSearchParams()
   const links = role === 'master' ? masterLinks : farmerLinks
+
+  // Navegar entre secciones conserva ciclo y agricultor seleccionados; si no,
+  // cambiar de pantalla reseteaba el filtro y "reaparecían" datos de otro año.
+  const qs = searchParams.toString()
+  const withParams = (href: string) => (qs ? `${href}?${qs}` : href)
 
   async function handleLogout() {
     const supabase = createClient()
@@ -50,6 +57,9 @@ export default function Sidebar({ role }: { role: string }) {
         <ThemeToggle />
       </div>
 
+      {/* Filtro de ciclo agrícola */}
+      <CicloSelector />
+
       {/* Navegación */}
       <nav className="flex-1 px-3 pt-1">
         <p className="px-3 pb-1.5 text-[10px] font-semibold uppercase tracking-wider text-white/40">
@@ -61,7 +71,7 @@ export default function Sidebar({ role }: { role: string }) {
             return (
               <Link
                 key={href}
-                href={href}
+                href={withParams(href)}
                 aria-current={active ? 'page' : undefined}
                 className={`group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors ${
                   active

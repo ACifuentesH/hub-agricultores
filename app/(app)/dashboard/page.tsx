@@ -8,6 +8,7 @@ import MasterEmptyState from '@/components/MasterEmptyState'
 import { valueWithFreshness, freshnessTextClass } from '@/lib/freshness'
 import { getCurrentConditions } from '@/lib/clima'
 import DataSourceBadge from '@/components/DataSourceBadge'
+import { resolveCiclo } from '@/lib/ciclo'
 
 // Datos vivos: nunca cachear
 export const dynamic = 'force-dynamic'
@@ -15,13 +16,14 @@ export const dynamic = 'force-dynamic'
 export default async function DashboardPage({
   searchParams,
 }: {
-  searchParams: Promise<{ agricultor?: string }>
+  searchParams: Promise<{ agricultor?: string; ciclo?: string }>
 }) {
   const profile = await getUserProfile()
   if (!profile) redirect('/login')
 
   const params = await searchParams
   const scope = await resolveAgricultorScope(profile, params)
+  const ciclo = resolveCiclo(params.ciclo)
 
   if (scope.isMaster && !scope.agricultorKey) {
     const agricultores = await listAgricultores()
@@ -42,7 +44,8 @@ export default async function DashboardPage({
     supabase
       .from('lote')
       .select('lote_id, nombre_lote, ha_sembradas, fecha_inicio_siembra_real, ha_perdidas, edo_gral_cultivo_v')
-      .eq('AgricultorKey', agricultorKey),
+      .eq('AgricultorKey', agricultorKey)
+      .eq('ciclo', ciclo),
     getCurrentConditions(agricultorKey),
     scope.isMaster ? listAgricultores() : Promise.resolve([]),
   ])

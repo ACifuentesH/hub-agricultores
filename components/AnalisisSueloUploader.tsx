@@ -51,16 +51,21 @@ export default function AnalisisSueloUploader({ agricultores }: { agricultores: 
 
   // Lotes por agricultor, cargados bajo demanda para el selector opcional
   // de lote (un PDF puede cubrir toda la finca o un lote específico).
+  // Cache por agricultor+ciclo: un lote pertenece a un ciclo, así que no puede
+  // ofrecerse un lote 2025 para un análisis marcado como 2026.
   const lotesCache = useRef<Record<string, LoteOption[]>>({})
   const [, bumpLotes] = useState(0)
-  const ensureLotes = useCallback(async (key: string) => {
-    if (!key || lotesCache.current[key]) return
+  const cacheKey = (key: string, ciclo: string) => `${key}|${ciclo}`
+  const ensureLotes = useCallback(async (key: string, ciclo: string) => {
+    const ck = cacheKey(key, ciclo)
+    if (!key || lotesCache.current[ck]) return
     const { data } = await supabase
       .from('lote')
       .select('lote_id, nombre_lote')
       .eq('AgricultorKey', key)
+      .eq('ciclo', ciclo)
       .order('nombre_lote')
-    lotesCache.current[key] = (data ?? []) as LoteOption[]
+    lotesCache.current[ck] = (data ?? []) as LoteOption[]
     bumpLotes(n => n + 1)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -89,7 +94,7 @@ export default function AnalisisSueloUploader({ agricultores }: { agricultores: 
     )
 
     // Precargar lotes de los agricultores sugeridos (para el selector de lote)
-    newPending.forEach(p => { if (p.finalKey) void ensureLotes(p.finalKey) })
+    newPending.forEach(p => { if (p.finalKey) void ensureLotes(p.finalKey, p.ciclo) })
 
     setPending(prev => [...prev, ...newPending])
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -242,7 +247,7 @@ export default function AnalisisSueloUploader({ agricultores }: { agricultores: 
                       onChange={(e) => {
                         // Cambiar de agricultor invalida el lote elegido
                         updateRow(p.id, { finalKey: e.target.value, loteId: '' })
-                        void ensureLotes(e.target.value)
+                        void ensureLotes(e.target.value, p.ciclo)
                       }}
                       disabled={p.status === 'uploading' || p.status === 'done'}
                       className="text-xs px-2 py-1 rounded border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 max-w-[280px] truncate"
@@ -263,7 +268,7 @@ export default function AnalisisSueloUploader({ agricultores }: { agricultores: 
                       className="text-xs px-2 py-1 rounded border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 max-w-[180px] truncate"
                     >
                       <option value="">Toda la finca</option>
-                      {(lotesCache.current[p.finalKey] ?? []).map(l => (
+                      {(lotesCache.current[cacheKey(p.finalKey, p.ciclo)] ?? []).map(l => (
                         <option key={l.lote_id} value={l.lote_id}>
                           {l.nombre_lote ?? l.lote_id}
                         </option>
@@ -272,7 +277,11 @@ export default function AnalisisSueloUploader({ agricultores }: { agricultores: 
                     {/* Ciclo */}
                     <select
                       value={p.ciclo}
-                      onChange={(e) => updateRow(p.id, { ciclo: e.target.value })}
+                      onChange={(e) => {
+                        // El ciclo acota los lotes disponibles: resetear elección
+                        updateRow(p.id, { ciclo: e.target.value, loteId: '' })
+                        if (p.finalKey) void ensureLotes(p.finalKey, e.target.value)
+                      }}
                       disabled={p.status === 'uploading' || p.status === 'done'}
                       className="text-xs px-2 py-1 rounded border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200"
                     >

@@ -29,7 +29,7 @@ export default function ThemeToggle() {
     <button
       onClick={toggle}
       aria-label="Cambiar tema"
-      className="flex items-center justify-center w-9 h-9 rounded-lg text-green-200 hover:bg-green-800 hover:text-white dark:hover:bg-gray-700 transition-colors"
+      className="flex h-9 w-9 items-center justify-center rounded-lg text-emerald-100/80 transition-colors hover:bg-white/10 hover:text-white"
     >
       {dark ? <Sun size={17} /> : <Moon size={17} />}
     </button>

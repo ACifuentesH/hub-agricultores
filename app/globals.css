@@ -12,8 +12,26 @@
 }
 
 .dark {
-  --background: #0b1220;
-  --foreground: #e5e7eb;
+  /* Paleta oscura "natural": carbón verdoso cálido en lugar del negro-azulado
+     frío (feedback: "negro neón semi futurista" → algo natural y agradable).
+     Como Tailwind v4 compila las utilidades de color a var(--color-gray-*),
+     redefinir la escala aquí entibia TODO el modo oscuro (fondos, bordes,
+     textos) sin tocar cada componente. Solo aplica bajo .dark; el modo claro
+     no cambia. */
+  --background: #161712;
+  --foreground: #ebeee6;
+
+  --color-gray-50: #f5f6f0;
+  --color-gray-100: #ebeee6;
+  --color-gray-200: #dce0d4;
+  --color-gray-300: #c3c8bc;
+  --color-gray-400: #9ba293;
+  --color-gray-500: #74796d;
+  --color-gray-600: #585d52;
+  --color-gray-700: #3b3f37;
+  --color-gray-800: #2c2f28;
+  --color-gray-900: #1f211b;
+  --color-gray-950: #161712;
 }
 
 @theme inline {

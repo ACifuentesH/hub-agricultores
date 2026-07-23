@@ -185,7 +185,31 @@ del mismo productor, por contención de tokens del nombre normalizado (ej:
 1 donante por huérfano Y 1 huérfano por donante. Homónimos parciales (dos
 "Jose Rolando Caldera …") quedan fuera y requieren override manual.
 
-### G. Contador de lecturas (true-up diario)
+### G. Carga de coordenadas de productores (para triangulación)
+
+Las coordenadas viven en `unidad_produccion.latitud/longitud` y habilitan la
+triangulación IDW cuando el agricultor NO tiene estación Davis propia. Carga del
+22-jul-2026 (`CoordsProductores.xlsx`, 55 filas / 41 productores): usuarios sin
+clima pasaron de 27 a 1.
+
+Trampas encontradas en el archivo de origen — **revisar siempre antes de cargar**:
+
+1. **Longitudes positivas.** Venezuela está siempre en longitud negativa. Dos
+   filas venían como `69.22` / `65.74` (faltaba el signo); sin corregir, el
+   productor cae al otro lado del planeta.
+2. **Coordenadas como texto con coma decimal y símbolo de grado**
+   (`"9,1707595°N "`). Un parser ingenuo las descarta en silencio y el productor
+   desaparece de la carga sin aviso.
+3. **Productores con varias fincas** (hasta 4 filas). Se usa el centroide; si la
+   dispersión es grande conviene revisarla (Dennis: 27,7 km de radio).
+4. **Nombres cortos vs. nombres largos del sistema** ("Richard Apóstol" vs
+   "Richard Jose Apostol Nuñez"). El match es por contención de tokens del
+   nombre normalizado, igual que la herencia entre ciclos.
+5. **Agricultores sin fila en `unidad_produccion`.** Un `UPDATE` no los alcanza
+   porque no hay dónde escribir: hay que **insertar** la UP (placeholder
+   `AUTO-NNN`) con las coordenadas.
+
+### H. Contador de lecturas (true-up diario)
 
 `sync_status.total_records` se re-sincroniza cada madrugada desde
 `weather_readings` (cron `trueup-sync-counters`, 04:40 UTC). Las vistas ya NO

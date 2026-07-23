@@ -74,7 +74,6 @@ export default async function ClimaPage({
     <div className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Clima</h1>
           {scope.isMaster && scope.agropecuariaName && (
             <p className="text-sm text-green-700 dark:text-green-400 font-medium mt-1">
               {scope.agropecuariaName}

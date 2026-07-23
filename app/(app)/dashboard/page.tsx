@@ -42,10 +42,10 @@ export default async function DashboardPage({
   const agricultorKey = scope.agricultorKey ?? ''
   const supabase = await createClient()
 
-  const [{ data: lotes }, conditions, agricultores, forecast, { data: docsRecientes }] = await Promise.all([
+  const [{ data: lotes }, conditions, agricultores, forecast, { data: docsRecientes }, { data: eventos }] = await Promise.all([
     supabase
       .from('lote')
-      .select('lote_id, nombre_lote, ha_sembradas, fecha_inicio_siembra_real, ha_perdidas, edo_gral_cultivo_v')
+      .select('lote_id, nombre_lote, ha_sembradas, fecha_inicio_siembra_real, ha_perdidas, ha_cosechadas, edo_gral_cultivo_v')
       .eq('AgricultorKey', agricultorKey)
       .eq('ciclo', ciclo),
     getCurrentConditions(agricultorKey),
@@ -58,6 +58,13 @@ export default async function DashboardPage({
       .eq('ciclo', ciclo)
       .order('uploaded_at', { ascending: false })
       .limit(5),
+    supabase
+      .from('lote_eventos')
+      .select('id, lote_nombre, tipo, valor_anterior, valor_nuevo, created_at')
+      .eq('agricultor_key', agricultorKey)
+      .eq('ciclo', ciclo)
+      .order('created_at', { ascending: false })
+      .limit(10),
   ])
 
   const totalHa = lotes?.reduce((s, l) => s + parseFloat(l.ha_sembradas ?? '0'), 0) ?? 0
@@ -81,6 +88,15 @@ export default async function DashboardPage({
   const lotesConSiembra = lotes?.filter(
     l => l.fecha_inicio_siembra_real != null && l.fecha_inicio_siembra_real !== '',
   ).length ?? 0
+
+  // Cosecha y pérdidas pertenecen a ciclos ya cerrados: en 2026 están vacías en
+  // los 335 lotes. Se detecta por dato, no por año fijo, para que el ciclo en
+  // curso deje de mostrar "0.0 ha perdidas · 335 sin reporte", que era ruido.
+  const cicloTieneCierre = (lotes ?? []).some(
+    l =>
+      (l.ha_perdidas != null && l.ha_perdidas !== '') ||
+      (l.ha_cosechadas != null && l.ha_cosechadas !== ''),
+  )
 
   // ── Novedades para el centro de notificaciones ──
   const novedades: Novedad[] = []
@@ -107,6 +123,22 @@ export default async function DashboardPage({
     })
   }
 
+  // Cambios manuales sobre lotes (p. ej. carga de la fecha de siembra)
+  for (const ev of eventos ?? []) {
+    const nombre = (ev.lote_nombre as string | null) ?? 'un lote'
+    const nuevo = ev.valor_nuevo as string | null
+    const anterior = ev.valor_anterior as string | null
+    novedades.push({
+      id: `evt-${ev.id}`,
+      tipo: 'cambio',
+      titulo: `Fecha de siembra actualizada · ${nombre}`,
+      detalle: anterior
+        ? `Cambió de ${anterior} a ${nuevo ?? 'sin fecha'}.`
+        : `Se registró la siembra el ${nuevo ?? '—'}.`,
+      fecha: ev.created_at as string,
+    })
+  }
+
   // Aviso de dato de clima desactualizado
   if (tempKpi.isStale && tempKpi.level !== 'missing' && conditions.fecha) {
     novedades.push({
@@ -124,7 +156,6 @@ export default async function DashboardPage({
     <div className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Dashboard</h1>
           {scope.isMaster && scope.agropecuariaName && (
             <p className="text-sm text-green-700 dark:text-green-400 font-medium mt-1">
               {scope.agropecuariaName}
@@ -161,13 +192,15 @@ export default async function DashboardPage({
           value={`${totalHa.toFixed(1)} ha`}
           hint={lotesSinFechaReal > 0 ? `${lotesSinFechaReal} lotes sin fecha de siembra confirmada` : undefined}
         />
-        <KpiCard
-          icon={<AlertTriangle className="text-red-500" size={24} />}
-          label="Ha perdidas"
-          value={`${totalPerdidas.toFixed(1)} ha`}
-          hint={lotesSinReportePerdidas > 0 ? `${lotesSinReportePerdidas} lotes sin reporte (posible outlier)` : undefined}
-          hintLevel="warn"
-        />
+        {cicloTieneCierre && (
+          <KpiCard
+            icon={<AlertTriangle className="text-red-500" size={24} />}
+            label="Ha perdidas"
+            value={`${totalPerdidas.toFixed(1)} ha`}
+            hint={lotesSinReportePerdidas > 0 ? `${lotesSinReportePerdidas} lotes sin reporte (posible outlier)` : undefined}
+            hintLevel="warn"
+          />
+        )}
         <KpiCard
           icon={<CloudSun className="text-blue-500" size={24} />}
           label="Temperatura actual"
@@ -190,7 +223,7 @@ export default async function DashboardPage({
                 <th className="px-4 py-3 text-left">Lote</th>
                 <th className="px-4 py-3 text-left">Ha sembradas</th>
                 <th className="px-4 py-3 text-left">Inicio siembra</th>
-                <th className="px-4 py-3 text-left">Ha perdidas</th>
+                {cicloTieneCierre && <th className="px-4 py-3 text-left">Ha perdidas</th>}
                 <th className="px-4 py-3 text-left">Estado</th>
               </tr>
             </thead>
@@ -200,7 +233,9 @@ export default async function DashboardPage({
                   <td className="px-4 py-3 font-medium text-gray-800 dark:text-gray-100">{l.nombre_lote}</td>
                   <td className="px-4 py-3 text-gray-600 dark:text-gray-300">{l.ha_sembradas ?? '—'}</td>
                   <td className="px-4 py-3 text-gray-600 dark:text-gray-300">{l.fecha_inicio_siembra_real ?? '—'}</td>
-                  <td className="px-4 py-3 text-gray-600 dark:text-gray-300">{l.ha_perdidas ?? '—'}</td>
+                  {cicloTieneCierre && (
+                    <td className="px-4 py-3 text-gray-600 dark:text-gray-300">{l.ha_perdidas ?? '—'}</td>
+                  )}
                   <td className="px-4 py-3">
                     <span className="px-2 py-0.5 rounded-full text-xs bg-green-100 text-green-700 dark:text-green-400">
                       {l.edo_gral_cultivo_v ?? 'Activo'}

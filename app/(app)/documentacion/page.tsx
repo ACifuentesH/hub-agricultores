@@ -64,8 +64,7 @@ export default async function DocumentacionPage({
     <div className="space-y-8">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Documentación</h1>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-sm text-gray-500 dark:text-gray-400">
             Documentos del ciclo {ciclo} — análisis de suelo, mapas, caso de negocio y convenios.
             {scope.isMaster && scope.agropecuariaName && (
               <span className="ml-2 font-medium text-green-700 dark:text-green-400">

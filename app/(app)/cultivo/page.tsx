@@ -17,6 +17,7 @@ import { CloudSun, CloudRain, Sun, Cloud, Sprout, AlertCircle, CalendarOff, Flas
 import { freshnessLevel, freshnessTextClass, formatDateShort } from '@/lib/freshness'
 import { resolveCiclo } from '@/lib/ciclo'
 import { FASE_CORTA } from '@/lib/agro-glosario'
+import FechaSiembraEditor from '@/components/FechaSiembraEditor'
 
 // Datos vivos: nunca cachear (lotes/clima/condiciones cambian frecuentemente)
 export const dynamic = 'force-dynamic'
@@ -65,13 +66,16 @@ export default async function CultivoPage({
 
   // Condición de suelo e insumos aplicados por lote — movidos aquí desde el
   // antiguo módulo "Suelo", que pasó a ser el repositorio de Documentación.
-  // producto_registro se cruza por nombre de lote (lote_v), no por lote_id.
+  // producto_registro se cruza por nombre de lote (lote_v) Y por ciclo: sin el
+  // filtro de ciclo, los insumos de 2025 aparecían bajo el filtro 2026 en los
+  // lotes cuyo nombre se repite entre ciclos.
   const nombresLote = (lotes ?? []).map(l => l.nombre_lote).filter(Boolean) as string[]
   const { data: insumos } = nombresLote.length
     ? await supabase
         .from('producto_registro')
         .select('lote_v, nombre_producto, categoria_producto, dosis_real_ha, dosis_recomendada_v, ha_aplicadas, fecha_registro')
         .in('lote_v', nombresLote)
+        .eq('ciclo', ciclo)
         .order('fecha_registro', { ascending: false })
     : { data: [] }
 
@@ -98,10 +102,7 @@ export default async function CultivoPage({
       {/* Header with title + current conditions chip */}
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
-            Línea de tiempo del cultivo
-          </h1>
-          <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
+          <p className="text-gray-500 dark:text-gray-400 text-sm">
             Ciclo completo del maíz — desde siembra hasta cosecha — por lote.
             {scope.isMaster && scope.agropecuariaName && (
               <span className="ml-2 text-green-700 dark:text-green-400 font-medium">
@@ -192,8 +193,15 @@ export default async function CultivoPage({
                     {l.codigo_lote} · {l.unidad_produccion_v ?? 'Sin unidad'}
                   </p>
                 </div>
-                <div className="text-xs text-gray-500 dark:text-gray-400">
+                <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
                   Siembra <span className="text-gray-700 dark:text-gray-300 font-medium">{l.fecha_inicio_siembra_real ?? '—'}</span>
+                  {scope.isMaster && (
+                    <FechaSiembraEditor
+                      loteId={l.lote_id}
+                      loteNombre={l.nombre_lote ?? l.lote_id}
+                      fechaActual={l.fecha_inicio_siembra_real ?? null}
+                    />
+                  )}
                 </div>
               </div>
 
@@ -280,6 +288,7 @@ export default async function CultivoPage({
                   <th className="px-4 py-2 text-left">Unidad</th>
                   <th className="px-4 py-2 text-left">Fecha planeada</th>
                   <th className="px-4 py-2 text-right">Ha sembradas</th>
+                  {scope.isMaster && <th className="px-4 py-2 text-right">Fecha de siembra</th>}
                 </tr>
               </thead>
               <tbody className="divide-y divide-amber-200/60 dark:divide-amber-900/40">
@@ -294,6 +303,15 @@ export default async function CultivoPage({
                     <td className="px-4 py-2 text-gray-500 dark:text-gray-400">{l.unidad_produccion_v ?? '—'}</td>
                     <td className="px-4 py-2 text-gray-500 dark:text-gray-400">{l.fecha_inicio_siembra ?? '—'}</td>
                     <td className="px-4 py-2 text-right text-gray-600 dark:text-gray-300">{l.ha_sembradas ?? '—'}</td>
+                    {scope.isMaster && (
+                      <td className="px-4 py-2 text-right">
+                        <FechaSiembraEditor
+                          loteId={l.lote_id}
+                          loteNombre={l.nombre_lote ?? l.lote_id}
+                          fechaActual={null}
+                        />
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>

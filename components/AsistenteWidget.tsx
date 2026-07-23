@@ -150,6 +150,27 @@ export default function AsistenteWidget({ defaultAgricultorKey, isMaster }: Prop
             )}
           </div>
 
+          {/* Chips siempre visibles: el asistente responde un catálogo acotado,
+              así que mostrar sus temas evita que el usuario adivine. */}
+          <div className="border-t border-gray-100 bg-white px-3 pt-2.5 dark:border-gray-800 dark:bg-gray-900">
+            <p className="px-0.5 pb-1.5 text-[10px] font-medium uppercase tracking-wider text-gray-400 dark:text-gray-500">
+              Preguntas que sé responder
+            </p>
+            <div className="flex gap-1.5 overflow-x-auto pb-2">
+              {PREGUNTAS_SUGERIDAS.map(q => (
+                <button
+                  key={q}
+                  type="button"
+                  onClick={() => send(q)}
+                  disabled={loading || !agricultorKey}
+                  className="shrink-0 whitespace-nowrap rounded-full border border-gray-200 bg-gray-50 px-2.5 py-1 text-[11px] text-gray-700 transition-colors hover:border-green-500 hover:bg-green-50 hover:text-green-800 disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-green-950/40 dark:hover:text-green-300"
+                >
+                  {q}
+                </button>
+              ))}
+            </div>
+          </div>
+
           <form
             onSubmit={e => { e.preventDefault(); send(input) }}
             className="border-t border-gray-100 bg-white px-3 py-3 dark:border-gray-800 dark:bg-gray-900"

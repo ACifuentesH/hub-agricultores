@@ -39,8 +39,10 @@ export default function Sidebar({ role }: { role: string }) {
     router.push('/login')
   }
 
+  // sticky + h-screen: la barra queda fija al desplazar y el bloque de
+  // "Cerrar sesión" (mt-auto) se ancla al borde inferior de la ventana.
   return (
-    <aside className="flex min-h-screen w-56 flex-col border-r border-black/10 bg-gradient-to-b from-[#15492c] to-[#0e3620] dark:border-black/30 dark:from-[#123c24] dark:to-[#0a2b1a]">
+    <aside className="sticky top-0 flex h-screen w-56 shrink-0 flex-col overflow-y-auto border-r border-black/10 bg-gradient-to-b from-[#15492c] to-[#0e3620] dark:border-black/30 dark:from-[#123c24] dark:to-[#0a2b1a]">
       {/* Marca */}
       <div className="flex items-start justify-between gap-2 px-4 py-5">
         <div className="flex min-w-0 items-center gap-2.5">

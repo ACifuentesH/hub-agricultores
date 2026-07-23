@@ -1,11 +1,11 @@
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
-import { Bell, X, CloudRain, FileText, Clock } from 'lucide-react'
+import { Bell, X, CloudRain, FileText, Clock, CalendarCheck } from 'lucide-react'
 
 export interface Novedad {
   id: string
-  tipo: 'clima' | 'documento' | 'dato_viejo'
+  tipo: 'clima' | 'documento' | 'dato_viejo' | 'cambio'
   titulo: string
   detalle: string
   /** ISO timestamp que define si es "nueva" respecto a la última visita */
@@ -95,6 +95,7 @@ export default function NotificacionesButton({
                   {n.tipo === 'clima' && <CloudRain size={15} className="text-blue-500" />}
                   {n.tipo === 'documento' && <FileText size={15} className="text-green-600" />}
                   {n.tipo === 'dato_viejo' && <Clock size={15} className="text-amber-500" />}
+                  {n.tipo === 'cambio' && <CalendarCheck size={15} className="text-violet-500" />}
                 </div>
                 <div className="min-w-0">
                   <p className="text-sm font-medium text-gray-800 dark:text-gray-100">{n.titulo}</p>

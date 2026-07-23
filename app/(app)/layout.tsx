@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import Sidebar from '@/components/Sidebar'
-import AgriChatWidget from '@/components/AgriChatWidget'
+import AsistenteWidget from '@/components/AsistenteWidget'
 import SoporteWhatsAppWidget from '@/components/SoporteWhatsAppWidget'
 import UserMenu from '@/components/UserMenu'
 
@@ -40,7 +40,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         </header>
         <main className="flex-1 p-6">{children}</main>
       </div>
-      <AgriChatWidget
+      <AsistenteWidget
         defaultAgricultorKey={profile?.agricultor_key ?? null}
         isMaster={(profile?.role ?? 'farmer') === 'master'}
       />

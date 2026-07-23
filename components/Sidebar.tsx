@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import {
-  LayoutDashboard, CloudSun, Sprout, FlaskConical,
+  LayoutDashboard, CloudSun, Sprout, FolderOpen,
   Users, LogOut, Leaf,
 } from 'lucide-react'
 import ThemeToggle from './ThemeToggle'
@@ -14,7 +14,7 @@ const farmerLinks = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/clima', label: 'Clima', icon: CloudSun },
   { href: '/cultivo', label: 'Cultivo', icon: Sprout },
-  { href: '/suelo', label: 'Suelo', icon: FlaskConical },
+  { href: '/documentacion', label: 'Documentación', icon: FolderOpen },
 ]
 
 const masterLinks = [

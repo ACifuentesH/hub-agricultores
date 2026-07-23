@@ -5,10 +5,12 @@ import { Sprout, Wheat, CloudSun, AlertTriangle } from 'lucide-react'
 import { resolveAgricultorScope, listAgricultores } from '@/lib/access'
 import MasterAgricultorSelector from '@/components/MasterAgricultorSelector'
 import MasterEmptyState from '@/components/MasterEmptyState'
-import { valueWithFreshness, freshnessTextClass } from '@/lib/freshness'
-import { getCurrentConditions } from '@/lib/clima'
+import { valueWithFreshness, freshnessTextClass, formatDateShort } from '@/lib/freshness'
+import { getCurrentConditions, getForecast, computeAlerts } from '@/lib/clima'
 import DataSourceBadge from '@/components/DataSourceBadge'
 import { resolveCiclo } from '@/lib/ciclo'
+import { labelCategoria } from '@/lib/documentos'
+import NotificacionesButton, { type Novedad } from '@/components/NotificacionesButton'
 
 // Datos vivos: nunca cachear
 export const dynamic = 'force-dynamic'
@@ -40,7 +42,7 @@ export default async function DashboardPage({
   const agricultorKey = scope.agricultorKey ?? ''
   const supabase = await createClient()
 
-  const [{ data: lotes }, conditions, agricultores] = await Promise.all([
+  const [{ data: lotes }, conditions, agricultores, forecast, { data: docsRecientes }] = await Promise.all([
     supabase
       .from('lote')
       .select('lote_id, nombre_lote, ha_sembradas, fecha_inicio_siembra_real, ha_perdidas, edo_gral_cultivo_v')
@@ -48,6 +50,14 @@ export default async function DashboardPage({
       .eq('ciclo', ciclo),
     getCurrentConditions(agricultorKey),
     scope.isMaster ? listAgricultores() : Promise.resolve([]),
+    getForecast(agricultorKey, 7),
+    supabase
+      .from('lote_analisis_suelo')
+      .select('id, nombre_archivo, categoria, uploaded_at')
+      .eq('agricultor_key', agricultorKey)
+      .eq('ciclo', ciclo)
+      .order('uploaded_at', { ascending: false })
+      .limit(5),
   ])
 
   const totalHa = lotes?.reduce((s, l) => s + parseFloat(l.ha_sembradas ?? '0'), 0) ?? 0
@@ -66,6 +76,50 @@ export default async function DashboardPage({
     conditions.fecha,
   )
 
+  // Lotes con fecha de siembra confirmada: la única señal real de avance que
+  // hoy tiene la base (edo_gral_cultivo_v está vacío en todo el ciclo 2026).
+  const lotesConSiembra = lotes?.filter(
+    l => l.fecha_inicio_siembra_real != null && l.fecha_inicio_siembra_real !== '',
+  ).length ?? 0
+
+  // ── Novedades para el centro de notificaciones ──
+  const novedades: Novedad[] = []
+
+  // Alertas del pronóstico (lluvia fuerte, calor, frío, viento)
+  for (const a of computeAlerts(forecast.rows).slice(0, 5)) {
+    novedades.push({
+      id: `clima-${a.id}`,
+      tipo: 'clima',
+      titulo: a.title,
+      detalle: a.detail,
+      fecha: a.fecha,
+    })
+  }
+
+  // Documentos cargados recientemente
+  for (const d of docsRecientes ?? []) {
+    novedades.push({
+      id: `doc-${d.id}`,
+      tipo: 'documento',
+      titulo: `Nuevo documento · ${labelCategoria(d.categoria as string)}`,
+      detalle: d.nombre_archivo as string,
+      fecha: d.uploaded_at as string,
+    })
+  }
+
+  // Aviso de dato de clima desactualizado
+  if (tempKpi.isStale && tempKpi.level !== 'missing' && conditions.fecha) {
+    novedades.push({
+      id: 'clima-viejo',
+      tipo: 'dato_viejo',
+      titulo: 'Lectura de clima desactualizada',
+      detalle: `La última lectura de tu estación es del ${formatDateShort(conditions.fecha)}. Puede ser una falla del enlace de la estación.`,
+      fecha: conditions.fecha,
+    })
+  }
+
+  novedades.sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime())
+
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
@@ -80,14 +134,27 @@ export default async function DashboardPage({
             <DataSourceBadge source={conditions.source} fecha={conditions.fecha} size="sm" />
           </div>
         </div>
-        {scope.isMaster && (
-          <MasterAgricultorSelector agricultores={agricultores} selected={scope.agricultorKey} />
-        )}
+        <div className="flex items-center gap-3">
+          {scope.isMaster && (
+            <MasterAgricultorSelector agricultores={agricultores} selected={scope.agricultorKey} />
+          )}
+          <NotificacionesButton novedades={novedades} agricultorKey={agricultorKey} />
+        </div>
       </div>
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <KpiCard icon={<Sprout className="text-green-600" size={24} />} label="Lotes activos" value={String(lotes?.length ?? 0)} />
+        <KpiCard
+          icon={<Sprout className="text-green-600" size={24} />}
+          label={`Lotes del ciclo ${ciclo}`}
+          value={String(lotes?.length ?? 0)}
+          hint={
+            (lotes?.length ?? 0) > 0
+              ? `${lotesConSiembra} con siembra confirmada`
+              : undefined
+          }
+          hintLevel={lotesConSiembra === 0 && (lotes?.length ?? 0) > 0 ? 'warn' : undefined}
+        />
         <KpiCard
           icon={<Wheat className="text-yellow-600" size={24} />}
           label="Ha sembradas"

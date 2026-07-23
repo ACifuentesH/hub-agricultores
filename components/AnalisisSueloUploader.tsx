@@ -4,6 +4,7 @@ import { useState, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
 import { Upload, Loader2, Check, X, FileText, AlertCircle } from 'lucide-react'
+import { CATEGORIAS, CATEGORIA_DEFAULT, type CategoriaId } from '@/lib/documentos'
 
 interface Agricultor {
   AgricultorKey: string
@@ -26,6 +27,8 @@ interface PendingFile {
   ciclo: string
   /** '' = análisis a nivel finca; si no, lote.lote_id específico */
   loteId: string
+  /** Sección del módulo Documentación a la que va el archivo */
+  categoria: CategoriaId
   status: 'pending' | 'uploading' | 'done' | 'error'
   errorMsg?: string
 }
@@ -71,7 +74,11 @@ export default function AnalisisSueloUploader({ agricultores }: { agricultores: 
   }, [])
 
   const onFiles = useCallback(async (files: FileList | File[]) => {
-    const arr = Array.from(files).filter(f => f.type === 'application/pdf' || f.name.toLowerCase().endsWith('.pdf'))
+    // PDF para análisis/convenios; imágenes para mapas escaneados o fotos de plano
+    const ACEPTADOS = /\.(pdf|png|jpe?g|webp)$/i
+    const arr = Array.from(files).filter(
+      f => f.type === 'application/pdf' || f.type.startsWith('image/') || ACEPTADOS.test(f.name)
+    )
     if (arr.length === 0) return
 
     // Crear entries con sugerencias en paralelo
@@ -88,6 +95,7 @@ export default function AnalisisSueloUploader({ agricultores }: { agricultores: 
           finalKey: top?.agricultor_key ?? '',
           ciclo: top?.ciclo?.includes('2026') ? '2026' : (top?.ciclo ?? '2026'),
           loteId: '',
+          categoria: CATEGORIA_DEFAULT,
           status: 'pending',
         }
       })
@@ -121,16 +129,19 @@ export default function AnalisisSueloUploader({ agricultores }: { agricultores: 
     }
     updateRow(p.id, { status: 'uploading' })
 
-    // Path: <AgricultorKey>/<ciclo>/<timestamp>_<safeFilename>.pdf
+    // Path: <AgricultorKey>/<ciclo>/<categoria>/<timestamp>_<safeFilename>
+    // Las rutas antiguas (sin categoría) siguen siendo válidas: se resuelven
+    // por storage_path guardado en la fila, no por convención.
     const safe = p.file.name.replace(/[^a-zA-Z0-9._-]/g, '_').slice(-100)
-    const path = `${p.finalKey}/${p.ciclo}/${Date.now()}_${safe}`
+    const path = `${p.finalKey}/${p.ciclo}/${p.categoria}/${Date.now()}_${safe}`
 
     const { error: upErr } = await supabase.storage
       .from('analisis-suelo')
       .upload(path, p.file, {
         cacheControl: '3600',
         upsert: false,
-        contentType: 'application/pdf',
+        // Los mapas suelen ser imágenes, no PDF: respetar el tipo real
+        contentType: p.file.type || 'application/octet-stream',
       })
 
     if (upErr) {
@@ -145,6 +156,7 @@ export default function AnalisisSueloUploader({ agricultores }: { agricultores: 
       .insert({
         agricultor_key: p.finalKey,
         ciclo: p.ciclo,
+        categoria: p.categoria,
         lote_id: p.loteId || null,
         storage_path: path,
         nombre_archivo: p.file.name,
@@ -199,17 +211,17 @@ export default function AnalisisSueloUploader({ agricultores }: { agricultores: 
         <input
           ref={inputRef}
           type="file"
-          accept="application/pdf"
+          accept="application/pdf,image/*"
           multiple
           className="hidden"
           onChange={(e) => e.target.files && onFiles(e.target.files)}
         />
         <Upload size={32} className="mx-auto text-gray-400 mb-2" />
         <p className="text-sm font-medium text-gray-700 dark:text-gray-200">
-          Arrastra PDFs aquí o haz clic para seleccionar
+          Arrastra documentos aquí o haz clic para seleccionar
         </p>
         <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
-          Multi-selección permitida · auto-asigna por nombre del archivo
+          PDF o imágenes · multi-selección · asigna agricultor, ciclo, sección y lote por archivo
         </p>
       </div>
 
@@ -287,6 +299,17 @@ export default function AnalisisSueloUploader({ agricultores }: { agricultores: 
                     >
                       <option value="2025">2025</option>
                       <option value="2026">2026</option>
+                    </select>
+                    {/* Categoría: sección del módulo Documentación */}
+                    <select
+                      value={p.categoria}
+                      onChange={(e) => updateRow(p.id, { categoria: e.target.value as CategoriaId })}
+                      disabled={p.status === 'uploading' || p.status === 'done'}
+                      className="max-w-[160px] truncate rounded border border-gray-200 bg-white px-2 py-1 text-xs text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
+                    >
+                      {CATEGORIAS.map(c => (
+                        <option key={c.id} value={c.id}>{c.label}</option>
+                      ))}
                     </select>
                     {/* Sugerencia */}
                     {p.suggestedName && p.similitud != null && (

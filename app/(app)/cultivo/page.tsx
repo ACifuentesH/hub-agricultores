@@ -13,9 +13,10 @@ import ClimateSparkline from '@/components/ClimateSparkline'
 import ReportButtons from '@/components/ReportButtons'
 import PredictorSiembraPanel from '@/components/PredictorSiembraPanel'
 import DataSourceBadge from '@/components/DataSourceBadge'
-import { CloudSun, CloudRain, Sun, Cloud, Sprout, AlertCircle, CalendarOff } from 'lucide-react'
+import { CloudSun, CloudRain, Sun, Cloud, Sprout, AlertCircle, CalendarOff, FlaskConical } from 'lucide-react'
 import { freshnessLevel, freshnessTextClass, formatDateShort } from '@/lib/freshness'
 import { resolveCiclo } from '@/lib/ciclo'
+import { FASE_CORTA } from '@/lib/agro-glosario'
 
 // Datos vivos: nunca cachear (lotes/clima/condiciones cambian frecuentemente)
 export const dynamic = 'force-dynamic'
@@ -48,10 +49,11 @@ export default async function CultivoPage({
   }
 
   const agricultorKey = scope.agricultorKey ?? ''
+  const supabase = await createClient()
   const [{ data: lotes }, conditions, series, agricultores, predictorCtx] = await Promise.all([
-    (await createClient())
+    supabase
       .from('lote')
-      .select('lote_id, nombre_lote, codigo_lote, ha_sembradas, fecha_inicio_siembra, fecha_inicio_siembra_real, ha_cosechadas, rendimiento_real, ha_perdidas, unidad_produccion_v')
+      .select('lote_id, nombre_lote, codigo_lote, ha_sembradas, fecha_inicio_siembra, fecha_inicio_siembra_real, ha_cosechadas, rendimiento_real, ha_perdidas, unidad_produccion_v, compactacion, segmentacion_particulas, drenajes_internos, condicion_drenaje')
       .eq('AgricultorKey', agricultorKey)
       .eq('ciclo', ciclo)
       .order('fecha_inicio_siembra_real', { ascending: true }),
@@ -60,6 +62,27 @@ export default async function CultivoPage({
     scope.isMaster ? listAgricultores() : Promise.resolve([]),
     getPredictorContext(agricultorKey),
   ])
+
+  // Condición de suelo e insumos aplicados por lote — movidos aquí desde el
+  // antiguo módulo "Suelo", que pasó a ser el repositorio de Documentación.
+  // producto_registro se cruza por nombre de lote (lote_v), no por lote_id.
+  const nombresLote = (lotes ?? []).map(l => l.nombre_lote).filter(Boolean) as string[]
+  const { data: insumos } = nombresLote.length
+    ? await supabase
+        .from('producto_registro')
+        .select('lote_v, nombre_producto, categoria_producto, dosis_real_ha, dosis_recomendada_v, ha_aplicadas, fecha_registro')
+        .in('lote_v', nombresLote)
+        .order('fecha_registro', { ascending: false })
+    : { data: [] }
+
+  type InsumoRow = NonNullable<typeof insumos>[number]
+  const insumosByLote = (insumos ?? []).reduce<Record<string, InsumoRow[]>>((acc, ins) => {
+    if (!ins) return acc
+    const k = ins.lote_v ?? 'Sin lote'
+    if (!acc[k]) acc[k] = []
+    acc[k]!.push(ins)
+    return acc
+  }, {})
 
   const WeatherIcon = pickWeatherIcon(conditions.descripcion)
   const tempDisplay = conditions.tempC != null ? `${conditions.tempC.toFixed(1)}°C` : '—'
@@ -282,6 +305,79 @@ export default async function CultivoPage({
           </div>
         </div>
       )}
+
+      {/* Condición de suelo e insumos por lote (antes vivían en el módulo Suelo).
+          Se listan TODOS los lotes, con o sin fecha de siembra, para no perder
+          la información de los que aún no entran en la línea de tiempo. */}
+      {(lotes?.length ?? 0) > 0 && (
+        <div className="space-y-4">
+          <div className="flex items-center gap-2">
+            <FlaskConical size={18} className="text-amber-600" />
+            <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+              Condición de suelo e insumos
+            </h2>
+          </div>
+
+          {lotes!.map(l => (
+            <div
+              key={`suelo-${l.lote_id}`}
+              className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900"
+            >
+              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-100 px-5 py-4 dark:border-gray-800">
+                <div>
+                  <h3 className="font-semibold text-gray-800 dark:text-gray-100">{l.nombre_lote}</h3>
+                  <p className="text-xs text-gray-400 dark:text-gray-500">{l.codigo_lote}</p>
+                </div>
+                <div className="flex flex-wrap gap-3 text-xs text-gray-500 dark:text-gray-400">
+                  <span>Compactación: <b className="text-gray-700 dark:text-gray-200">{l.compactacion ?? '—'}</b></span>
+                  <span>Drenaje: <b className="text-gray-700 dark:text-gray-200">{l.condicion_drenaje ?? '—'}</b></span>
+                  <span>Drenajes internos: <b className="text-gray-700 dark:text-gray-200">{l.drenajes_internos ?? '—'}</b></span>
+                </div>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead className="bg-gray-50 text-xs uppercase text-gray-500 dark:bg-gray-800 dark:text-gray-400">
+                    <tr>
+                      <th className="px-4 py-3 text-left">Producto</th>
+                      <th className="px-4 py-3 text-left">Categoría</th>
+                      <th className="px-4 py-3 text-right">Dosis real (ha)</th>
+                      <th className="px-4 py-3 text-right">Dosis recom. (ha)</th>
+                      <th className="px-4 py-3 text-right">Ha aplicadas</th>
+                      <th className="px-4 py-3 text-left">Fecha</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+                    {(insumosByLote[l.nombre_lote as string] ?? []).slice(0, 10).map((ins, i) => (
+                      <tr key={i} className="hover:bg-gray-50 dark:hover:bg-gray-900/40">
+                        <td className="px-4 py-2.5 font-medium text-gray-800 dark:text-gray-100">{ins?.nombre_producto}</td>
+                        <td className="px-4 py-2.5">
+                          <span className="rounded-full bg-blue-50 px-2 py-0.5 text-xs text-blue-700 dark:bg-blue-950/40 dark:text-blue-300">
+                            {ins?.categoria_producto}
+                          </span>
+                        </td>
+                        <td className="px-4 py-2.5 text-right text-gray-600 dark:text-gray-300">{ins?.dosis_real_ha?.toFixed(2)}</td>
+                        <td className="px-4 py-2.5 text-right text-gray-600 dark:text-gray-300">{ins?.dosis_recomendada_v?.toFixed(2)}</td>
+                        <td className="px-4 py-2.5 text-right text-gray-600 dark:text-gray-300">{ins?.ha_aplicadas}</td>
+                        <td className="px-4 py-2.5 text-xs text-gray-400 dark:text-gray-500">
+                          {ins?.fecha_registro ? new Date(ins.fecha_registro).toLocaleDateString('es-VE') : '—'}
+                        </td>
+                      </tr>
+                    ))}
+                    {!(insumosByLote[l.nombre_lote as string]?.length) && (
+                      <tr>
+                        <td colSpan={6} className="px-4 py-4 text-center text-sm text-gray-400 dark:text-gray-500">
+                          Sin registros de insumos
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
@@ -315,13 +411,6 @@ function pickWeatherIcon(descripcion: string) {
 }
 
 function getPhaseDescription(stage: 0 | 1 | 2 | 3 | 4 | 5): string {
-  const descriptions = [
-    'Emergencia y germinación: monitorea humedad superficial.',
-    'Establecimiento: plántulas con primeras hojas verdaderas.',
-    'Crecimiento vegetativo activo, alto consumo de nitrógeno.',
-    'Floración y polinización: etapa crítica para el rendimiento.',
-    'Llenado de grano: hidratación y sanidad determinan el peso.',
-    'Madurez fisiológica: planificar la cosecha en los próximos días.',
-  ]
-  return descriptions[stage]
+  // Texto único compartido con el asistente (lib/agro-glosario.ts)
+  return FASE_CORTA[stage]
 }

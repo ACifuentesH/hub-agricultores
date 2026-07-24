@@ -1,11 +1,11 @@
 ---
-title: "Polar en el Campo"
+title: "Proyecto Saturno"
 subtitle: "Plataforma digital del Programa de Agricultura por Contrato"
 author: "Equipo de Agricultura Polar"
 date: "18 de abril de 2026"
 ---
 
-# Polar en el Campo
+# Proyecto Saturno
 
 ## Plataforma digital del Programa de Agricultura por Contrato
 ### Maíz blanco · Anexo de presentación a la junta
@@ -410,5 +410,5 @@ Los **cruxes** (slides anteriores) son problemas estructurales no mitigables por
 
 ## Gracias
 
-### Polar en el Campo
+### Proyecto Saturno
 **Inteligencia agronómica para el Programa de Agricultura por Contrato**

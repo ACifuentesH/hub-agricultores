@@ -21,7 +21,7 @@ export default function ModuloTitulo() {
   const match = TITULOS.find(t => pathname.startsWith(t.prefijo))
   return (
     <h1 className="truncate text-base font-semibold text-gray-800 dark:text-gray-100">
-      {match?.titulo ?? 'Polar en el Campo'}
+      {match?.titulo ?? 'Proyecto Saturno'}
     </h1>
   )
 }

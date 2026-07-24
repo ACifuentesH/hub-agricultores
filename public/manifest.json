@@ -1,6 +1,6 @@
 {
-  "name": "Polar en el Campo",
-  "short_name": "Polar Campo",
+  "name": "Proyecto Saturno",
+  "short_name": "Saturno",
   "description": "Plataforma digital del Programa de Agricultura por Contrato — clima, cultivo, finanzas y suelo en una sola app.",
   "lang": "es-VE",
   "start_url": "/dashboard",
@@ -44,10 +44,10 @@
       "description": "Línea de tiempo del cultivo"
     },
     {
-      "name": "Suelo",
-      "short_name": "Suelo",
-      "url": "/suelo",
-      "description": "Análisis de suelo"
+      "name": "Documentación",
+      "short_name": "Docs",
+      "url": "/documentacion",
+      "description": "Análisis de suelo, mapas y convenios"
     }
   ]
 }

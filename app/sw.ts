@@ -1,6 +1,6 @@
 /// <reference lib="webworker" />
 /**
- * Service Worker para Polar en el Campo (PWA).
+ * Service Worker para Proyecto Saturno (PWA).
  *
  * Estrategias:
  *   - Static assets (Next chunks, CSS, fuentes): CacheFirst

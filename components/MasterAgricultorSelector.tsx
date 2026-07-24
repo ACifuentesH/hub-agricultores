@@ -1,7 +1,8 @@
 'use client'
 
+import { useTransition } from 'react'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
-import { Users, X } from 'lucide-react'
+import { Users, X, Loader2 } from 'lucide-react'
 import type { AgricultorOption } from '@/lib/access'
 
 interface Props {
@@ -18,18 +19,25 @@ export default function MasterAgricultorSelector({ agricultores, selected }: Pro
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+  // Cambiar de agricultor recarga toda la pantalla desde el servidor: sin este
+  // indicador el select parecía no responder durante la espera.
+  const [pendiente, startTransition] = useTransition()
 
   function navigate(value: string | null) {
     const next = new URLSearchParams(searchParams.toString())
     if (value) next.set('agricultor', value)
     else next.delete('agricultor')
     const qs = next.toString()
-    router.push(qs ? `${pathname}?${qs}` : pathname)
+    startTransition(() => {
+      router.push(qs ? `${pathname}?${qs}` : pathname)
+    })
   }
 
   return (
     <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
-      <Users size={14} className="text-green-700 dark:text-green-400 shrink-0" />
+      {pendiente
+        ? <Loader2 size={14} className="shrink-0 animate-spin text-green-700 dark:text-green-400" />
+        : <Users size={14} className="text-green-700 dark:text-green-400 shrink-0" />}
       <span className="text-xs text-gray-500 dark:text-gray-400 hidden sm:inline">Vista master:</span>
       <select
         value={selected ?? ''}

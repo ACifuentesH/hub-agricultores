@@ -1,6 +1,6 @@
 /// <reference lib="webworker" />
 /**
- * Service Worker para Proyecto Saturno (PWA).
+ * Service Worker para Programa Saturno (PWA).
  *
  * Estrategias:
  *   - Static assets (Next chunks, CSS, fuentes): CacheFirst

@@ -1,10 +1,10 @@
 # INFORME EJECUTIVO
-## Plataforma Digital "Proyecto Saturno"
+## Plataforma Digital "Programa Saturno"
 ### Estado del proyecto, valor de negocio, camino al MVP y cruxes a resolver
 
 | | |
 |---|---|
-| **Producto** | Proyecto Saturno — Agri-Platform |
+| **Producto** | Programa Saturno — Agri-Platform |
 | **Fecha del informe** | 18 de abril de 2026 |
 | **Entorno productivo** | https://agri-platform-omega.vercel.app |
 | **Estado global** | Prototipo funcional desplegado en producción |
@@ -15,7 +15,7 @@
 
 ## 1. RESUMEN EJECUTIVO
 
-**Proyecto Saturno** es la plataforma digital que centraliza la operación del Programa de Agricultura por Contrato (maíz blanco) en una sola interfaz operativa. Convierte la data dispersa —estaciones meteorológicas Davis, registros productivos de lotes, percentiles climáticos históricos y pronósticos GFS— en decisiones agronómicas accionables, tanto para la gerencia técnica de Polar como para cada agricultor del programa.
+**Programa Saturno** es la plataforma digital que centraliza la operación del Programa de Agricultura por Contrato (maíz blanco) en una sola interfaz operativa. Convierte la data dispersa —estaciones meteorológicas Davis, registros productivos de lotes, percentiles climáticos históricos y pronósticos GFS— en decisiones agronómicas accionables, tanto para la gerencia técnica de Polar como para cada agricultor del programa.
 
 La plataforma se encuentra **operativa en producción** con cinco módulos funcionales (Dashboard, Cultivo, Clima, Finanzas y Suelo), un selector multi-tenant para vista corporativa, un predictor de fecha de siembra basado en IA, un sistema de alertas climáticas y un asistente conversacional agronómico. El proyecto se ejecutó en seis fases incrementales (A–F), de las cuales **cinco están desplegadas**.
 
@@ -411,7 +411,7 @@ A diferencia de los cruxes (problemas estructurales no resueltos), los riesgos o
 
 ### 10.1 Estado del proyecto
 
-La plataforma "Proyecto Saturno" cumple los objetivos planteados al inicio del proyecto a nivel de prototipo:
+La plataforma "Programa Saturno" cumple los objetivos planteados al inicio del proyecto a nivel de prototipo:
 
 1. Centralizar la operación del Programa de Agricultura por Contrato en una única interfaz
 2. Aplicar inteligencia artificial al proceso agronómico (predictor de siembra y asistente conversacional)

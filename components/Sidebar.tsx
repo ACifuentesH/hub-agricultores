@@ -53,7 +53,7 @@ export default function Sidebar({ role }: { role: string }) {
             <h2 className="truncate text-[15px] font-semibold leading-tight text-white">
               Agri Platform
             </h2>
-            <p className="truncate text-[11px] text-emerald-200/70">Proyecto Saturno</p>
+            <p className="truncate text-[11px] text-emerald-200/70">Programa Saturno</p>
           </div>
         </div>
         <ThemeToggle />

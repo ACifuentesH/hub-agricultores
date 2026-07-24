@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const APP_NAME = "Proyecto Saturno";
+const APP_NAME = "Programa Saturno";
 const APP_DESCRIPTION =
   "Plataforma digital del Programa de Agricultura por Contrato — clima, cultivo y suelo.";
 

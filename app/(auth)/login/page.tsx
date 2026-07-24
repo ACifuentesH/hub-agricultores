@@ -54,7 +54,7 @@ export default function LoginPage() {
 
         <div className="relative z-10 max-w-lg space-y-6">
           <p className="text-xs font-medium uppercase tracking-[0.2em] text-green-300">
-            Proyecto Saturno
+            Programa Saturno
           </p>
           <h1 className="text-4xl xl:text-5xl font-semibold leading-[1.1] tracking-tight">
             Gestión integral del programa agrícola.
@@ -81,7 +81,7 @@ export default function LoginPage() {
         </div>
 
         <div className="relative z-10 text-xs text-green-200/60">
-          © {new Date().getFullYear()} Proyecto Saturno
+          © {new Date().getFullYear()} Programa Saturno
         </div>
       </div>
 
@@ -95,7 +95,7 @@ export default function LoginPage() {
             </div>
             <div>
               <p className="font-semibold text-gray-900 dark:text-gray-100 leading-none">Agri Platform</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Proyecto Saturno</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Programa Saturno</p>
             </div>
           </div>
 
@@ -186,7 +186,7 @@ export default function LoginPage() {
           </form>
 
           <p className="text-xs text-gray-400 dark:text-gray-500 text-center mt-10">
-            Acceso restringido · Proyecto Saturno
+            Acceso restringido · Programa Saturno
           </p>
         </div>
       </div>

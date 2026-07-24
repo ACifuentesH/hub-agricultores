@@ -1,5 +1,5 @@
 """
-Estudio de muestreo estratificado — data 2025 (Proyecto Saturno).
+Estudio de muestreo estratificado — data 2025 (Programa Saturno).
 
 Genera un Excel para diseñar un muestreo estratificado (por estado) de cara a
 estimar un modelo de rendimiento POR LOTE en ciclos futuros, y para juzgar si

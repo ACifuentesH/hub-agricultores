@@ -36,7 +36,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           <div className="flex min-w-0 items-baseline gap-3">
             <ModuloTitulo />
             <span className="hidden truncate text-sm text-gray-500 sm:inline dark:text-gray-400">
-              Proyecto Saturno
+              Programa Saturno
             </span>
           </div>
           <UserMenu

@@ -1,36 +1,86 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Programa Saturno
 
-## Getting Started
+Plataforma digital del Programa de Agricultura por Contrato (maíz blanco).
+Reúne clima, cultivo y documentación de cada agricultor en una sola interfaz,
+para el equipo técnico y para los propios productores.
 
-First, run the development server:
+**Producción:** https://agri-platform-omega.vercel.app
+
+> El repositorio se llama `agri-platform` por razones históricas; el producto es
+> **Programa Saturno**. "Polar" a secas se refiere a la empresa.
+
+---
+
+## Arranque
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Requiere un `.env.local` con las credenciales de Supabase y WeatherLink
+(ver `.env.example`). **Nunca se commitea.**
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run build   # usa --webpack a propósito: Turbopack rompe con Serwist
+npm run lint
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Push a `main` despliega automáticamente en Vercel.
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## Módulos
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Ruta | Qué hace |
+|---|---|
+| `/dashboard` | KPIs del ciclo, tabla de lotes y centro de novedades |
+| `/clima` | Lectura actual, pronóstico a 7 días, alertas e histórico |
+| `/cultivo` | Línea de tiempo por lote, etapa fenológica, suelo e insumos |
+| `/documentacion` | Análisis de suelo, mapas, caso de negocio y convenios |
+| `/master` | Consola de validación: qué ve cada usuario, con acceso directo |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Dos roles: **farmer** (ve solo lo suyo, por RLS) y **master** (valida la vista
+de cualquier agricultor mediante `?agricultor=`).
 
-## Deploy on Vercel
+Todas las pantallas respetan el **ciclo agrícola** seleccionado en la barra
+lateral (`?ciclo=`).
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## De dónde salen los datos
+
+```
+Saturno (sistema origen)  ──4 volcados/día──►  esquema `saturno.*`  ──►  app
+WeatherLink (44 estaciones) ──cron horario──►  weather_readings     ──►  app
+```
+
+- **Datos operativos** (lotes, agricultores, insumos, cosecha): los produce
+  **Saturno**; la app los espeja y no los edita.
+  → [`docs/SINCRONIZACION_SATURNO.md`](docs/SINCRONIZACION_SATURNO.md)
+- **Clima**: único dato que la app captura por sí misma, desde estaciones Davis.
+  Cuando un agricultor no tiene estación propia, se estima por triangulación
+  entre las cercanas. → [`docs/OPERACION_PIPELINE_CLIMA.md`](docs/OPERACION_PIPELINE_CLIMA.md)
+
+Para revisar el estado de la sincronización:
+
+```sql
+select * from public.v_saturno_salud;
+```
+
+---
+
+## Stack
+
+Next.js 16 (App Router) · React 19 · Tailwind CSS v4 · HeroUI v3 (piloto) ·
+Supabase (Postgres + Auth + Storage + Edge Functions) · PWA con Serwist ·
+Recharts · desplegado en Vercel.
+
+---
+
+## Antes de tocar el código
+
+Lee **[`AGENTS.md`](AGENTS.md)**. Recoge las decisiones y trampas que ya
+costaron caro: el formato de fecha de Saturno, por qué las escrituras pasan por
+`service_role`, por qué el middleware no debe interceptar el service worker, y
+qué patrón de consulta hunde el rendimiento del clima.

@@ -11,6 +11,13 @@ const withSerwist = withSerwistInit({
 });
 
 const nextConfig: NextConfig = {
+  async redirects() {
+    return [
+      // El modulo Suelo paso a llamarse Documentacion. Quien tenga un marcador
+      // viejo —o la PWA instalada con el atajo anterior— llegaria a un 404.
+      { source: '/suelo', destination: '/documentacion', permanent: true },
+    ]
+  },
   async headers() {
     return [
       {

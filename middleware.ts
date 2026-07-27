@@ -53,5 +53,19 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)'],
+  /**
+   * Qué NO debe pasar por el middleware.
+   *
+   * Crítico: `sw.js` y `manifest.json` tienen que quedar fuera. Si el
+   * middleware los intercepta, el navegador recibe una redirección a /login en
+   * vez del archivo; entonces el service worker no puede actualizarse y los
+   * usuarios que ya tenían la PWA instalada se quedan servidos por un worker
+   * viejo de forma permanente, viendo una versión anterior de la app.
+   *
+   * Se excluyen también las extensiones de archivos estáticos: además de
+   * evitar el mismo problema, ahorra una verificación de sesión por asset.
+   */
+  matcher: [
+    '/((?!_next/static|_next/image|favicon.ico|manifest.json|sw.js|workbox-.*|swe-worker-.*|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|txt|xml|webmanifest|js|map)$).*)',
+  ],
 }

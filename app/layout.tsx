@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import ConnectionStatus from "@/components/ConnectionStatus";
+import ServiceWorkerRefresh from "@/components/ServiceWorkerRefresh";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -63,6 +64,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <ConnectionStatus />
+        <ServiceWorkerRefresh />
         {children}
       </body>
     </html>

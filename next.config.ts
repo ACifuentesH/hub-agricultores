@@ -34,6 +34,8 @@ const nextConfig: NextConfig = {
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: blob: https:",
               "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.weatherlink.com",
+              // Preview de documentos: iframe apuntando a una signed URL de Supabase Storage
+              "frame-src 'self' https://*.supabase.co",
               "font-src 'self'",
               "frame-ancestors 'none'",
               // Service workers necesitan poder registrarse

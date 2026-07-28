@@ -60,6 +60,30 @@ export function SkeletonPanel({ className = 'h-40' }: { className?: string }) {
   )
 }
 
+/** Tarjeta de documento: icono + 2 líneas de texto + fila de acciones. */
+export function SkeletonCard() {
+  return (
+    <div className="flex flex-col gap-3 rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-900">
+      <div className="flex items-start gap-2.5">
+        <SkeletonBox className="h-9 w-9 shrink-0 rounded-lg" />
+        <div className="min-w-0 flex-1 space-y-2">
+          <SkeletonBox className="h-3.5 w-3/4" />
+          <SkeletonBox className="h-4 w-20 rounded-full" />
+        </div>
+      </div>
+      <div className="flex items-center justify-between">
+        <SkeletonBox className="h-2.5 w-24" />
+        <SkeletonBox className="h-2.5 w-12" />
+      </div>
+      <div className="flex items-center gap-1.5 border-t border-gray-100 pt-3 dark:border-gray-800">
+        <SkeletonBox className="h-6 w-14 rounded-md" />
+        <SkeletonBox className="h-6 w-20 rounded-md" />
+        <SkeletonBox className="h-6 w-6 rounded-md" />
+      </div>
+    </div>
+  )
+}
+
 /** Cabecera de página: subtítulo + control a la derecha. */
 export function SkeletonEncabezado() {
   return (

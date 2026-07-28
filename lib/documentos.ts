@@ -47,3 +47,11 @@ export function resolveCategoria(raw?: string | null): CategoriaId {
 export function labelCategoria(id: string): string {
   return CATEGORIAS.find(c => c.id === id)?.label ?? id
 }
+
+/**
+ * Tipos y tamaño aceptados por el bucket `analisis-suelo`. Compartido entre el
+ * filtro del uploader (cliente) y la validación de la ruta de upload
+ * (servidor) para que ambos lados nunca se desincronicen.
+ */
+export const ACEPTADOS_MIME = ['application/pdf', 'image/png', 'image/jpeg', 'image/webp'] as const
+export const MAX_BYTES = 20 * 1024 * 1024 // 20MB, igual al límite del bucket

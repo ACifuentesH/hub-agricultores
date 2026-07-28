@@ -5,7 +5,7 @@ import { resolveAgricultorScope, listAgricultores } from '@/lib/access'
 import MasterAgricultorSelector from '@/components/MasterAgricultorSelector'
 import MasterEmptyState from '@/components/MasterEmptyState'
 import DocumentosSection from '@/components/DocumentosSection'
-import AnalisisSueloUploader from '@/components/AnalisisSueloUploader'
+import DocumentoUploader from '@/components/DocumentoUploader'
 import { resolveCiclo } from '@/lib/ciclo'
 import { CATEGORIAS } from '@/lib/documentos'
 import { FlaskConical, Map, Briefcase, ScrollText } from 'lucide-react'
@@ -78,7 +78,7 @@ export default async function DocumentacionPage({
         )}
       </div>
 
-      {scope.isMaster && <AnalisisSueloUploader agricultores={agricultoresParaMaster} />}
+      {scope.isMaster && <DocumentoUploader agricultores={agricultoresParaMaster} />}
 
       <div className="space-y-8">
         {CATEGORIAS.map(c => (

@@ -4,7 +4,7 @@ import { useState, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
 import { Upload, Loader2, Check, X, FileText, AlertCircle } from 'lucide-react'
-import { CATEGORIAS, CATEGORIA_DEFAULT, type CategoriaId } from '@/lib/documentos'
+import { CATEGORIAS, CATEGORIA_DEFAULT, ACEPTADOS_MIME, MAX_BYTES, type CategoriaId } from '@/lib/documentos'
 
 interface Agricultor {
   AgricultorKey: string
@@ -37,13 +37,14 @@ const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
 /**
- * Drag & drop multi-file uploader para PDFs de análisis de suelo (rol master).
+ * Drag & drop multi-file uploader para documentos del módulo (rol master).
  * Por cada archivo dropeado:
  *   1. Llama RPC `match_archivo_a_agricultor` para sugerir agricultor
  *   2. Permite cambiar manualmente el agricultor + ciclo si la sugerencia es baja
- *   3. Sube en paralelo y crea registro en lote_analisis_suelo
+ *   3. Sube vía `POST /api/documentos/upload` (service_role en el servidor;
+ *      esta pantalla ya no escribe Storage/tabla directo desde el browser)
  */
-export default function AnalisisSueloUploader({ agricultores }: { agricultores: Agricultor[] }) {
+export default function DocumentoUploader({ agricultores }: { agricultores: Agricultor[] }) {
   const router = useRouter()
   const [pending, setPending] = useState<PendingFile[]>([])
   const [dragOver, setDragOver] = useState(false)
@@ -74,10 +75,10 @@ export default function AnalisisSueloUploader({ agricultores }: { agricultores: 
   }, [])
 
   const onFiles = useCallback(async (files: FileList | File[]) => {
-    // PDF para análisis/convenios; imágenes para mapas escaneados o fotos de plano
-    const ACEPTADOS = /\.(pdf|png|jpe?g|webp)$/i
+    // Mismos tipos y tamaño que valida el servidor (lib/documentos.ts), para
+    // que el filtro del cliente nunca se desincronice del contrato real.
     const arr = Array.from(files).filter(
-      f => f.type === 'application/pdf' || f.type.startsWith('image/') || ACEPTADOS.test(f.name)
+      f => ACEPTADOS_MIME.includes(f.type as (typeof ACEPTADOS_MIME)[number]) && f.size <= MAX_BYTES
     )
     if (arr.length === 0) return
 
@@ -129,49 +130,27 @@ export default function AnalisisSueloUploader({ agricultores }: { agricultores: 
     }
     updateRow(p.id, { status: 'uploading' })
 
-    // Path: <AgricultorKey>/<ciclo>/<categoria>/<timestamp>_<safeFilename>
-    // Las rutas antiguas (sin categoría) siguen siendo válidas: se resuelven
-    // por storage_path guardado en la fila, no por convención.
-    const safe = p.file.name.replace(/[^a-zA-Z0-9._-]/g, '_').slice(-100)
-    const path = `${p.finalKey}/${p.ciclo}/${p.categoria}/${Date.now()}_${safe}`
+    // La escritura (Storage + tabla) vive en el servidor con service_role:
+    // la tabla y el bucket son solo-lectura para master en RLS. Ver
+    // app/api/documentos/upload/route.ts para el contrato completo.
+    const fd = new FormData()
+    fd.set('file', p.file)
+    fd.set('agricultor_key', p.finalKey)
+    fd.set('ciclo', p.ciclo)
+    fd.set('categoria', p.categoria)
+    fd.set('lote_id', p.loteId)
 
-    const { error: upErr } = await supabase.storage
-      .from('analisis-suelo')
-      .upload(path, p.file, {
-        cacheControl: '3600',
-        upsert: false,
-        // Los mapas suelen ser imágenes, no PDF: respetar el tipo real
-        contentType: p.file.type || 'application/octet-stream',
-      })
-
-    if (upErr) {
-      updateRow(p.id, { status: 'error', errorMsg: upErr.message })
-      return
+    try {
+      const res = await fetch('/api/documentos/upload', { method: 'POST', body: fd })
+      const json = await res.json() as { ok: boolean; id?: string; error?: string }
+      if (!res.ok || !json.ok) {
+        updateRow(p.id, { status: 'error', errorMsg: json.error ?? `Error ${res.status}` })
+        return
+      }
+      updateRow(p.id, { status: 'done' })
+    } catch (e) {
+      updateRow(p.id, { status: 'error', errorMsg: e instanceof Error ? e.message : 'Error de red' })
     }
-
-    // Cada PDF puede cubrir toda la finca (lote_id null) o un lote específico
-    // si el master lo asignó en el selector. Todos coexisten como vigentes.
-    const { error: insErr } = await supabase
-      .from('lote_analisis_suelo')
-      .insert({
-        agricultor_key: p.finalKey,
-        ciclo: p.ciclo,
-        categoria: p.categoria,
-        lote_id: p.loteId || null,
-        storage_path: path,
-        nombre_archivo: p.file.name,
-        tamano_bytes: p.file.size,
-        es_vigente: true,
-      })
-
-    if (insErr) {
-      // rollback: borrar el archivo subido
-      await supabase.storage.from('analisis-suelo').remove([path])
-      updateRow(p.id, { status: 'error', errorMsg: insErr.message })
-      return
-    }
-
-    updateRow(p.id, { status: 'done' })
   }
 
   async function uploadAll() {
@@ -211,7 +190,7 @@ export default function AnalisisSueloUploader({ agricultores }: { agricultores: 
         <input
           ref={inputRef}
           type="file"
-          accept="application/pdf,image/*"
+          accept={ACEPTADOS_MIME.join(',')}
           multiple
           className="hidden"
           onChange={(e) => e.target.files && onFiles(e.target.files)}

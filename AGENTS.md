@@ -39,6 +39,38 @@ secas es la empresa — no confundir ni renombrar.
 - El clima es el único dato que la app captura por sí misma (WeatherLink, cron
   horario). Ver [`docs/OPERACION_PIPELINE_CLIMA.md`](docs/OPERACION_PIPELINE_CLIMA.md).
 
+## ⚠️ Nunca cruces `saturno.*` en una vista que consuma la app
+
+El esquema `saturno` está **cerrado a los usuarios finales** (RLS sin políticas y
+sin `USAGE` para `authenticated`). Las vistas de `public` llevan
+`security_invoker = true`, así que corren con los permisos de quien consulta:
+**una vista que lea de `saturno.*` devuelve CERO filas a cualquier agricultor**,
+aunque los datos existan.
+
+Esto ya ocurrió: `v_lote_detalle` cruzaba `saturno.seguimiento` y
+`saturno.mecanizacion_registro`, y el dashboard mostraba "0 lotes" a todos los
+agricultores. Pasó desapercibido porque las pruebas se hicieron con el MCP, que
+usa `service_role` y sí tiene acceso.
+
+**Regla:** los datos derivados del espejo se materializan en tablas de `public`
+con RLS propia (ver `lote_derivado`), rellenadas por
+`saturno_refrescar_derivados()` dentro de la promoción.
+
+**Al probar una vista, hazlo con permisos de agricultor, no de servicio:**
+
+```sql
+do $$ declare v_uid uuid; begin
+  select user_id into v_uid from user_profiles where agricultor_key='<KEY>' limit 1;
+  perform set_config('request.jwt.claims',
+    json_build_object('sub', v_uid::text, 'role','authenticated')::text, true);
+  perform set_config('role','authenticated', true);
+end $$;
+select count(*) from public.v_lote_detalle;  -- debe devolver los lotes de ese agricultor
+```
+
+(Ojo: tras adoptar una identidad no puedes leer el perfil de otro usuario —
+prueba cada agricultor en su propia transacción.)
+
 ## Vistas que alimentan las pantallas
 
 No consultes `public.lote` directamente para el dashboard: usa estas vistas, que
@@ -100,10 +132,9 @@ ciclo (es lo que hace `AvanceCultivoChart`).
   No se le conecta un modelo: no hay API key y no debe inventar cifras.
   También orienta sobre los módulos (`MODULOS` en `lib/agro-glosario.ts`): al
   agregar una pantalla, añádela ahí o el asistente no sabrá que existe.
-- **Soporte, dos canales complementarios**: WhatsApp (abajo a la izquierda) para
-  lo urgente, y tickets (encima) para lo que se responde en diferido y debe
-  quedar registrado. Si agregas otro botón flotante, revisa que no colisione:
-  ya hay tres (asistente a la derecha; WhatsApp y tickets a la izquierda).
+- **Soporte: solo tickets.** El botón de WhatsApp se eliminó por decisión del
+  usuario (29-jul-2026); no reintroducirlo. Quedan dos botones flotantes:
+  asistente (derecha) y tickets (izquierda).
 - Paleta oscura: la escala `gray` de Tailwind está redefinida bajo `.dark` en
   `globals.css` para dar un carbón cálido. Cambiar esas variables afecta toda la
   app en modo oscuro.

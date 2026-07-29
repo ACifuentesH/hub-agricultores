@@ -2,7 +2,6 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import Sidebar from '@/components/Sidebar'
 import AsistenteWidget from '@/components/AsistenteWidget'
-import SoporteWhatsAppWidget from '@/components/SoporteWhatsAppWidget'
 import TicketsWidget from '@/components/TicketsWidget'
 import UserMenu from '@/components/UserMenu'
 import ModuloTitulo from '@/components/ModuloTitulo'
@@ -53,11 +52,6 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         isMaster={(profile?.role ?? 'farmer') === 'master'}
       />
       <TicketsWidget />
-      <SoporteWhatsAppWidget
-        agricultorNombre={displayName}
-        agricultorKey={profile?.agricultor_key ?? 'sin_key'}
-        role={(profile?.role ?? 'farmer') as 'master' | 'farmer'}
-      />
     </div>
   )
 }

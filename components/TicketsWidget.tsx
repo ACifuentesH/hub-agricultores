@@ -87,7 +87,7 @@ export default function TicketsWidget() {
       <button
         onClick={() => setAbierto(true)}
         aria-label="Dejar una pregunta al equipo"
-        className="fixed bottom-24 left-6 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-violet-700 text-white shadow-xl transition-all hover:scale-105 hover:bg-violet-800"
+        className="fixed bottom-6 left-6 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-violet-700 text-white shadow-xl transition-all hover:scale-105 hover:bg-violet-800"
       >
         <LifeBuoy size={22} />
         {sinLeer > 0 && (
@@ -100,7 +100,7 @@ export default function TicketsWidget() {
   }
 
   return (
-    <div className="fixed bottom-24 left-6 z-40 flex h-[min(560px,calc(100vh-8rem))] w-[min(380px,calc(100vw-2rem))] flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl dark:border-gray-800 dark:bg-gray-900">
+    <div className="fixed bottom-6 left-6 z-40 flex h-[min(560px,calc(100vh-3rem))] w-[min(380px,calc(100vw-2rem))] flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl dark:border-gray-800 dark:bg-gray-900">
       <div className="flex items-center justify-between bg-gradient-to-r from-violet-700 to-violet-800 px-4 py-3 text-white">
         <div className="flex items-center gap-2.5">
           <div className="rounded-lg bg-white/15 p-1.5"><LifeBuoy size={16} /></div>

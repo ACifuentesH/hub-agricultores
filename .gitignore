@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# reportes generados localmente por scripts de import masivo (contienen
+# nombres/keys reales de agricultores, no van al repo)
+scripts/bulk-import-report.csv
+scripts/bulk-import-result.csv

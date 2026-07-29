@@ -14,7 +14,7 @@ interface Props {
  * Botón "Descargar" que pide al cliente una signed URL de Supabase Storage
  * (válida 60 s) y dispara la descarga. Sin prefetch para no quemar URLs.
  */
-export default function AnalisisSueloDownloadBtn({ storagePath, filename, size = 'md' }: Props) {
+export default function DocumentoDownloadBtn({ storagePath, filename, size = 'md' }: Props) {
   const [loading, setLoading] = useState(false)
 
   async function handleDownload() {

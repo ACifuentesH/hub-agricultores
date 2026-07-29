@@ -44,6 +44,7 @@ export default function TicketsWidget() {
   const cargar = useCallback(async () => {
     try {
       const r = await fetch('/api/tickets')
+      if (r.status === 401) { setError('Tu sesión expiró. Vuelve a iniciar sesión.'); return }
       const j = await r.json()
       if (j.ok) setTickets(j.tickets)
     } catch { /* sin red: la lista queda vacía, el formulario sigue usable */ }
@@ -61,6 +62,10 @@ export default function TicketsWidget() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ asunto, mensaje, categoria }),
       })
+      if (r.status === 401) {
+        setError('Tu sesión expiró. Vuelve a iniciar sesión y tu pregunta se podrá enviar.')
+        return
+      }
       const j = await r.json()
       if (!j.ok) { setError(j.error ?? 'No se pudo enviar'); return }
       setAsunto(''); setMensaje(''); setCategoria('general')

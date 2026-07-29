@@ -26,8 +26,17 @@ export async function middleware(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
   const { pathname } = request.nextUrl
 
-  // Redirect unauthenticated users to /login
   if (!user && !PUBLIC_ROUTES.includes(pathname)) {
+    // Las rutas de API responden JSON, no una redirección a HTML: si la sesión
+    // caduca mientras el usuario tiene la app abierta, el fetch del cliente
+    // recibiría la página de login y fallaría al interpretarla, dando un error
+    // incomprensible. Con un 401 el widget puede avisar que hay que reingresar.
+    if (pathname.startsWith('/api/')) {
+      return NextResponse.json(
+        { ok: false, error: 'Tu sesión expiró. Vuelve a iniciar sesión.' },
+        { status: 401 },
+      )
+    }
     return NextResponse.redirect(new URL('/login', request.url))
   }
 

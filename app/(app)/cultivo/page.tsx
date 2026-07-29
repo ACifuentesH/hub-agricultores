@@ -17,6 +17,7 @@ import { freshnessLevel, freshnessTextClass, formatDateShort } from '@/lib/fresh
 import { resolveCiclo } from '@/lib/ciclo'
 import { FASE_CORTA } from '@/lib/agro-glosario'
 import FechaSiembraEditor from '@/components/FechaSiembraEditor'
+import DescargarPLBtn from '@/components/DescargarPLBtn'
 
 // Datos vivos: nunca cachear (lotes/clima/condiciones cambian frecuentemente)
 export const dynamic = 'force-dynamic'
@@ -148,6 +149,22 @@ export default async function CultivoPage({
         </div>
       </div>
 
+      {/* Estado de resultados del ciclo */}
+      <div className="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div className="min-w-0">
+            <h2 className="text-base font-semibold text-gray-800 dark:text-gray-100">
+              Estado de resultados (P&amp;L)
+            </h2>
+            <p className="mt-0.5 text-xs text-gray-500 dark:text-gray-400">
+              Costos por unidad de producción: semillas, agroquímicos, fertilizantes,
+              mecanización, servicio técnico y financiamiento. En Excel, con resumen y detalle.
+            </p>
+          </div>
+          <DescargarPLBtn agricultorKey={scope.isMaster ? scope.agricultorKey : null} />
+        </div>
+      </div>
+
       {/* Índice navegable de lotes (chips clicables que saltan al ancla) */}
       {(lotes?.length ?? 0) > 0 && (
         <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-4">
@@ -226,10 +243,14 @@ export default async function CultivoPage({
                   </div>
                 </StatCard>
 
-                <StatCard title="Estado riego">
-                  <div className="flex items-center gap-4">
-                    <IrrigationRing percent={irrigation} label="Óptimo" />
-                    <div className="space-y-1.5 flex-1">
+                <StatCard title="Estado de riego">
+                  {/* El anillo medía 96 px y las etiquetas no partían línea:
+                      en una columna estrecha "Población establecida" se salía
+                      de la tarjeta. Anillo más chico, etiquetas que envuelven
+                      y min-w-0 para que el flex pueda encogerlas. */}
+                  <div className="flex items-center gap-3">
+                    <IrrigationRing percent={irrigation} label="Óptimo" size={76} />
+                    <div className="flex min-w-0 flex-1 flex-wrap gap-1.5">
                       <Chip>Población establecida</Chip>
                       <Chip>Plantabilidad</Chip>
                     </div>
@@ -425,8 +446,10 @@ function StatCard({ title, children }: { title: string; children: React.ReactNod
 }
 
 function Chip({ children }: { children: React.ReactNode }) {
+  // Sin whitespace-nowrap: en tarjetas estrechas la etiqueta debe poder
+  // partirse en dos líneas antes que desbordar el borde.
   return (
-    <span className="inline-flex items-center text-[11px] px-2.5 py-1 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-full whitespace-nowrap">
+    <span className="inline-flex items-center rounded-full border border-gray-200 bg-gray-50 px-2.5 py-1 text-[11px] leading-snug text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300">
       {children}
     </span>
   )

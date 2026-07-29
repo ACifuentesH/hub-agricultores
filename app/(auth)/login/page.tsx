@@ -49,7 +49,7 @@ export default function LoginPage() {
           <div className="w-9 h-9 rounded-lg bg-white/15 backdrop-blur flex items-center justify-center border border-white/20">
             <Sprout size={18} />
           </div>
-          <span className="font-semibold tracking-tight">Agri Platform</span>
+          <span className="font-semibold tracking-tight">Programa Saturno</span>
         </div>
 
         <div className="relative z-10 max-w-lg space-y-6">
@@ -94,8 +94,8 @@ export default function LoginPage() {
               <Sprout size={18} />
             </div>
             <div>
-              <p className="font-semibold text-gray-900 dark:text-gray-100 leading-none">Agri Platform</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Programa Saturno</p>
+              <p className="font-semibold text-gray-900 dark:text-gray-100 leading-none">Programa Saturno</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Agricultura por contrato</p>
             </div>
           </div>
 

@@ -104,16 +104,29 @@ export default async function DashboardPage({
 
   // ── Novedades para la campana ──
   const novedades: Novedad[] = []
+  // Cada novedad lleva a donde se resuelve: enterarse de algo sin poder ir a
+  // verlo obligaba a buscarlo a mano.
+  const qsAgricultor = scope.isMaster && scope.agricultorKey
+    ? `&agricultor=${encodeURIComponent(scope.agricultorKey)}`
+    : ''
+
   for (const a of computeAlerts(forecast.rows).slice(0, 5)) {
-    novedades.push({ id: `clima-${a.id}`, tipo: 'clima', titulo: a.title, detalle: a.detail, fecha: a.fecha })
+    novedades.push({
+      id: `clima-${a.id}`, tipo: 'clima', titulo: a.title, detalle: a.detail, fecha: a.fecha,
+      enlace: `/clima?x=1${qsAgricultor}`,
+      enlaceTexto: 'Ver pronóstico',
+    })
   }
   for (const d of docsRecientes ?? []) {
+    // Abre Documentación en la pestaña de la categoría del documento
     novedades.push({
       id: `doc-${d.id}`,
       tipo: 'documento',
       titulo: `Nuevo documento · ${labelCategoria(d.categoria as string)}`,
       detalle: d.nombre_archivo as string,
       fecha: d.uploaded_at as string,
+      enlace: `/documentacion?categoria=${encodeURIComponent(String(d.categoria))}${qsAgricultor}`,
+      enlaceTexto: 'Abrir documento',
     })
   }
   for (const ev of eventos ?? []) {
@@ -126,6 +139,8 @@ export default async function DashboardPage({
         ? `Cambió de ${ev.valor_anterior} a ${ev.valor_nuevo ?? 'sin fecha'}.`
         : `Se registró la siembra el ${ev.valor_nuevo ?? '—'}.`,
       fecha: ev.created_at as string,
+      enlace: `/cultivo?x=1${qsAgricultor}`,
+      enlaceTexto: 'Ver el lote',
     })
   }
   if (tempKpi.isStale && tempKpi.level !== 'missing' && conditions.fecha) {
@@ -135,6 +150,8 @@ export default async function DashboardPage({
       titulo: 'Lectura de clima desactualizada',
       detalle: `La última lectura de tu estación es del ${formatDateShort(conditions.fecha)}.`,
       fecha: conditions.fecha,
+      enlace: `/clima?x=1${qsAgricultor}`,
+      enlaceTexto: 'Revisar la estación',
     })
   }
   novedades.sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime())

@@ -8,7 +8,6 @@ import {
   Users, LogOut, Leaf,
 } from 'lucide-react'
 import ThemeToggle from './ThemeToggle'
-import CicloSelector from './CicloSelector'
 
 const farmerLinks = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -51,16 +50,13 @@ export default function Sidebar({ role }: { role: string }) {
           </div>
           <div className="min-w-0">
             <h2 className="truncate text-[15px] font-semibold leading-tight text-white">
-              Agri Platform
+              Programa Saturno
             </h2>
-            <p className="truncate text-[11px] text-emerald-200/70">Programa Saturno</p>
+            <p className="truncate text-[11px] text-emerald-200/70">Agricultura por contrato</p>
           </div>
         </div>
         <ThemeToggle />
       </div>
-
-      {/* Filtro de ciclo agrícola */}
-      <CicloSelector />
 
       {/* Navegación */}
       <nav className="flex-1 px-3 pt-1">

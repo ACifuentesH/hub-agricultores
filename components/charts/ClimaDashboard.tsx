@@ -63,9 +63,18 @@ export default function ClimaDashboard({ lecturas }: { lecturas: Lectura[] }) {
           <LineChart data={daily}>
             <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
             <XAxis dataKey="fecha" tick={{ fontSize: 11 }} />
-            <YAxis tick={{ fontSize: 11 }} />
+            {/* Escala fija 10-40 °C: con dominio automático, una variación de
+                2° llenaba el alto del gráfico y parecía un evento extremo.
+                Fija, cada curva se lee contra el mismo rango real del llano. */}
+            <YAxis
+              tick={{ fontSize: 11 }}
+              domain={[10, 40]}
+              ticks={[10, 15, 20, 25, 30, 35, 40]}
+              allowDataOverflow={false}
+              unit="°"
+            />
             <Tooltip />
-            <Line type="monotone" dataKey="temp_avg" stroke="#166534" strokeWidth={2} dot={false} name="Temp (°C)" />
+            <Line type="monotone" dataKey="temp_avg" stroke="#166534" strokeWidth={2} dot={false} name="Temperatura (°C)" />
           </LineChart>
         </ResponsiveContainer>
       </div>

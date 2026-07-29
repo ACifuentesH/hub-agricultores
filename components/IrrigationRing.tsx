@@ -6,7 +6,7 @@ interface Props {
   size?: number
 }
 
-export default function IrrigationRing({ percent, label = 'Optimal', size = 96 }: Props) {
+export default function IrrigationRing({ percent, label = 'Óptimo', size = 96 }: Props) {
   const r = 38
   const c = 2 * Math.PI * r
   const clamped = Math.max(0, Math.min(100, percent))

@@ -67,12 +67,15 @@ export default function CultivoTimeline({ fechaSiembra, diasCiclo = 120 }: Props
       {/* Panel label */}
       <div className="flex items-center justify-between mb-4">
         <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">
-          Maize Growth Timeline
+          Ciclo del maíz
         </p>
       </div>
 
-      {/* Timeline body */}
-      <div className="relative pt-24 pb-12">
+      {/* Cuerpo de la línea de tiempo.
+          El padding superior debe superar la suma de: marcador "Hoy" (~34 px)
+          + franja de plantas. Antes era pt-24 (96 px) mientras las plantas
+          ocupaban de 48 px a 128 px, así que invadían la barra de meses. */}
+      <div className="relative pt-36 pb-12">
         {/* Hoy marker (glowing pill + arrow) */}
         <div
           className="absolute top-0 -translate-x-1/2 flex flex-col items-center z-30"
@@ -89,8 +92,10 @@ export default function CultivoTimeline({ fechaSiembra, diasCiclo = 120 }: Props
           </svg>
         </div>
 
-        {/* Corn stages floating above the bar */}
-        <div className="absolute inset-x-0 top-12 h-20 pointer-events-none">
+        {/* Plantas por etapa, apoyadas justo encima de la barra de meses.
+            `bottom-0` de este contenedor coincide con el borde superior de la
+            barra, así que las plantas crecen hacia arriba sin invadirla. */}
+        <div className="absolute inset-x-0 top-12 bottom-0 pointer-events-none">
           {stages.map(({ stage, leftPct }, i) => {
             const isPast = stage <= currentStage
             const isCurrent = stage === currentStage

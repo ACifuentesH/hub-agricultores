@@ -39,6 +39,26 @@ secas es la empresa — no confundir ni renombrar.
 - El clima es el único dato que la app captura por sí misma (WeatherLink, cron
   horario). Ver [`docs/OPERACION_PIPELINE_CLIMA.md`](docs/OPERACION_PIPELINE_CLIMA.md).
 
+## Vistas que alimentan las pantallas
+
+No consultes `public.lote` directamente para el dashboard: usa estas vistas, que
+ya resuelven derivaciones que no son obvias.
+
+- **`v_lote_detalle`** — una fila por lote con ha plan / encaladas / sembradas /
+  perdidas / cosechadas, estado, fase, última visita técnica y avance del ciclo.
+  - **"Ha encaladas" NO existe como columna.** Se deriva sumando la mecanización
+    de tipo `Pase de encaladora` aplicada al lote.
+  - **La fase viene MEDIDA EN CAMPO** (`saturno.seguimiento` → V1..V12, R1..R6),
+    no calculada por días transcurridos. Es más fiable; prefiérela.
+  - `avance_pct` es null para lotes sin sembrar, a propósito: no deben arrastrar
+    el promedio hacia abajo.
+- **`v_agricultor_resumen`** — distribución de estados, fase dominante y avance
+  medio por agricultor y ciclo.
+
+**Ojo con la cosecha**: en el ciclo activo puede no haber ningún lote cosechado.
+Antes de graficar cosecha, comprueba que hay datos; si no, grafica avance de
+ciclo (es lo que hace `AvanceCultivoChart`).
+
 ## Base de datos
 
 - **Escrituras solo por `service_role`.** Tras el endurecimiento, las tablas son
@@ -78,6 +98,12 @@ secas es la empresa — no confundir ni renombrar.
 - El asistente (`lib/asistente.ts`) es **determinista, sin IA externa**: lee
   datos reales y responde con textos del glosario. Si no entiende, lo admite.
   No se le conecta un modelo: no hay API key y no debe inventar cifras.
+  También orienta sobre los módulos (`MODULOS` en `lib/agro-glosario.ts`): al
+  agregar una pantalla, añádela ahí o el asistente no sabrá que existe.
+- **Soporte, dos canales complementarios**: WhatsApp (abajo a la izquierda) para
+  lo urgente, y tickets (encima) para lo que se responde en diferido y debe
+  quedar registrado. Si agregas otro botón flotante, revisa que no colisione:
+  ya hay tres (asistente a la derecha; WhatsApp y tickets a la izquierda).
 - Paleta oscura: la escala `gray` de Tailwind está redefinida bajo `.dark` en
   `globals.css` para dar un carbón cálido. Cambiar esas variables afecta toda la
   app en modo oscuro.

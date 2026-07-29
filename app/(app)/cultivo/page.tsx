@@ -5,13 +5,12 @@ import CultivoTimeline from '@/components/CultivoTimeline'
 import { getCurrentStageInfo } from '@/lib/corn-stages'
 import { getCurrentConditions, getClimateSeries } from '@/lib/clima'
 import { resolveAgricultorScope, listAgricultores } from '@/lib/access'
-import { getPredictorContext } from '@/lib/predictor'
+import UltimaVisitaCard from '@/components/UltimaVisitaCard'
 import MasterAgricultorSelector from '@/components/MasterAgricultorSelector'
 import MasterEmptyState from '@/components/MasterEmptyState'
 import IrrigationRing from '@/components/IrrigationRing'
 import ClimateSparkline from '@/components/ClimateSparkline'
 import ReportButtons from '@/components/ReportButtons'
-import PredictorSiembraPanel from '@/components/PredictorSiembraPanel'
 import DataSourceBadge from '@/components/DataSourceBadge'
 import { CloudSun, CloudRain, Sun, Cloud, Sprout, AlertCircle, CalendarOff, FlaskConical } from 'lucide-react'
 import { freshnessLevel, freshnessTextClass, formatDateShort } from '@/lib/freshness'
@@ -51,7 +50,7 @@ export default async function CultivoPage({
 
   const agricultorKey = scope.agricultorKey ?? ''
   const supabase = await createClient()
-  const [{ data: lotes }, conditions, series, agricultores, predictorCtx] = await Promise.all([
+  const [{ data: lotes }, conditions, series, agricultores, { data: visitas }] = await Promise.all([
     supabase
       .from('lote')
       .select('lote_id, nombre_lote, codigo_lote, ha_sembradas, fecha_inicio_siembra, fecha_inicio_siembra_real, ha_cosechadas, rendimiento_real, ha_perdidas, unidad_produccion_v, compactacion, segmentacion_particulas, drenajes_internos, condicion_drenaje')
@@ -61,7 +60,12 @@ export default async function CultivoPage({
     getCurrentConditions(agricultorKey),
     getClimateSeries(agricultorKey, 14),
     scope.isMaster ? listAgricultores() : Promise.resolve([]),
-    getPredictorContext(agricultorKey),
+    // Última visita técnica por lote — mismo origen que la fase del cultivo
+    supabase
+      .from('v_lote_detalle')
+      .select('lote_id, fecha_visita, tecnico, fase, observaciones, acuerdos, estado_experto')
+      .eq('agricultor_key', agricultorKey)
+      .eq('ciclo', ciclo),
   ])
 
   // Condición de suelo e insumos aplicados por lote — movidos aquí desde el
@@ -87,6 +91,12 @@ export default async function CultivoPage({
     acc[k]!.push(ins)
     return acc
   }, {})
+
+  // Índice de visitas por lote, para no recorrer el array en cada tarjeta
+  const visitaPorLote = new Map(
+    (visitas ?? []).map(v => [v.lote_id as string, v as unknown as import('@/components/UltimaVisitaCard').Visita]),
+  )
+  const visitaDe = (loteId: string) => visitaPorLote.get(loteId)
 
   const WeatherIcon = pickWeatherIcon(conditions.descripcion)
   const tempDisplay = conditions.tempC != null ? `${conditions.tempC.toFixed(1)}°C` : '—'
@@ -137,9 +147,6 @@ export default async function CultivoPage({
           </div>
         </div>
       </div>
-
-      {/* Predictor de siembra (on-demand) */}
-      <PredictorSiembraPanel context={predictorCtx} />
 
       {/* Índice navegable de lotes (chips clicables que saltan al ancla) */}
       {(lotes?.length ?? 0) > 0 && (
@@ -208,8 +215,8 @@ export default async function CultivoPage({
               {/* Main timeline panel */}
               <CultivoTimeline fechaSiembra={fechaReal} diasCiclo={DIAS_CICLO} />
 
-              {/* 4-card stat row */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* Fila de indicadores del lote (incluye la última visita técnica) */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
                 <StatCard title="Días desde siembra">
                   <div className="flex items-baseline gap-2">
                     <span className="text-5xl font-bold text-gray-900 dark:text-gray-100 tabular-nums">
@@ -244,11 +251,17 @@ export default async function CultivoPage({
 
                 <StatCard title="Resumen de fase">
                   <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
-                    {stageInfo
-                      ? `Etapa ${stageInfo.meta.label} — ${stageInfo.meta.phase}. ${getPhaseDescription(stageInfo.stage)}`
-                      : 'Lote sin fecha de siembra real registrada.'}
+                    {visitaDe(l.lote_id)?.fase
+                      ? `Fase ${visitaDe(l.lote_id)!.fase} medida en campo. ${
+                          stageInfo ? getPhaseDescription(stageInfo.stage) : ''
+                        }`
+                      : stageInfo
+                        ? `Etapa ${stageInfo.meta.label} — ${stageInfo.meta.phase}. ${getPhaseDescription(stageInfo.stage)}`
+                        : 'Lote sin fecha de siembra real registrada.'}
                   </p>
                 </StatCard>
+
+                <UltimaVisitaCard v={visitaDe(l.lote_id) ?? null} />
               </div>
 
               {/* Reports row */}

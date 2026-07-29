@@ -67,7 +67,7 @@ export default function SoporteWhatsAppWidget({ agricultorNombre, agricultorKey,
         <button
           onClick={() => setOpen(true)}
           aria-label="Abrir soporte por WhatsApp"
-          className="fixed bottom-24 left-6 z-40 p-4 rounded-full text-white shadow-xl transition-all hover:scale-105"
+          className="fixed bottom-6 left-6 z-40 p-4 rounded-full text-white shadow-xl transition-all hover:scale-105"
           style={{
             background: '#25D366',
             boxShadow: '0 0 30px rgba(37, 211, 102, 0.45)',
@@ -84,7 +84,7 @@ export default function SoporteWhatsAppWidget({ agricultorNombre, agricultorKey,
       {/* Panel */}
       {open && (
         <div
-          className="fixed bottom-24 left-6 z-40 w-[min(380px,calc(100vw-2rem))] h-[min(560px,calc(100vh-8rem))] bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-2xl flex flex-col overflow-hidden"
+          className="fixed bottom-6 left-6 z-40 w-[min(380px,calc(100vw-2rem))] h-[min(560px,calc(100vh-3rem))] bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-2xl flex flex-col overflow-hidden"
         >
           {/* Header */}
           <div

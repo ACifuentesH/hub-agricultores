@@ -16,7 +16,10 @@
 import { createClient } from './supabase/server'
 import { getCurrentStageInfo, STAGE_META, type Stage } from './corn-stages'
 import { getCurrentConditions, getForecast, computeAlerts } from './clima'
-import { FASE_EXPLICACION, ETAPA_ALIAS, DOC_EXPLICACION, FUENTE_EXPLICACION } from './agro-glosario'
+import {
+  FASE_EXPLICACION, ETAPA_ALIAS, DOC_EXPLICACION, FUENTE_EXPLICACION,
+  MODULOS, CANALES_AYUDA,
+} from './agro-glosario'
 import { CATEGORIAS, labelCategoria } from './documentos'
 import { formatDateShort, freshnessLevel } from './freshness'
 
@@ -59,6 +62,34 @@ export async function responder(
     return {
       intencion: 'sin_agricultor',
       texto: 'Primero selecciona un agricultor para que pueda consultar sus datos.',
+    }
+  }
+
+  // 0) Orientación sobre la app. Va PRIMERO porque "dónde veo X" es la duda más
+  //    común de quien tiene poca práctica con apps, y no debe caer en el fallback.
+  const pideOrientacion = incluyeAlguna(q, [
+    'que puedo hacer', 'que hay en', 'para que sirve', 'donde veo', 'donde esta',
+    'donde encuentro', 'como uso', 'como funciona la app', 'ayuda', 'no encuentro',
+    'que es esta app', 'guiame', 'modulos', 'menu', 'secciones',
+  ])
+  if (pideOrientacion) {
+    // ¿Pregunta por un módulo concreto?
+    const mod = MODULOS.find(m => incluyeAlguna(q, m.palabras))
+    if (mod && !incluyeAlguna(q, ['que puedo hacer', 'que es esta app', 'modulos', 'secciones'])) {
+      return {
+        intencion: 'orientacion_modulo',
+        texto:
+          `${mod.nombre} — ${mod.ruta}\n\n${mod.resumen}\n\nAhí encuentras:\n` +
+          mod.contiene.map(c => `• ${c}`).join('\n'),
+      }
+    }
+    return {
+      intencion: 'orientacion_general',
+      texto:
+        'La app tiene cuatro secciones, en el menú de la izquierda:\n\n' +
+        MODULOS.map(m => `• ${m.nombre}: ${m.resumen}`).join('\n\n') +
+        `\n\n${CANALES_AYUDA}\n\n` +
+        'Si quieres saber más de una sección, pregúntame por ella.',
     }
   }
 
@@ -110,12 +141,13 @@ export async function responder(
     intencion: 'fallback',
     texto:
       'No tengo una respuesta para eso todavía. Puedo ayudarte con:\n\n' +
+      '• Qué hay en cada sección de la app y dónde encontrarlo\n' +
       '• En qué etapa está tu cultivo y qué significa\n' +
       '• Cuántos lotes y hectáreas tienes en el ciclo\n' +
       '• Qué documentos hay cargados en tu perfil\n' +
       '• El clima de tu finca y de dónde sale ese dato\n' +
       '• Las alertas de la semana\n\n' +
-      'Para cualquier otra cosa, escríbele al equipo por el botón de WhatsApp.',
+      CANALES_AYUDA,
   }
 }
 

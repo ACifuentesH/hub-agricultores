@@ -11,6 +11,10 @@ import DataSourceBadge from '@/components/DataSourceBadge'
 import { resolveCiclo } from '@/lib/ciclo'
 import { labelCategoria } from '@/lib/documentos'
 import NotificacionesButton, { type Novedad } from '@/components/NotificacionesButton'
+import EstadoLotesCard from '@/components/EstadoLotesCard'
+import FaseActualCard from '@/components/FaseActualCard'
+import AvanceCultivoChart from '@/components/AvanceCultivoChart'
+import MisComunicaciones from '@/components/MisComunicaciones'
 
 // Datos vivos: nunca cachear
 export const dynamic = 'force-dynamic'
@@ -42,18 +46,34 @@ export default async function DashboardPage({
   const agricultorKey = scope.agricultorKey ?? ''
   const supabase = await createClient()
 
-  const [{ data: lotes }, conditions, agricultores, forecast, { data: docsRecientes }, { data: eventos }] = await Promise.all([
+  const [
+    { data: lotes },
+    { data: resumen },
+    conditions,
+    agricultores,
+    forecast,
+    { data: docsRecientes },
+    { data: eventos },
+  ] = await Promise.all([
+    // v_lote_detalle ya trae ha plan, encaladas, estado, fase y avance
     supabase
-      .from('lote')
-      .select('lote_id, nombre_lote, ha_sembradas, fecha_inicio_siembra_real, ha_perdidas, ha_cosechadas, edo_gral_cultivo_v')
-      .eq('AgricultorKey', agricultorKey)
-      .eq('ciclo', ciclo),
+      .from('v_lote_detalle')
+      .select('lote_id, nombre, ha_plan, ha_encaladas, inicio_siembra, ha_sembradas, ha_perdidas, ha_cosechadas, estado_lote, fase, avance_pct')
+      .eq('agricultor_key', agricultorKey)
+      .eq('ciclo', ciclo)
+      .order('nombre'),
+    supabase
+      .from('v_agricultor_resumen')
+      .select('*')
+      .eq('agricultor_key', agricultorKey)
+      .eq('ciclo', ciclo)
+      .maybeSingle(),
     getCurrentConditions(agricultorKey),
     scope.isMaster ? listAgricultores() : Promise.resolve([]),
     getForecast(agricultorKey, 7),
     supabase
       .from('lote_analisis_suelo')
-      .select('id, nombre_archivo, categoria, uploaded_at')
+      .select('id, nombre_archivo, categoria, uploaded_at, storage_path')
       .eq('agricultor_key', agricultorKey)
       .eq('ciclo', ciclo)
       .order('uploaded_at', { ascending: false })
@@ -67,52 +87,26 @@ export default async function DashboardPage({
       .limit(10),
   ])
 
-  const totalHa = lotes?.reduce((s, l) => s + parseFloat(l.ha_sembradas ?? '0'), 0) ?? 0
-  // Política: ha_perdidas null/vacío = 0 hectáreas perdidas (no fue reportado pero asumimos sin pérdidas).
-  // Marcamos como posible outlier los lotes sin reporte explícito.
-  const totalPerdidas = lotes?.reduce((s, l) => {
-    const v = l.ha_perdidas
-    if (v == null || v === '') return s
-    return s + parseFloat(v)
-  }, 0) ?? 0
-  const lotesSinReportePerdidas = lotes?.filter(l => l.ha_perdidas == null || l.ha_perdidas === '').length ?? 0
-  const lotesSinFechaReal = lotes?.filter(l => l.fecha_inicio_siembra_real == null || l.fecha_inicio_siembra_real === '').length ?? 0
+  const filas = lotes ?? []
+  const totalHa = filas.reduce((s, l) => s + (Number(l.ha_sembradas) || 0), 0)
+  const totalPerdidas = filas.reduce((s, l) => s + (Number(l.ha_perdidas) || 0), 0)
+  const lotesConSiembra = filas.filter(l => l.inicio_siembra != null).length
+
+  // Cosecha y pérdidas solo tienen sentido cuando el ciclo ya reportó cierre
+  const cicloTieneCierre = filas.some(
+    l => (Number(l.ha_cosechadas) || 0) > 0 || (Number(l.ha_perdidas) || 0) > 0,
+  )
 
   const tempKpi = valueWithFreshness(
     conditions.tempC != null ? `${conditions.tempC}°C` : null,
     conditions.fecha,
   )
 
-  // Lotes con fecha de siembra confirmada: la única señal real de avance que
-  // hoy tiene la base (edo_gral_cultivo_v está vacío en todo el ciclo 2026).
-  const lotesConSiembra = lotes?.filter(
-    l => l.fecha_inicio_siembra_real != null && l.fecha_inicio_siembra_real !== '',
-  ).length ?? 0
-
-  // Cosecha y pérdidas pertenecen a ciclos ya cerrados: en 2026 están vacías en
-  // los 335 lotes. Se detecta por dato, no por año fijo, para que el ciclo en
-  // curso deje de mostrar "0.0 ha perdidas · 335 sin reporte", que era ruido.
-  const cicloTieneCierre = (lotes ?? []).some(
-    l =>
-      (l.ha_perdidas != null && l.ha_perdidas !== '') ||
-      (l.ha_cosechadas != null && l.ha_cosechadas !== ''),
-  )
-
-  // ── Novedades para el centro de notificaciones ──
+  // ── Novedades para la campana ──
   const novedades: Novedad[] = []
-
-  // Alertas del pronóstico (lluvia fuerte, calor, frío, viento)
   for (const a of computeAlerts(forecast.rows).slice(0, 5)) {
-    novedades.push({
-      id: `clima-${a.id}`,
-      tipo: 'clima',
-      titulo: a.title,
-      detalle: a.detail,
-      fecha: a.fecha,
-    })
+    novedades.push({ id: `clima-${a.id}`, tipo: 'clima', titulo: a.title, detalle: a.detail, fecha: a.fecha })
   }
-
-  // Documentos cargados recientemente
   for (const d of docsRecientes ?? []) {
     novedades.push({
       id: `doc-${d.id}`,
@@ -122,34 +116,27 @@ export default async function DashboardPage({
       fecha: d.uploaded_at as string,
     })
   }
-
-  // Cambios manuales sobre lotes (p. ej. carga de la fecha de siembra)
   for (const ev of eventos ?? []) {
     const nombre = (ev.lote_nombre as string | null) ?? 'un lote'
-    const nuevo = ev.valor_nuevo as string | null
-    const anterior = ev.valor_anterior as string | null
     novedades.push({
       id: `evt-${ev.id}`,
       tipo: 'cambio',
       titulo: `Fecha de siembra actualizada · ${nombre}`,
-      detalle: anterior
-        ? `Cambió de ${anterior} a ${nuevo ?? 'sin fecha'}.`
-        : `Se registró la siembra el ${nuevo ?? '—'}.`,
+      detalle: ev.valor_anterior
+        ? `Cambió de ${ev.valor_anterior} a ${ev.valor_nuevo ?? 'sin fecha'}.`
+        : `Se registró la siembra el ${ev.valor_nuevo ?? '—'}.`,
       fecha: ev.created_at as string,
     })
   }
-
-  // Aviso de dato de clima desactualizado
   if (tempKpi.isStale && tempKpi.level !== 'missing' && conditions.fecha) {
     novedades.push({
       id: 'clima-viejo',
       tipo: 'dato_viejo',
       titulo: 'Lectura de clima desactualizada',
-      detalle: `La última lectura de tu estación es del ${formatDateShort(conditions.fecha)}. Puede ser una falla del enlace de la estación.`,
+      detalle: `La última lectura de tu estación es del ${formatDateShort(conditions.fecha)}.`,
       fecha: conditions.fecha,
     })
   }
-
   novedades.sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime())
 
   return (
@@ -157,7 +144,7 @@ export default async function DashboardPage({
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           {scope.isMaster && scope.agropecuariaName && (
-            <p className="text-sm text-green-700 dark:text-green-400 font-medium mt-1">
+            <p className="mt-1 text-sm font-medium text-green-700 dark:text-green-400">
               {scope.agropecuariaName}
             </p>
           )}
@@ -173,91 +160,142 @@ export default async function DashboardPage({
         </div>
       </div>
 
-      {/* KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <KpiCard
-          icon={<Sprout className="text-green-600" size={24} />}
-          label={`Lotes del ciclo ${ciclo}`}
-          value={String(lotes?.length ?? 0)}
-          hint={
-            (lotes?.length ?? 0) > 0
-              ? `${lotesConSiembra} con siembra confirmada`
-              : undefined
-          }
-          hintLevel={lotesConSiembra === 0 && (lotes?.length ?? 0) > 0 ? 'warn' : undefined}
-        />
-        <KpiCard
-          icon={<Wheat className="text-yellow-600" size={24} />}
-          label="Ha sembradas"
-          value={`${totalHa.toFixed(1)} ha`}
-          hint={lotesSinFechaReal > 0 ? `${lotesSinFechaReal} lotes sin fecha de siembra confirmada` : undefined}
-        />
-        {cicloTieneCierre && (
+      {/* KPIs a la izquierda; estado y fase apilados a la derecha */}
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:col-span-2">
           <KpiCard
-            icon={<AlertTriangle className="text-red-500" size={24} />}
-            label="Ha perdidas"
-            value={`${totalPerdidas.toFixed(1)} ha`}
-            hint={lotesSinReportePerdidas > 0 ? `${lotesSinReportePerdidas} lotes sin reporte (posible outlier)` : undefined}
-            hintLevel="warn"
+            icon={<Sprout className="text-green-600" size={24} />}
+            label={`Lotes del ciclo ${ciclo}`}
+            value={String(filas.length)}
+            hint={filas.length > 0 ? `${lotesConSiembra} con siembra confirmada` : undefined}
+            hintLevel={lotesConSiembra === 0 && filas.length > 0 ? 'warn' : undefined}
           />
-        )}
-        <KpiCard
-          icon={<CloudSun className="text-blue-500" size={24} />}
-          label="Temperatura actual"
-          value={tempKpi.text}
-          valueClass={freshnessTextClass(tempKpi.level)}
-          hint={tempKpi.isStale && tempKpi.level !== 'missing' ? 'Lectura con más de 24 h de antigüedad' : undefined}
-          hintLevel={tempKpi.level === 'stale' ? 'danger' : tempKpi.level === 'warn' ? 'warn' : undefined}
-        />
+          <KpiCard
+            icon={<Wheat className="text-yellow-600" size={24} />}
+            label="Ha sembradas"
+            value={`${totalHa.toFixed(1)} ha`}
+          />
+          <KpiCard
+            icon={<CloudSun className="text-blue-500" size={24} />}
+            label="Temperatura actual"
+            value={tempKpi.text}
+            valueClass={freshnessTextClass(tempKpi.level)}
+            hint={tempKpi.isStale && tempKpi.level !== 'missing' ? 'Lectura con más de 24 h' : undefined}
+            hintLevel={tempKpi.level === 'stale' ? 'danger' : tempKpi.level === 'warn' ? 'warn' : undefined}
+          />
+          {cicloTieneCierre && (
+            <KpiCard
+              icon={<AlertTriangle className="text-red-500" size={24} />}
+              label="Ha perdidas"
+              value={`${totalPerdidas.toFixed(1)} ha`}
+            />
+          )}
+        </div>
+
+        <div className="space-y-4">
+          <EstadoLotesCard r={resumen as never} />
+          <FaseActualCard
+            fase={(resumen?.fase_dominante as string | null) ?? null}
+            lotesConFase={(resumen?.lotes_con_fase as number) ?? 0}
+            lotesTotales={filas.length}
+          />
+        </div>
       </div>
 
-      {/* Tabla de lotes */}
-      <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden">
-        <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-800">
-          <h2 className="font-semibold text-gray-700 dark:text-gray-200">Mis Lotes</h2>
+      {/* Avance del ciclo, justo debajo de los KPIs */}
+      <AvanceCultivoChart
+        lotes={filas.map(l => ({
+          nombre: l.nombre as string,
+          avance_pct: l.avance_pct as number | null,
+          fase: l.fase as string | null,
+          estado_lote: l.estado_lote as string | null,
+        }))}
+        avancePromedio={(resumen?.avance_promedio as number | null) ?? null}
+      />
+
+      {/* Lotes */}
+      <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
+        <div className="border-b border-gray-100 px-5 py-4 dark:border-gray-800">
+          <h2 className="font-semibold text-gray-700 dark:text-gray-200">Mis lotes</h2>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400 text-xs uppercase">
+            <thead className="bg-gray-50 text-xs uppercase text-gray-500 dark:bg-gray-800 dark:text-gray-400">
               <tr>
-                <th className="px-4 py-3 text-left">Lote</th>
-                <th className="px-4 py-3 text-left">Ha sembradas</th>
-                <th className="px-4 py-3 text-left">Inicio siembra</th>
-                {cicloTieneCierre && <th className="px-4 py-3 text-left">Ha perdidas</th>}
-                <th className="px-4 py-3 text-left">Estado</th>
+                <th scope="col" className="px-4 py-3 text-left">Lote</th>
+                <th scope="col" className="px-4 py-3 text-right">Ha plan</th>
+                <th scope="col" className="px-4 py-3 text-right">Ha encaladas</th>
+                <th scope="col" className="px-4 py-3 text-left">Inicio siembra</th>
+                <th scope="col" className="px-4 py-3 text-right">Ha sembradas</th>
+                <th scope="col" className="px-4 py-3 text-right">Ha perdidas</th>
+                <th scope="col" className="px-4 py-3 text-right">Ha cosechadas</th>
+                <th scope="col" className="px-4 py-3 text-left">Estado</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
-              {lotes?.map(l => (
-                <tr key={l.lote_id} className="hover:bg-gray-50">
-                  <td className="px-4 py-3 font-medium text-gray-800 dark:text-gray-100">{l.nombre_lote}</td>
-                  <td className="px-4 py-3 text-gray-600 dark:text-gray-300">{l.ha_sembradas ?? '—'}</td>
-                  <td className="px-4 py-3 text-gray-600 dark:text-gray-300">{l.fecha_inicio_siembra_real ?? '—'}</td>
-                  {cicloTieneCierre && (
-                    <td className="px-4 py-3 text-gray-600 dark:text-gray-300">{l.ha_perdidas ?? '—'}</td>
-                  )}
-                  <td className="px-4 py-3">
-                    <span className="px-2 py-0.5 rounded-full text-xs bg-green-100 text-green-700 dark:text-green-400">
-                      {l.edo_gral_cultivo_v ?? 'Activo'}
-                    </span>
+            <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+              {filas.map(l => (
+                <tr key={l.lote_id as string} className="hover:bg-gray-50 dark:hover:bg-gray-900/40">
+                  <td className="px-4 py-3 font-medium text-gray-800 dark:text-gray-100">{l.nombre as string}</td>
+                  <td className="px-4 py-3 text-right tabular-nums text-gray-600 dark:text-gray-300">{num(l.ha_plan)}</td>
+                  <td className="px-4 py-3 text-right tabular-nums text-gray-600 dark:text-gray-300">{num(l.ha_encaladas)}</td>
+                  <td className="px-4 py-3 text-gray-600 dark:text-gray-300">
+                    {l.inicio_siembra ? formatDateShort(l.inicio_siembra as string) : <SinDato />}
                   </td>
+                  <td className="px-4 py-3 text-right tabular-nums text-gray-600 dark:text-gray-300">{num(l.ha_sembradas)}</td>
+                  <td className="px-4 py-3 text-right tabular-nums text-gray-600 dark:text-gray-300">{num(l.ha_perdidas)}</td>
+                  <td className="px-4 py-3 text-right tabular-nums text-gray-600 dark:text-gray-300">{num(l.ha_cosechadas)}</td>
+                  <td className="px-4 py-3"><EstadoChip estado={l.estado_lote as string | null} /></td>
                 </tr>
               ))}
+              {filas.length === 0 && (
+                <tr>
+                  <td colSpan={8} className="px-4 py-6 text-center text-sm text-gray-500 dark:text-gray-400">
+                    No tienes lotes registrados en el ciclo {ciclo}.
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
       </div>
+
+      <MisComunicaciones docs={(docsRecientes ?? []) as never} />
     </div>
   )
 }
 
+/** Números con un decimal; el cero se atenúa para que no compita visualmente. */
+function num(v: unknown) {
+  const n = Number(v)
+  if (!Number.isFinite(n)) return <SinDato />
+  if (n === 0) return <span className="text-gray-300 dark:text-gray-600">0</span>
+  return n.toFixed(1)
+}
+
+function SinDato() {
+  return <span className="text-gray-300 dark:text-gray-600" title="Sin dato registrado">—</span>
+}
+
+function EstadoChip({ estado }: { estado: string | null }) {
+  if (!estado) {
+    return <span className="text-xs text-gray-400 dark:text-gray-500">Sin evaluar</span>
+  }
+  const estilo: Record<string, string> = {
+    'Excelente': 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300',
+    'Muy bueno': 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300',
+    'Bueno': 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300',
+    'Regular': 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300',
+    'Malo': 'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300',
+  }
+  return (
+    <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${estilo[estado] ?? 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300'}`}>
+      {estado}
+    </span>
+  )
+}
+
 function KpiCard({
-  icon,
-  label,
-  value,
-  valueClass,
-  hint,
-  hintLevel,
+  icon, label, value, valueClass, hint, hintLevel,
 }: {
   icon: React.ReactNode
   label: string
@@ -267,20 +305,16 @@ function KpiCard({
   hintLevel?: 'info' | 'warn' | 'danger'
 }) {
   const hintColor =
-    hintLevel === 'danger'
-      ? 'text-red-600 dark:text-red-400'
-      : hintLevel === 'warn'
-        ? 'text-amber-600 dark:text-amber-400'
-        : 'text-gray-500 dark:text-gray-400'
+    hintLevel === 'danger' ? 'text-red-600 dark:text-red-400'
+    : hintLevel === 'warn' ? 'text-amber-600 dark:text-amber-400'
+    : 'text-gray-500 dark:text-gray-400'
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-5 flex items-start gap-4">
-      <div className="p-2.5 bg-gray-50 dark:bg-gray-800 rounded-lg shrink-0">{icon}</div>
+    <div className="flex items-start gap-4 rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900">
+      <div className="shrink-0 rounded-lg bg-gray-50 p-2.5 dark:bg-gray-800">{icon}</div>
       <div className="min-w-0">
         <p className="text-xs text-gray-500 dark:text-gray-400">{label}</p>
-        <p className={`text-xl font-bold text-gray-800 dark:text-gray-100 truncate ${valueClass ?? ''}`}>
-          {value}
-        </p>
-        {hint && <p className={`text-[11px] mt-1 leading-tight ${hintColor}`}>{hint}</p>}
+        <p className={`truncate text-xl font-bold text-gray-800 dark:text-gray-100 ${valueClass ?? ''}`}>{value}</p>
+        {hint && <p className={`mt-1 text-[11px] leading-tight ${hintColor}`}>{hint}</p>}
       </div>
     </div>
   )

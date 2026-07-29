@@ -17,12 +17,92 @@ import type { Stage } from './corn-stages'
  * el cliente de Supabase de servidor al bundle del navegador.
  */
 export const PREGUNTAS_SUGERIDAS = [
+  '¿Qué puedo hacer en esta app?',
   '¿En qué etapa está mi cultivo?',
   '¿Qué es el llenado de grano?',
   '¿Qué documentos tengo cargados?',
   '¿Cómo está el clima en mi finca?',
   '¿Tengo alertas esta semana?',
+  '¿Dónde veo mis lotes?',
 ]
+
+/**
+ * Guía de los módulos, para que el asistente pueda orientar a quien no sabe
+ * dónde encontrar algo. Es la causa más común de abandono en agricultores con
+ * poca experiencia con apps: la información existe pero no la encuentran.
+ */
+export const MODULOS: {
+  id: string
+  nombre: string
+  ruta: string
+  resumen: string
+  contiene: string[]
+  palabras: string[]
+}[] = [
+  {
+    id: 'dashboard',
+    nombre: 'Panel',
+    ruta: 'Panel (la primera pantalla)',
+    resumen: 'Resumen de tu ciclo: cuántos lotes tienes, hectáreas sembradas, cómo va el cultivo y las novedades.',
+    contiene: [
+      'Cantidad de lotes y hectáreas sembradas',
+      'Estado de tus lotes (bueno, regular, malo)',
+      'La fase en la que está tu cultivo',
+      'El avance del ciclo, de siembra a cosecha',
+      'La tabla de tus lotes con hectáreas y estado',
+      'Tus últimos documentos, al final de la pantalla',
+      'La campana de novedades, arriba a la derecha',
+    ],
+    palabras: ['panel', 'dashboard', 'inicio', 'principal', 'resumen', 'avance', 'novedades', 'campana'],
+  },
+  {
+    id: 'clima',
+    nombre: 'Clima',
+    ruta: 'Clima, en el menú de la izquierda',
+    resumen: 'La temperatura y lluvia de tu finca, el pronóstico de la semana y los avisos de riesgo.',
+    contiene: [
+      'Temperatura, humedad y lluvia más recientes',
+      'De dónde sale el dato: tu estación o estimado de las cercanas',
+      'Pronóstico de 7 días',
+      'Alertas de lluvia fuerte, calor, frío o viento',
+      'Histórico de los últimos 30 días',
+    ],
+    palabras: ['clima', 'tiempo', 'lluvia', 'temperatura', 'pronostico', 'alerta', 'estacion'],
+  },
+  {
+    id: 'cultivo',
+    nombre: 'Cultivo',
+    ruta: 'Cultivo, en el menú de la izquierda',
+    resumen: 'El detalle lote por lote: en qué etapa va, cuándo se sembró y qué dijo el técnico en su visita.',
+    contiene: [
+      'Línea de tiempo de cada lote, de siembra a cosecha',
+      'Días desde la siembra y etapa del maíz',
+      'La última visita del técnico con sus observaciones y acuerdos',
+      'Condición del suelo e insumos aplicados por lote',
+      'Reportes descargables en PDF y Excel',
+    ],
+    palabras: ['cultivo', 'lote', 'lotes', 'siembra', 'etapa', 'fase', 'visita', 'tecnico', 'insumo', 'suelo'],
+  },
+  {
+    id: 'documentacion',
+    nombre: 'Documentación',
+    ruta: 'Documentación, en el menú de la izquierda',
+    resumen: 'Todos tus documentos, ordenados por tipo, para consultarlos o descargarlos.',
+    contiene: [
+      'Análisis de suelo del laboratorio',
+      'Mapas y planos de la finca',
+      'Caso de negocio con costos y rentabilidad',
+      'Convenios y contratos firmados',
+    ],
+    palabras: ['documento', 'documentacion', 'pdf', 'analisis', 'mapa', 'convenio', 'contrato', 'descargar'],
+  },
+]
+
+/** Cómo pedir ayuda humana, cuando el asistente no alcanza. */
+export const CANALES_AYUDA =
+  'Si necesitas hablar con el equipo tienes dos botones abajo a la izquierda: ' +
+  'el verde abre WhatsApp para algo urgente, y el morado te deja dejar una pregunta ' +
+  'por escrito que respondemos después y queda guardada.'
 
 /** Descripción corta de la fase — usada en las tarjetas de Cultivo. */
 export const FASE_CORTA: Record<Stage, string> = {

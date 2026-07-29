@@ -84,6 +84,17 @@ export function SkeletonCard() {
   )
 }
 
+/** Barra de pestañas (categorías, filtros por tabs). */
+export function SkeletonTabs({ cantidad = 4 }: { cantidad?: number }) {
+  return (
+    <div className="inline-flex gap-1 rounded-2xl border border-gray-200 bg-white p-1.5 dark:border-gray-800 dark:bg-gray-900">
+      {Array.from({ length: cantidad }).map((_, i) => (
+        <SkeletonBox key={i} className="h-8 w-28 rounded-xl" />
+      ))}
+    </div>
+  )
+}
+
 /** Cabecera de página: subtítulo + control a la derecha. */
 export function SkeletonEncabezado() {
   return (

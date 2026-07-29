@@ -22,6 +22,9 @@ const EXT_IMAGEN = /\.(png|jpe?g|webp)$/i
  * su propio componente cliente (a diferencia de `DocumentosSection`, que es
  * un server component que hace fetch) para poder abrir el modal de preview
  * al hacer clic en cualquier parte de la tarjeta, no solo en "Ver".
+ *
+ * fecha/tamano solo se muestran a master: al agricultor esos metadatos no le
+ * aportan nada y ensucian la tarjeta (feedback de diseño).
  */
 export default function DocumentoCard({
   pdfId,
@@ -34,6 +37,7 @@ export default function DocumentoCard({
 }: Props) {
   const [preview, setPreview] = useState(false)
   const esImagen = EXT_IMAGEN.test(filename)
+  const Icono = esImagen ? FileImage : FileText
 
   return (
     <>
@@ -42,13 +46,11 @@ export default function DocumentoCard({
         role="button"
         tabIndex={0}
         onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setPreview(true) }}
-        className="flex flex-col gap-3 rounded-xl border border-gray-200 bg-white p-4 cursor-pointer transition-colors hover:border-green-300 dark:border-gray-800 dark:bg-gray-900 dark:hover:border-green-800"
+        className="group flex flex-col gap-3 rounded-2xl border border-white/60 bg-white/70 p-4 shadow-sm shadow-black/5 backdrop-blur-xl transition-all cursor-pointer hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/10 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10"
       >
-        <div className="flex items-start gap-2.5">
-          <div className="mt-0.5 shrink-0 rounded-lg bg-gray-50 p-2 dark:bg-gray-800">
-            {esImagen
-              ? <FileImage size={16} className="text-blue-500" />
-              : <FileText size={16} className="text-red-500" />}
+        <div className="flex items-start gap-3">
+          <div className="shrink-0 rounded-xl bg-gradient-to-br from-green-600 to-emerald-700 p-2.5 shadow-[0_0_18px_rgba(22,163,74,0.35)] transition-shadow group-hover:shadow-[0_0_22px_rgba(22,163,74,0.5)]">
+            <Icono size={16} className="text-white drop-shadow-[0_0_5px_rgba(255,255,255,0.85)]" />
           </div>
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-medium text-gray-800 dark:text-gray-100" title={filename}>
@@ -66,12 +68,14 @@ export default function DocumentoCard({
           </div>
         </div>
 
-        <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
-          <span>{fecha}</span>
-          <span>{tamano}</span>
-        </div>
+        {isMaster && (
+          <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+            <span>{fecha}</span>
+            <span>{tamano}</span>
+          </div>
+        )}
 
-        <div className="border-t border-gray-100 pt-3 dark:border-gray-800">
+        <div className="border-t border-white/60 pt-3 dark:border-white/10">
           <DocumentoAcciones
             pdfId={pdfId}
             storagePath={storagePath}

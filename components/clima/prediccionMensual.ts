@@ -66,8 +66,22 @@ function clasificarMes(
  * clasifica primero con su propia realidad); si CUALQUIERA de sus lotes
  * quedó con hueco de calidad ese mes, el agregado se marca igual — más
  * seguro mostrar de más el aviso que de menos.
+ *
+ * Excepción: el PRIMER mes con algún dato real de cada lote nunca se marca
+ * como "hueco de calidad", así tenga pocos días — es el mes de instalación
+ * de la estación a medias, no una falla. Confirmado con datos reales: varias
+ * estaciones instaladas fines de mayo 2026 mostraban ese mes con el marcador
+ * de alerta solo por haber arrancado a mitad de mes.
  */
 export function agregarPrediccionLotesPorMes(rows: PrediccionLluviaLoteRow[]): PrediccionMes[] {
+  const primerMesConDatoPorLote = new Map<string, number>()
+  for (const r of rows) {
+    const dias = r.dias_con_dato === null || r.dias_con_dato === undefined ? 0 : Number(r.dias_con_dato)
+    if (dias <= 0) continue
+    const actual = primerMesConDatoPorLote.get(r.lote_id)
+    if (actual === undefined || r.mes < actual) primerMesConDatoPorLote.set(r.lote_id, r.mes)
+  }
+
   const porMes = new Map<number, PrediccionLluviaLoteRow[]>()
   for (const r of rows) {
     if (!porMes.has(r.mes)) porMes.set(r.mes, [])
@@ -78,7 +92,9 @@ export function agregarPrediccionLotesPorMes(rows: PrediccionLluviaLoteRow[]): P
     const clasificados = group.map(g => {
       const valorReal = g.valor_real === null || g.valor_real === undefined ? null : Number(g.valor_real)
       const diasConDato = g.dias_con_dato === null || g.dias_con_dato === undefined ? null : Number(g.dias_con_dato)
-      return clasificarMes(mes, valorReal, Number(g.valor), diasConDato)
+      const clasificado = clasificarMes(mes, valorReal, Number(g.valor), diasConDato)
+      const esPrimerMesDelLote = primerMesConDatoPorLote.get(g.lote_id) === mes
+      return esPrimerMesDelLote ? { ...clasificado, esExcluidoPorCalidad: false } : clasificado
     })
     const valores = clasificados.map(c => c.valor).filter((v): v is number => v !== null)
     out.push({

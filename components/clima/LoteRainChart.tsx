@@ -38,7 +38,7 @@ export default function LoteRainChart({ lote, dailyRows }: Props) {
             {lote.lote ?? 'Sin lote'}
           </h3>
           <p className="text-[11px] leading-snug text-gray-500 dark:text-gray-400">
-            Día {lote.dias_transcurridos ?? '—'} de {dur}
+            Día {lote.dias_transcurridos ?? '—'} de {dur} días de llenado
           </p>
         </div>
         {pct !== null && (
@@ -49,8 +49,10 @@ export default function LoteRainChart({ lote, dailyRows }: Props) {
       </div>
 
       {data.length === 0 ? (
-        <div className="flex h-48 items-center justify-center text-xs text-gray-400 dark:text-gray-500">
-          Sin datos diarios todavía.
+        <div className="flex h-48 items-center justify-center px-4 text-center text-xs text-gray-400 dark:text-gray-500">
+          {lote.dias_transcurridos === null || lote.dias_transcurridos === undefined || lote.dias_transcurridos <= 0
+            ? 'Este lote aún no entra en la etapa de llenado.'
+            : 'Sin datos diarios todavía.'}
         </div>
       ) : (
         <>
@@ -61,7 +63,7 @@ export default function LoteRainChart({ lote, dailyRows }: Props) {
                 <XAxis
                   dataKey="dia_del_periodo"
                   tick={{ fontSize: 10 }}
-                  label={{ value: 'Día del periodo', position: 'insideBottom', offset: -4, fontSize: 9 }}
+                  label={{ value: 'Día de llenado', position: 'insideBottom', offset: -4, fontSize: 9 }}
                 />
                 <YAxis tick={{ fontSize: 10 }} width={34} />
                 <Tooltip content={<LoteDiariaTooltip />} />

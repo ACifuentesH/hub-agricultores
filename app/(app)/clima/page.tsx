@@ -2,7 +2,6 @@ import { getUserProfile } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { resolveAgricultorScope } from '@/lib/access'
 import MasterAgricultorSelector from '@/components/MasterAgricultorSelector'
-import DataSourceBadge from '@/components/DataSourceBadge'
 import DescargarHistoricoClimaBtn from '@/components/DescargarHistoricoClimaBtn'
 import { getCurrentConditions, getClimateSeries, listAgricultores2026 } from '@/lib/clima'
 import CurrentConditionsCard from '@/components/clima/CurrentConditionsCard'
@@ -137,16 +136,15 @@ async function MiAgricultorContent({ agricultorKey, isMaster }: { agricultorKey:
     <div className="space-y-6">
       <AgricultorRainMonthlyChart mensual={mensualRows} prediccion={prediccionRows} />
 
-      <div className="flex flex-wrap items-center gap-2">
-        <DataSourceBadge source={conditions.source} fecha={conditions.fecha} size="sm" />
-        {conditions.source.fuente === 'davis' && (
+      {conditions.source.fuente === 'davis' && (
+        <div className="flex flex-wrap items-center gap-2">
           <DescargarHistoricoClimaBtn
             agricultorKey={isMaster ? agricultorKey : null}
             agricultorNombre={null}
             size="sm"
           />
-        )}
-      </div>
+        </div>
+      )}
 
       <CurrentConditionsCard conditions={conditions} />
       <StatCardRow lotes={lotes} />

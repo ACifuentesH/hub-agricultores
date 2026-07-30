@@ -198,9 +198,38 @@ Con las estaciones ya asignadas, la triangulación se retiró **en el `CASE` de
 lee desde esa vista en varios sitios —`lib/clima.ts` y los chips de `/master`— y parchear
 cada uno deja el riesgo de olvidar el siguiente que se escriba.
 
-Estado actual: **42 agricultores con estación Davis, 13 sin datos.**
 La RPC `triangulate_clima()` y las coordenadas se conservan intactas: revertir es reponer
 una rama del `CASE`.
+
+### Cómo se asigna la estación a un agricultor
+
+`v_clima_efectivo` prueba cuatro estrategias, **en este orden**:
+
+| Orden | `match_type` | Cómo empareja | Hoy |
+|---|---|---|---|
+| 1 | `override` | Fila manual en `mapa_productor_clima` | 33 |
+| 2 | `auto_codigo_up` | `sync_status.station_name` ↔ `unidad_produccion.codigo_up` | 7 |
+| 3 | `herencia_ciclo` | Perfil gemelo del mismo productor en el otro ciclo | 2 |
+| 4 | `codigo_de_lote` | `station_name` ↔ código derivado de `lote.unidad_produccion_id` | 3 |
+
+**Por qué existe el paso 4:** `unidad_produccion.codigo_up` trae un `AUTO-0xx` generado en
+bastantes perfiles, así que nunca puede emparejar con `G14-La Vilereña-Saturno`. El código
+real sí está en `lote.unidad_produccion_id`. Es el mismo problema que obligó a mapear el
+P&L por `codigo_up` contra `public.lote`.
+
+**Por qué va el último y no el primero:** medido antes de aplicarlo, darle prioridad
+reasignaba la estación de **31 agricultores que ya la tenían bien**. Como último recurso
+son 0 conflictos y 3 recuperados.
+
+El emparejamiento lleva `btrim()` en ambos lados porque hay estaciones con espacios
+alrededor del guion (`G08 - La Mata - Saturno` → `'G08 '`).
+
+Estado actual: **45 agricultores con estación Davis, 10 sin datos.**
+
+De esos 10, siete tienen lotes con un código de unidad de producción real
+(`S01`, `P13`, `P20`, `P21`, `P25`, `G15`, `G19`) para el que **no existe estación en el
+catálogo de WeatherLink** — el catálogo tiene 45 y llega hasta `P19` / `G14`. Los otros
+tres no tienen lotes: son perfiles residuales.
 
 ### El asistente no tiene IA
 
@@ -281,7 +310,17 @@ Dos advertencias que ya causaron verificaciones inválidas:
 - **Rotar las contraseñas de prueba** de agricultores y master antes de un despliegue real.
 - **Contraste del hero en `/login`**: 1.89:1, por debajo del mínimo WCAG de 3.0.
 - **Botón de mostrar contraseña**: 16×16 px, por debajo del área táctil recomendada.
+- **Siete agricultores sin estación pese a tener lotes**: sus unidades de producción son
+  `S01`, `P13`, `P20`, `P21`, `P25`, `G15` y `G19`, y no existe estación con esos códigos
+  en WeatherLink. El catálogo local está sano (45 estaciones, todas sincronizadas dentro
+  de la última hora), así que no es un problema del pipeline: o esas estaciones no están
+  dadas de alta en la cuenta, o figuran con otro nombre. Confirmar con el equipo de campo.
 - **Lotes faltantes** de Héctor Pérez y Miguel Tohme: confirmar con el equipo de datos si
-  el hueco viene del origen.
+  el hueco viene del origen. Ambos tienen usuario pero cero lotes.
+- **Perfiles duplicados de la misma persona**: "Marco Fantinel Furlanis" (ciclo 2025, sin
+  lotes ni usuario) y "Celso Fantinel Furlanis" (ciclo 2026, 10 lotes) son el mismo
+  productor. `public.agropecuaria` **no** se repuebla desde el espejo —ninguna función de
+  promoción escribe en ella— así que una consolidación local sobrevive al sync. La
+  herencia por nombre (`herencia_ciclo`) no los une porque los nombres de pila difieren.
 - **Confirmar la definición de "Ha encaladas"**: hoy se deriva sumando la mecanización de
   tipo `Pase de encaladora`.

@@ -54,8 +54,16 @@ secas es la empresa — no confundir ni renombrar.
   (migración `clima_sin_triangulacion`), no en el front: la fuente se lee desde
   esa vista en varios sitios y parchear cada uno deja el riesgo de olvidar el
   siguiente. La RPC `triangulate_clima()` y las coordenadas siguen ahí, así que
-  revertir es reponer una rama del `CASE`. Hoy: 42 agricultores con Davis,
-  13 sin datos.
+  revertir es reponer una rama del `CASE`. Hoy: **45 agricultores con Davis,
+  10 sin datos**.
+- **El código de unidad de producción bueno está en `lote`, no en
+  `unidad_produccion`.** `unidad_produccion.codigo_up` trae `AUTO-0xx` generado en
+  bastantes perfiles, mientras que `lote.unidad_produccion_id` sí trae el código
+  real (`G14-…`). Por eso `v_clima_efectivo` empareja también por el código
+  derivado de los lotes (`match_type = 'codigo_de_lote'`), igual que hace el P&L.
+  **Ese match va como ÚLTIMO recurso**, después de override / `auto_codigo_up` /
+  herencia: medido antes de aplicarlo, darle prioridad reasignaba la estación de
+  31 agricultores que ya la tenían bien.
 
 ## ⚠️ Nunca cruces `saturno.*` en una vista que consuma la app
 

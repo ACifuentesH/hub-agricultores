@@ -49,11 +49,19 @@ export function rendimientoCalculado(mmLluvia: number | null): number | null {
 /**
  * Estado de la fase de llenado en función del avance de días del periodo
  * crítico (dias_transcurridos / duracion_dias), no de la lluvia acumulada.
+ *
+ * "Aún no llena" es SOLO para el lote cuyo período todavía no arrancó
+ * (pctDias === 0, hoy es anterior a fecha_inicio_rango). En cuanto arranca
+ * (un solo día transcurrido ya cuenta) pasa a "Llenado" — antes el umbral
+ * era 30%, lo que dejaba lotes recién empezados (días 1-8 de 30) marcados
+ * como "aún no llena" pese a estar ya en curso; confirmado con casos reales
+ * (feedback del usuario, jul-2026) donde el % de días ya mostraba avance
+ * pero la etiqueta seguía diciendo lo contrario.
  */
 export function estadoLlenado(pctDias: number | null): string | null {
   if (pctDias === null || pctDias === undefined) return null
   if (pctDias >= 90) return 'Cierre de llenado'
-  if (pctDias >= 30) return 'Llenado'
+  if (pctDias > 0) return 'Llenado'
   return 'Aún no llena'
 }
 

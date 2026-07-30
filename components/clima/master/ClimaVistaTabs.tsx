@@ -19,12 +19,14 @@ interface Props {
 
 /**
  * Tira de pestañas del módulo Clima (vista master) — escribe `?vista=` en la
- * URL conservando el resto de los params, igual que `CicloSelector.tsx`
- * (mismo patrón `useTransition` + `useOptimistic`). A diferencia de
- * `CicloSelector` (que vive en la barra lateral oscura, ver `Sidebar.tsx`),
- * esta tira se renderiza en el cuerpo de la página `/clima` — por eso usa el
- * cromo claro/tarjeta blanca de `MasterAgricultorSelector.tsx` en vez del
- * `bg-black/15`/`ring-white/10` de la barra lateral.
+ * URL conservando el resto de los params, con el patrón `useTransition` +
+ * `useOptimistic`. Se renderiza en el cuerpo de la página `/clima`, así que
+ * usa el cromo claro/tarjeta blanca de `MasterAgricultorSelector.tsx` en vez
+ * del `bg-black/15`/`ring-white/10` de la barra lateral.
+ *
+ * (Antes esto se comparaba con `CicloSelector.tsx`, el selector 2025/2026 de
+ * la barra lateral. Ese componente ya no existe: el ciclo 2025 está cerrado y
+ * la app trabaja siempre sobre `CICLO_ACTIVO`, ver `lib/ciclo.ts`.)
  *
  * La página decide qué hacer con combinaciones no aplicables (p. ej.
  * "Mi agricultor" sin `?agricultor=` seleccionado) — este componente solo

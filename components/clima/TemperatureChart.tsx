@@ -49,8 +49,10 @@ export default function TemperatureChart({ series }: Props) {
       </div>
 
       {data.length === 0 ? (
-        <div className="flex h-48 items-center justify-center text-xs text-gray-400 dark:text-gray-500">
-          Sin datos de temperatura todavía.
+        <div className="flex h-48 items-center justify-center px-4 text-center text-xs text-gray-400 dark:text-gray-500">
+          {series.sinSensorTemperatura
+            ? 'La estación de este agricultor solo mide lluvia — no tiene sensor de temperatura.'
+            : 'Sin datos de temperatura todavía.'}
         </div>
       ) : (
         <div className="h-56 w-full">

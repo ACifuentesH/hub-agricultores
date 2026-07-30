@@ -35,6 +35,14 @@ export interface ClimateSeries {
   /** raw min/max for legend tooltips */
   tempMin: number
   tempMax: number
+  /**
+   * true cuando la estación de esta serie nunca reportó temp_c (hardware de
+   * solo-lluvia, confirmado con datos reales: varias estaciones del proyecto
+   * de seguimiento de lluvia traen miles de filas con lluvia_mm pero
+   * temp_c/hum_pct siempre null) — distinto de un hueco temporal de datos en
+   * una estación que sí mide temperatura.
+   */
+  sinSensorTemperatura: boolean
 }
 
 export interface ForecastDay {
@@ -245,7 +253,7 @@ export async function getClimateSeries(agricultorKey: string, days = 14): Promis
     .gte('ts', sinceTs)
     .order('ts', { ascending: true })
 
-  if (!data || data.length === 0) return emptySeries()
+  if (!data || data.length === 0) return emptySeries(await esSensorSoloLluvia(supabase, stationId))
 
   // Bucket by day (fecha_hora is "naive" string YYYY-MM-DD HH:MM:SS treated as UTC)
   const byDay = new Map<string, { temps: number[]; hums: number[] }>()
@@ -262,6 +270,15 @@ export async function getClimateSeries(agricultorKey: string, days = 14): Promis
   const dailyTemp = days_sorted.map(d => avg(byDay.get(d)!.temps))
   const dailyHum  = days_sorted.map(d => avg(byDay.get(d)!.hums))
 
+  // Estaciones de solo-lluvia (sin sensor de temperatura/humedad) traen filas
+  // en la ventana pero con temp_c/hum_pct siempre null — dailyTemp queda
+  // entero de NaN. Sin este chequeo, tempMin/tempMax quedaban en
+  // Infinity/-Infinity y denormalize() devolvía NaN en vez de mostrar el
+  // estado vacío correctamente (se veía un chart en blanco, no el mensaje).
+  if (dailyTemp.every(v => !Number.isFinite(v))) {
+    return emptySeries(await esSensorSoloLluvia(supabase, stationId))
+  }
+
   const tempMin = Math.min(...dailyTemp.filter(Number.isFinite))
   const tempMax = Math.max(...dailyTemp.filter(Number.isFinite))
   const humMin  = Math.min(...dailyHum.filter(Number.isFinite))
@@ -272,7 +289,22 @@ export async function getClimateSeries(agricultorKey: string, days = 14): Promis
     humSeries:  dailyHum.map(v => normalize(v, humMin, humMax)),
     tempMin,
     tempMax,
+    sinSensorTemperatura: false,
   }
+}
+
+/** Chequeo barato (limit 1, ya filtrado por station_id) de si esta estación alguna vez reportó temp_c. */
+async function esSensorSoloLluvia(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  stationId: string,
+): Promise<boolean> {
+  const { data } = await supabase
+    .from('weather_readings')
+    .select('ts')
+    .eq('station_id', stationId)
+    .not('temp_c', 'is', null)
+    .limit(1)
+  return !data || data.length === 0
 }
 
 function avg(xs: number[]): number {
@@ -286,8 +318,8 @@ function normalize(v: number, min: number, max: number): number {
   return Math.max(0, Math.min(1, (v - min) / (max - min)))
 }
 
-function emptySeries(): ClimateSeries {
-  return { tempSeries: [], humSeries: [], tempMin: 0, tempMax: 0 }
+function emptySeries(sinSensorTemperatura = false): ClimateSeries {
+  return { tempSeries: [], humSeries: [], tempMin: 0, tempMax: 0, sinSensorTemperatura }
 }
 
 function describeCondition(lluvia: number | null, solar: number | null, hum: number | null): string {

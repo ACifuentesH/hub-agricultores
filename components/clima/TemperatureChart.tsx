@@ -9,6 +9,10 @@
  * `getClimateSeries()` (lib/clima.ts) no expone valores diarios crudos: solo
  * una serie normalizada 0-1 por día + el mínimo/máximo global del período.
  * Denormalizamos acá para que el eje Y muestre °C reales en vez de 0-1.
+ *
+ * El eje Y usa un rango fijo (10-40°C) en vez de autoescalar al min/max real
+ * de los datos: así el gráfico queda centrado y comparable entre lotes, sin
+ * que una variación chica de un par de grados se vea exagerada.
  */
 
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
@@ -54,7 +58,7 @@ export default function TemperatureChart({ series }: Props) {
             <LineChart data={data} margin={{ top: 6, right: 8, left: 0, bottom: 14 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
               <XAxis dataKey="label" tick={{ fontSize: 10 }} />
-              <YAxis tick={{ fontSize: 10 }} width={34} unit="°C" />
+              <YAxis tick={{ fontSize: 10 }} width={34} unit="°C" domain={[10, 40]} />
               <Tooltip content={<TemperaturaTooltip />} />
               <Line
                 type="monotone"

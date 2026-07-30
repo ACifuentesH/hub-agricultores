@@ -1,14 +1,12 @@
 /**
  * Lógica pura de clasificación real/pronóstico y solapamiento de años para
- * las gráficas mensuales de lluvia (por agricultor y por zona), portada de
+ * la gráfica mensual de lluvia por agricultor, portada de
  * `seguimiento-lluvia-saturno/src/routes/index.tsx` (líneas ~1097-1420).
  *
- * Sin JSX a propósito — mismo criterio que `lib/seguimiento-lluvia-calc.ts`
- * — para que `AgricultorRainMonthlyChart` y `ZonaRainChart` compartan la
- * misma clasificación de meses en vez de duplicarla.
+ * Sin JSX a propósito — mismo criterio que `lib/seguimiento-lluvia-calc.ts`.
  */
 
-import type { PrediccionLluviaLoteRow, PrediccionLluviaZonaRow } from '@/lib/seguimiento-lluvia'
+import type { PrediccionLluviaLoteRow } from '@/lib/seguimiento-lluvia'
 
 export const MESES_ES = [
   'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
@@ -61,17 +59,6 @@ function clasificarMes(
   }
   // Mes ya pasado sin ningún dato real: no hay nada que graficar.
   return { valor: null, esPronostico: false, esExcluidoPorCalidad: false }
-}
-
-export function prediccionMesDeZona(r: PrediccionLluviaZonaRow): PrediccionMes {
-  const valorReal = r.valor_real === null || r.valor_real === undefined ? null : Number(r.valor_real)
-  const clasificado = clasificarMes(r.mes, valorReal, Number(r.valor), null)
-  return {
-    mes: r.mes,
-    ...clasificado,
-    metodoUsado: r.metodo_usado,
-    factorUsado: r.factor_usado === null || r.factor_usado === undefined ? null : Number(r.factor_usado),
-  }
 }
 
 /**

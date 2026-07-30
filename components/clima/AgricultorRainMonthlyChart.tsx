@@ -149,7 +149,7 @@ export default function AgricultorRainMonthlyChart({ mensual, prediccion }: Prop
 // Marcador distinto (círculo de alerta) para los meses con hueco de datos —
 // el punto sí tiene un valor numérico (el pronóstico), pero viene de una
 // lectura poco confiable, y eso debe verse en el gráfico, no solo en el
-// tooltip. Exportado para que ZonaRainChart reuse el mismo marcador.
+// tooltip.
 export function renderPrediccionDot(props: {
   cx?: number
   cy?: number
@@ -171,8 +171,6 @@ export function renderPrediccionDot(props: {
   return <circle key={`dot-${cx}-${cy}`} cx={cx} cy={cy} r={3} fill={stroke} />
 }
 
-// Tooltip compartido por AgricultorRainMonthlyChart y ZonaRainChart (mismas
-// series actual_real/actual_pronostico/<año>).
 export function PrediccionTooltip({
   active,
   payload,

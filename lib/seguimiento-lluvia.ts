@@ -213,11 +213,6 @@ export async function getPrediccionPorLotes(loteIds: string[]): Promise<Predicci
   return (data ?? []) as PrediccionLluviaLoteRow[]
 }
 
-/** Helper puro: zonas distintas presentes en un conjunto de lotes ya cargado. */
-export function getZonasDeAgricultor(lotes: LoteSeguimientoRow[]): string[] {
-  return Array.from(new Set(lotes.map(l => l.zona).filter((z): z is string => !!z)))
-}
-
 export async function getLluviaMensualZona(zona: string): Promise<LluviaMensualZonaRow[]> {
   const supabase = await createClient()
   const { data } = await supabase

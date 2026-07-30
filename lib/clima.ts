@@ -1,4 +1,5 @@
 import { createClient } from './supabase/server'
+import type { AgricultorOption } from './access'
 
 /** Origen de los datos de clima para un agricultor. */
 export type ClimaFuente = 'davis' | 'triangulated' | 'sin_datos'
@@ -429,4 +430,31 @@ function formatShortDate(iso: string): string {
   // Force UTC interpretation so "2026-04-20" doesn't shift by timezone
   const d = new Date(iso + 'T00:00:00')
   return d.toLocaleDateString('es-VE', { weekday: 'short', day: 'numeric', month: 'short' })
+}
+
+/**
+ * Lista de agricultores para el selector de master, SOLO en /clima: acá no
+ * tiene sentido mostrar los "perfiles gemelos" (mismo productor, dos
+ * AgricultorKey — una por ciclo, ver AGENTS.md) porque ni el clima actual ni
+ * el seguimiento de lluvia dependen del ciclo. Se filtra a las filas cuyo
+ * `ciclo` incluye 2026 — NUNCA con `.eq('ciclo', '2026')`, porque
+ * `agropecuaria.ciclo` a veces trae el valor combinado "2025,2026" para un
+ * agricultor con lotes en ambos ciclos bajo la misma key (regla de
+ * AGENTS.md: ese campo "no sirve para filtrar" con igualdad exacta).
+ *
+ * A diferencia de `listAgricultores()` (lib/access.ts, usada en
+ * documentación/cultivo/master), acá NO se le agrega el sufijo "· ciclo" al
+ * nombre: al quedar un solo perfil por productor no hace falta desambiguar.
+ */
+export async function listAgricultores2026(): Promise<AgricultorOption[]> {
+  const supabase = await createClient()
+  const { data } = await supabase
+    .from('agropecuaria')
+    .select('AgricultorKey, nombre_agropecuaria, ciclo')
+    .ilike('ciclo', '%2026%')
+    .order('nombre_agropecuaria', { ascending: true })
+  return (data ?? []).map(a => ({
+    key: a.AgricultorKey as string,
+    nombre: (a.nombre_agropecuaria as string | null) ?? (a.AgricultorKey as string),
+  }))
 }

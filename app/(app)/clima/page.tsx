@@ -1,10 +1,10 @@
 import { getUserProfile } from '@/lib/auth'
 import { redirect } from 'next/navigation'
-import { resolveAgricultorScope, listAgricultores } from '@/lib/access'
+import { resolveAgricultorScope } from '@/lib/access'
 import MasterAgricultorSelector from '@/components/MasterAgricultorSelector'
 import DataSourceBadge from '@/components/DataSourceBadge'
 import DescargarHistoricoClimaBtn from '@/components/DescargarHistoricoClimaBtn'
-import { getCurrentConditions, getClimateSeries } from '@/lib/clima'
+import { getCurrentConditions, getClimateSeries, listAgricultores2026 } from '@/lib/clima'
 import CurrentConditionsCard from '@/components/clima/CurrentConditionsCard'
 import {
   resolveAgricultorLluviaId,
@@ -12,7 +12,6 @@ import {
   getLluviaDiariaPorLotes,
   getLluviaMensualPorLotes,
   getPrediccionPorLotes,
-  getZonasDeAgricultor,
   getLluviaMensualZona,
   getPrediccionZona,
   getLluviaDiariaEstacionPorZona,
@@ -24,7 +23,6 @@ import StatCardRow from '@/components/clima/StatCardRow'
 import LotesRainGrid from '@/components/clima/LotesRainGrid'
 import TemperatureChart from '@/components/clima/TemperatureChart'
 import AgricultorRainMonthlyChart from '@/components/clima/AgricultorRainMonthlyChart'
-import ZonaRainChart from '@/components/clima/ZonaRainChart'
 import ClimaVistaTabs from '@/components/clima/master/ClimaVistaTabs'
 import GlobalAgricultoresTable from '@/components/clima/master/GlobalAgricultoresTable'
 import PorAgricultorAccordion from '@/components/clima/master/PorAgricultorAccordion'
@@ -67,7 +65,7 @@ export default async function ClimaPage({
   // Master: ya no se corta a un empty-state de página completa antes de
   // mostrar nada — aterriza directo en el dashboard espejado (mismo
   // comportamiento que tenía seguimiento-lluvia-saturno).
-  const agricultores = await listAgricultores()
+  const agricultores = await listAgricultores2026()
   const vista = resolveVista(params.vista, !!scope.agricultorKey)
 
   return (
@@ -105,10 +103,12 @@ export default async function ClimaPage({
 }
 
 /**
- * Vista de UN agricultor: lectura actual + KPIs + gráficos por lote + serie
- * de temperatura + mensual propio + su(s) zona(s). La usan tanto el
- * agricultor logueado como el master cuando elige `?agricultor=` en la
- * pestaña "Mi agricultor".
+ * Vista de UN agricultor: el mensual de lluvia (real/pronóstico) va primero
+ * — es el gráfico principal de todo el módulo — seguido de la lectura
+ * actual, KPIs, gráficos por lote y temperatura. Ya no muestra el gráfico de
+ * su zona (Oriente/Occidente): eso quedó solo en la pestaña "Zonas" de
+ * master. La usan tanto el agricultor logueado como el master cuando elige
+ * `?agricultor=` en la pestaña "Mi agricultor".
  */
 async function MiAgricultorContent({ agricultorKey, isMaster }: { agricultorKey: string; isMaster: boolean }) {
   const [conditions, agricultorLluviaId, climateSeries] = await Promise.all([
@@ -133,17 +133,10 @@ async function MiAgricultorContent({ agricultorKey, isMaster }: { agricultorKey:
     dailyByLote.set(row.lote_id, arr)
   }
 
-  const zonas = getZonasDeAgricultor(lotes)
-  const zonaData = await Promise.all(
-    zonas.map(async zona => ({
-      zona,
-      mensual: await getLluviaMensualZona(zona),
-      prediccion: await getPrediccionZona(zona),
-    })),
-  )
-
   return (
     <div className="space-y-6">
+      <AgricultorRainMonthlyChart mensual={mensualRows} prediccion={prediccionRows} />
+
       <div className="flex flex-wrap items-center gap-2">
         <DataSourceBadge source={conditions.source} fecha={conditions.fecha} size="sm" />
         {conditions.source.fuente === 'davis' && (
@@ -159,10 +152,6 @@ async function MiAgricultorContent({ agricultorKey, isMaster }: { agricultorKey:
       <StatCardRow lotes={lotes} />
       <LotesRainGrid lotes={lotes} dailyByLote={dailyByLote} />
       <TemperatureChart series={climateSeries} />
-      <AgricultorRainMonthlyChart mensual={mensualRows} prediccion={prediccionRows} />
-      {zonaData.map(z => (
-        <ZonaRainChart key={z.zona} zona={z.zona} mensual={z.mensual} prediccion={z.prediccion} />
-      ))}
     </div>
   )
 }

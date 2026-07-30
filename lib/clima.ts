@@ -187,7 +187,12 @@ export async function getCurrentConditions(agricultorKey: string): Promise<Curre
     }
   }
 
-  // Path B — triangulado por IDW desde estaciones cercanas
+  // Path B — triangulado por IDW desde estaciones cercanas.
+  //
+  // INACTIVO: `v_clima_efectivo` ya no emite la fuente 'triangulated' (ver
+  // migración `clima_sin_triangulacion`), así que esta rama no se alcanza.
+  // Se conserva —igual que la RPC `triangulate_clima` y las coordenadas— para
+  // que reactivarla sea solo reponer una línea del CASE de la vista.
   if (efectivo.fuente === 'triangulated' && efectivo.lat != null && efectivo.lon != null) {
     const { data: tri } = await supabase.rpc('triangulate_clima', {
       target_lat: efectivo.lat,

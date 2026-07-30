@@ -18,8 +18,14 @@ secas es la empresa — no confundir ni renombrar.
 - **Al borrar una página**, Next deja una referencia obsoleta en
   `.next/dev/types/validator.ts` y el typecheck falla. Solución: borrar `.next`
   y recompilar.
-- Push a `main` despliega en Vercel. Verificar en producción mirando si cambió
-  el hash del bundle CSS: `curl -s <url>/login | grep -o '/_next/static/css/[a-z0-9]*'`.
+- Push a `main` despliega en Vercel. Para verificar qué build está vivo, ver
+  [Verificar un deploy](docs/ARQUITECTURA.md#verificar-un-deploy-sin-iniciar-sesión):
+  `/sw.js` es público y lista los chunks reales del build en producción.
+- **Vercel (plan Hobby) bloquea el deploy si el autor del commit no es
+  colaborador del proyecto.** Los commits de Alejandro quedan en `Blocked` y su
+  trabajo no sale a producción hasta que se empuja un commit encima desde la
+  cuenta dueña del proyecto. No hace falta reescribir su autoría: basta con que
+  el commit de cabecera sea de la cuenta dueña.
 
 ## Datos
 
@@ -28,16 +34,28 @@ secas es la empresa — no confundir ni renombrar.
   "arreglar" datos faltantes, comprobar si el hueco viene del origen.
 - **Las fechas de Saturno son MM/DD/YYYY** (formato estadounidense). Usar
   siempre `public.saturno_fecha(text)`; nunca parsearlas a mano.
-- **Ciclo agrícola**: `agropecuaria.ciclo` puede traer el valor combinado
-  `'2025,2026'`, así que **no sirve para filtrar**. El ciclo es una elección
-  explícita del usuario vía `?ciclo=` (`lib/ciclo.ts`). Además hay agricultores
-  con lotes en ambos ciclos bajo la misma key.
+- **Ciclo agrícola**: el selector 2025/2026 se retiró (30-jul-2026). La app
+  trabaja siempre sobre `CICLO_ACTIVO` (`lib/ciclo.ts`); `resolveCiclo()` ignora
+  el parámetro de la URL a propósito, para que un enlace viejo o una versión
+  cacheada en la PWA con `?ciclo=2025` no deje a nadie mirando un ciclo cerrado.
+  Si alguna vez hay que volver a filtrar por año: `agropecuaria.ciclo` **no
+  sirve** — puede traer el valor combinado `'2025,2026'`, que nunca iguala a
+  `lote.ciclo`. Además hay agricultores con lotes en ambos ciclos bajo la misma key.
 - **Perfiles gemelos**: el mismo productor puede existir como dos agropecuarias
   (una por ciclo) con keys distintas. Por eso el selector muestra el ciclo.
 - **`producto_registro` tiene columna `ciclo`**: filtrar por ella además de por
   nombre de lote, o los insumos de un año se cuelan en el otro.
 - El clima es el único dato que la app captura por sí misma (WeatherLink, cron
   horario). Ver [`docs/OPERACION_PIPELINE_CLIMA.md`](docs/OPERACION_PIPELINE_CLIMA.md).
+- **Sin triangulación** (30-jul-2026). Con las estaciones Davis ya asignadas,
+  quien no tiene estación propia ve el módulo vacío en vez de una estimación por
+  IDW desde estaciones a decenas de kilómetros, que en pantalla se leía igual que
+  una medición del lote. El corte está en el `CASE` de `v_clima_efectivo`
+  (migración `clima_sin_triangulacion`), no en el front: la fuente se lee desde
+  esa vista en varios sitios y parchear cada uno deja el riesgo de olvidar el
+  siguiente. La RPC `triangulate_clima()` y las coordenadas siguen ahí, así que
+  revertir es reponer una rama del `CASE`. Hoy: 42 agricultores con Davis,
+  13 sin datos.
 
 ## ⚠️ Nunca cruces `saturno.*` en una vista que consuma la app
 
@@ -133,8 +151,9 @@ ciclo (es lo que hace `AvanceCultivoChart`).
   También orienta sobre los módulos (`MODULOS` en `lib/agro-glosario.ts`): al
   agregar una pantalla, añádela ahí o el asistente no sabrá que existe.
 - **Soporte: solo tickets.** El botón de WhatsApp se eliminó por decisión del
-  usuario (29-jul-2026); no reintroducirlo. Quedan dos botones flotantes:
-  asistente (derecha) y tickets (izquierda).
+  usuario (29-jul-2026); no reintroducirlo. Quedan dos botones flotantes, ambos
+  apilados a la derecha: tickets arriba (`bottom-24 right-6`) y asistente debajo
+  (`bottom-6 right-6`).
 - Paleta oscura: la escala `gray` de Tailwind está redefinida bajo `.dark` en
   `globals.css` para dar un carbón cálido. Cambiar esas variables afecta toda la
   app en modo oscuro.

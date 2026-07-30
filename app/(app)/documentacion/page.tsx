@@ -7,6 +7,7 @@ import MasterEmptyState from '@/components/MasterEmptyState'
 import DocumentosSection from '@/components/DocumentosSection'
 import DocumentoUploader from '@/components/DocumentoUploader'
 import DocumentoCategoriaTabs from '@/components/DocumentoCategoriaTabs'
+import DescargarPLBtn from '@/components/DescargarPLBtn'
 import { resolveCiclo } from '@/lib/ciclo'
 import { CATEGORIAS, resolveCategoria } from '@/lib/documentos'
 
@@ -94,6 +95,26 @@ export default async function DocumentacionPage({
         categoria={categoria}
         descripcion={categoriaActual.descripcion}
       />
+
+      {/* Extra: no es un documento cargado por nadie, se genera al vuelo desde
+          los costos de Saturno. Va fuera de las pestañas —y separado por una
+          línea— para que no se lea como una cuarta categoría del archivo. */}
+      <div className="border-t border-gray-200 pt-6 dark:border-gray-800">
+        <div className="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div className="min-w-0">
+              <h2 className="text-base font-semibold text-gray-800 dark:text-gray-100">
+                Estado de resultados (P&amp;L)
+              </h2>
+              <p className="mt-0.5 text-xs text-gray-500 dark:text-gray-400">
+                Costos por unidad de producción: semillas, agroquímicos, fertilizantes,
+                mecanización, servicio técnico y financiamiento. En Excel, con resumen y detalle.
+              </p>
+            </div>
+            <DescargarPLBtn agricultorKey={scope.isMaster ? scope.agricultorKey : null} />
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

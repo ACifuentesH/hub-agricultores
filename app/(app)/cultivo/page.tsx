@@ -17,7 +17,6 @@ import { freshnessLevel, freshnessTextClass, formatDateShort } from '@/lib/fresh
 import { resolveCiclo } from '@/lib/ciclo'
 import { FASE_CORTA } from '@/lib/agro-glosario'
 import FechaSiembraEditor from '@/components/FechaSiembraEditor'
-import DescargarPLBtn from '@/components/DescargarPLBtn'
 
 // Datos vivos: nunca cachear (lotes/clima/condiciones cambian frecuentemente)
 export const dynamic = 'force-dynamic'
@@ -146,22 +145,6 @@ export default async function CultivoPage({
             </div>
             <DataSourceBadge source={conditions.source} fecha={conditions.fecha} size="sm" />
           </div>
-        </div>
-      </div>
-
-      {/* Estado de resultados del ciclo */}
-      <div className="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900">
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <div className="min-w-0">
-            <h2 className="text-base font-semibold text-gray-800 dark:text-gray-100">
-              Estado de resultados (P&amp;L)
-            </h2>
-            <p className="mt-0.5 text-xs text-gray-500 dark:text-gray-400">
-              Costos por unidad de producción: semillas, agroquímicos, fertilizantes,
-              mecanización, servicio técnico y financiamiento. En Excel, con resumen y detalle.
-            </p>
-          </div>
-          <DescargarPLBtn agricultorKey={scope.isMaster ? scope.agricultorKey : null} />
         </div>
       </div>
 

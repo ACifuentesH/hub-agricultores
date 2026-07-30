@@ -72,62 +72,68 @@ export default function CultivoTimeline({ fechaSiembra, diasCiclo = 120 }: Props
       </div>
 
       {/* Cuerpo de la línea de tiempo.
-          El padding superior debe superar la suma de: marcador "Hoy" (~34 px)
-          + franja de plantas. Antes era pt-24 (96 px) mientras las plantas
-          ocupaban de 48 px a 128 px, así que invadían la barra de meses. */}
-      <div className="relative pt-36 pb-12">
-        {/* Hoy marker (glowing pill + arrow) */}
-        <div
-          className="absolute top-0 -translate-x-1/2 flex flex-col items-center z-30"
-          style={{ left: `${todayPct * 100}%` }}
-        >
+          Antes las plantas eran `absolute … bottom-0` respecto a ESTE div, y su
+          borde inferior caía al final del panel —o sea, por debajo de la barra
+          de meses y del indicador de ciclo—, que es justo donde se veían. Ahora
+          la franja superior (marcador "Hoy" + plantas) es un bloque propio en
+          flujo normal, así que las plantas se apoyan en SU base y quedan
+          siempre encima de los meses, pase lo que pase con el alto del panel. */}
+      <div className="relative pb-12">
+        {/* Franja superior: 128 px reparten el marcador "Hoy" (~34 px arriba) y
+            las plantas de 48 px apoyadas abajo, sin que se toquen. */}
+        <div className="relative h-32">
+          {/* Hoy marker (glowing pill + arrow) */}
           <div
-            className="px-3 py-1 rounded-full bg-green-500 text-white text-xs font-semibold shadow-lg"
-            style={{ boxShadow: '0 0 15px rgba(34, 197, 94, 0.6), 0 0 30px rgba(34, 197, 94, 0.3)' }}
+            className="absolute top-0 -translate-x-1/2 flex flex-col items-center z-30"
+            style={{ left: `${todayPct * 100}%` }}
           >
-            Hoy
+            <div
+              className="px-3 py-1 rounded-full bg-green-500 text-white text-xs font-semibold shadow-lg"
+              style={{ boxShadow: '0 0 15px rgba(34, 197, 94, 0.6), 0 0 30px rgba(34, 197, 94, 0.3)' }}
+            >
+              Hoy
+            </div>
+            <svg width="14" height="10" viewBox="0 0 14 10" className="text-green-500 mt-0.5">
+              <path d="M7 10 L0 0 L14 0 Z" fill="currentColor" />
+            </svg>
           </div>
-          <svg width="14" height="10" viewBox="0 0 14 10" className="text-green-500 mt-0.5">
-            <path d="M7 10 L0 0 L14 0 Z" fill="currentColor" />
-          </svg>
-        </div>
 
-        {/* Plantas por etapa, apoyadas justo encima de la barra de meses.
-            `bottom-0` de este contenedor coincide con el borde superior de la
-            barra, así que las plantas crecen hacia arriba sin invadirla. */}
-        <div className="absolute inset-x-0 top-12 bottom-0 pointer-events-none">
-          {stages.map(({ stage, leftPct }, i) => {
-            const isPast = stage <= currentStage
-            const isCurrent = stage === currentStage
-            return (
-              <div
-                key={stage}
-                className="absolute -translate-x-1/2"
-                style={{
-                  left: `${leftPct}%`,
-                  bottom: 0,
-                  opacity: isPast ? 1 : 0.45,
-                  filter: isCurrent
-                    ? 'drop-shadow(0 0 8px rgba(132, 204, 22, 0.6))'
-                    : isPast ? 'none' : 'grayscale(0.4)',
-                }}
-              >
-                <CornStage stage={stage} delay={i * 0.18} size={48} />
-              </div>
-            )
-          })}
-        </div>
+          {/* Plantas por etapa, apoyadas en la base de la franja */}
+          <div className="absolute inset-0 pointer-events-none">
+            {stages.map(({ stage, leftPct }, i) => {
+              const isPast = stage <= currentStage
+              const isCurrent = stage === currentStage
+              return (
+                <div
+                  key={stage}
+                  className="absolute -translate-x-1/2"
+                  style={{
+                    left: `${leftPct}%`,
+                    bottom: 0,
+                    opacity: isPast ? 1 : 0.45,
+                    filter: isCurrent
+                      ? 'drop-shadow(0 0 8px rgba(132, 204, 22, 0.6))'
+                      : isPast ? 'none' : 'grayscale(0.4)',
+                  }}
+                >
+                  <CornStage stage={stage} delay={i * 0.18} size={48} />
+                </div>
+              )
+            })}
+          </div>
 
-        {/* Current stage glow on month bar */}
-        {siembraPct !== null && cosechaPct !== null && (
-          <div
-            className="absolute top-[calc(100%-48px)] -translate-x-1/2 w-32 h-6 pointer-events-none rounded-full"
-            style={{
-              left: `${todayPct * 100}%`,
-              background: 'radial-gradient(ellipse, rgba(132, 204, 22, 0.4), transparent 70%)',
-            }}
-          />
-        )}
+          {/* Resplandor de la etapa actual, pegado al borde inferior de la
+              franja para que caiga sobre la barra de meses */}
+          {siembraPct !== null && cosechaPct !== null && (
+            <div
+              className="absolute bottom-0 -translate-x-1/2 translate-y-1/2 w-32 h-6 pointer-events-none rounded-full"
+              style={{
+                left: `${todayPct * 100}%`,
+                background: 'radial-gradient(ellipse, rgba(132, 204, 22, 0.4), transparent 70%)',
+              }}
+            />
+          )}
+        </div>
 
         {/* Month bar */}
         <div className="relative grid grid-cols-12 border-t border-b border-gray-700">

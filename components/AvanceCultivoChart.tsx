@@ -103,30 +103,43 @@ export default function AvanceCultivoChart({
           />
         </div>
 
-        {/* Hitos del ciclo */}
+        {/* Hitos del ciclo.
+            El punto siempre va centrado en su porcentaje, pero la etiqueta no:
+            centrarla en 0% y 100% sacaba "Siembra" y "Cosecha" fuera de la
+            tarjeta. Los extremos se anclan hacia dentro (el primero alinea su
+            borde izquierdo con el punto, el último el derecho) y solo los
+            intermedios van centrados. */}
         <div className="relative mt-1.5 h-8">
-          {HITOS.map(h => (
-            <div
-              key={h.pct}
-              className="absolute top-0 -translate-x-1/2 text-center"
-              style={{ left: `${h.pct}%` }}
-            >
-              <div
-                className={`mx-auto h-1.5 w-1.5 rounded-full ${
-                  promedio >= h.pct ? 'bg-green-600' : 'bg-gray-300 dark:bg-gray-600'
-                }`}
-              />
-              <span
-                className={`mt-1 block whitespace-nowrap text-[10px] ${
-                  promedio >= h.pct
-                    ? 'font-medium text-gray-700 dark:text-gray-200'
-                    : 'text-gray-400 dark:text-gray-500'
-                }`}
-              >
-                {h.etiqueta}
-              </span>
-            </div>
-          ))}
+          {HITOS.map((h, i) => {
+            const esPrimero = i === 0
+            const esUltimo = i === HITOS.length - 1
+            const alcanzado = promedio >= h.pct
+            return (
+              <div key={h.pct} className="absolute top-0" style={{ left: `${h.pct}%` }}>
+                <div
+                  className={`h-1.5 w-1.5 -translate-x-1/2 rounded-full ${
+                    alcanzado ? 'bg-green-600' : 'bg-gray-300 dark:bg-gray-600'
+                  }`}
+                />
+                <span
+                  className={`absolute top-2.5 block whitespace-nowrap text-[10px] ${
+                    alcanzado
+                      ? 'font-medium text-gray-700 dark:text-gray-200'
+                      : 'text-gray-400 dark:text-gray-500'
+                  }`}
+                  style={{
+                    transform: esPrimero
+                      ? 'translateX(0)'
+                      : esUltimo
+                        ? 'translateX(-100%)'
+                        : 'translateX(-50%)',
+                  }}
+                >
+                  {h.etiqueta}
+                </span>
+              </div>
+            )
+          })}
         </div>
       </div>
 

@@ -43,8 +43,12 @@ Push a `main` despliega automáticamente en Vercel.
 Dos roles: **farmer** (ve solo lo suyo, por RLS) y **master** (valida la vista
 de cualquier agricultor mediante `?agricultor=`).
 
-Todas las pantallas respetan el **ciclo agrícola** seleccionado en la barra
-lateral (`?ciclo=`).
+Todas las pantallas trabajan sobre el **ciclo activo**. El selector 2025/2026 se
+retiró el 30-jul-2026: el ciclo 2025 está cerrado y verlo mezclado con el ciclo
+en curso confundía más de lo que aportaba.
+
+Para entender cómo está armado por dentro:
+[**Arquitectura**](docs/ARQUITECTURA.md) · [**Componentes**](docs/COMPONENTES.md)
 
 ---
 
@@ -59,8 +63,10 @@ WeatherLink (44 estaciones) ──cron horario──►  weather_readings     �
   **Saturno**; la app los espeja y no los edita.
   → [`docs/SINCRONIZACION_SATURNO.md`](docs/SINCRONIZACION_SATURNO.md)
 - **Clima**: único dato que la app captura por sí misma, desde estaciones Davis.
-  Cuando un agricultor no tiene estación propia, se estima por triangulación
-  entre las cercanas. → [`docs/OPERACION_PIPELINE_CLIMA.md`](docs/OPERACION_PIPELINE_CLIMA.md)
+  Quien no tiene estación propia ve el módulo vacío — la triangulación entre
+  estaciones cercanas se retiró el 30-jul-2026 porque una estimación a decenas de
+  kilómetros se leía en pantalla igual que una medición del lote.
+  → [`docs/OPERACION_PIPELINE_CLIMA.md`](docs/OPERACION_PIPELINE_CLIMA.md)
 
 Para revisar el estado de la sincronización:
 

@@ -99,7 +99,11 @@ export default async function MasterPage({
       (l.ha_cosechadas != null && l.ha_cosechadas !== ''),
   )
 
-  const conClima = filas.filter(f => f.fuente === 'davis' || f.fuente === 'triangulated').length
+  // "Con clima" = estación Davis propia y nada más. La triangulación se retiró
+  // (ver migración `clima_sin_triangulacion`): quien no tiene estación ve el
+  // módulo vacío, así que contarlo aquí como "con clima" mentía sobre la
+  // cobertura real.
+  const conClima = filas.filter(f => f.fuente === 'davis').length
   const conLotes = filas.filter(f => f.lotes > 0).length
   const conDocs = filas.filter(f => f.docs > 0).length
   const sinNada = filas.filter(f => f.lotes === 0 && f.docs === 0).length
@@ -260,16 +264,9 @@ function ClimaChip({ fuente, estacion }: { fuente: string; estacion: string | nu
       </span>
     )
   }
-  if (fuente === 'triangulated') {
-    return (
-      <span
-        className="inline-flex items-center gap-1 rounded-full bg-blue-100 px-2 py-0.5 text-[11px] text-blue-800 dark:bg-blue-900/40 dark:text-blue-300"
-        title="Estimado por triangulación entre estaciones cercanas"
-      >
-        <CircleCheck size={11} /> Triangulado
-      </span>
-    )
-  }
+  // Nota: ya no existe el chip "Triangulado". `v_clima_efectivo` dejó de emitir
+  // esa fuente (migración `clima_sin_triangulacion`), así que quien no tiene
+  // estación propia cae directo en "Sin datos".
   return (
     <span
       className="inline-flex items-center gap-1 rounded-full bg-red-100 px-2 py-0.5 text-[11px] text-red-700 dark:bg-red-900/40 dark:text-red-300"

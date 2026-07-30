@@ -31,6 +31,8 @@ interface PendingFile {
   categoria: CategoriaId
   status: 'pending' | 'uploading' | 'done' | 'error'
   errorMsg?: string
+  /** Si la subida local funcionó pero el reenvío a productorhub falló: no bloquea, solo se avisa. */
+  syncWarning?: string
 }
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
@@ -172,6 +174,22 @@ export default function AnalisisSueloUploader({ agricultores }: { agricultores: 
     }
 
     updateRow(p.id, { status: 'done' })
+
+    // Reenvío best-effort al bucket productorhub (proyecto del equipo que
+    // hereda la plataforma): el guardado local ya está confirmado arriba, así
+    // que un fallo acá solo se muestra como aviso, no revierte nada.
+    try {
+      const form = new FormData()
+      form.append('file', p.file)
+      form.append('path', path)
+      const res = await fetch('/api/documentos/productorhub', { method: 'POST', body: form })
+      if (!res.ok) {
+        const body = await res.json().catch(() => null)
+        updateRow(p.id, { syncWarning: body?.error ?? 'No se pudo sincronizar con productorhub' })
+      }
+    } catch {
+      updateRow(p.id, { syncWarning: 'No se pudo sincronizar con productorhub (sin conexión)' })
+    }
   }
 
   async function uploadAll() {
@@ -336,7 +354,16 @@ export default function AnalisisSueloUploader({ agricultores }: { agricultores: 
                     </button>
                   )}
                   {p.status === 'uploading' && <Loader2 size={16} className="animate-spin text-green-600" />}
-                  {p.status === 'done' && <Check size={16} className="text-green-600" />}
+                  {p.status === 'done' && (
+                    <span className="inline-flex items-center gap-1">
+                      <Check size={16} className="text-green-600" />
+                      {p.syncWarning && (
+                        <span title={p.syncWarning} className="text-amber-600">
+                          <AlertCircle size={14} />
+                        </span>
+                      )}
+                    </span>
+                  )}
                   {p.status === 'error' && (
                     <span title={p.errorMsg} className="text-red-600 inline-flex items-center gap-1">
                       <AlertCircle size={16} />

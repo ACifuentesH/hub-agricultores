@@ -16,8 +16,8 @@ interface Props {
 }
 
 /**
- * Una sección del módulo Documentación (análisis de suelo, mapas, caso de
- * negocio o convenios). Lista los archivos de esa categoría para el agricultor
+ * Una sección del módulo Documentación (análisis de suelo y agua, convenios o
+ * P&L). Lista los archivos de esa categoría para el agricultor
  * y ciclo en contexto. La carga de archivos vive en el uploader único de la
  * página, no aquí.
  */

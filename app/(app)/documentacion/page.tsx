@@ -8,7 +8,7 @@ import DocumentosSection from '@/components/DocumentosSection'
 import AnalisisSueloUploader from '@/components/AnalisisSueloUploader'
 import { resolveCiclo } from '@/lib/ciclo'
 import { CATEGORIAS } from '@/lib/documentos'
-import { FlaskConical, Map, Briefcase, ScrollText } from 'lucide-react'
+import { FlaskConical, Briefcase, ScrollText } from 'lucide-react'
 
 // Datos vivos: nunca cachear
 export const dynamic = 'force-dynamic'
@@ -16,9 +16,8 @@ export const dynamic = 'force-dynamic'
 /** Icono por categoría — se mapea aquí para que lib/documentos.ts no dependa de React. */
 const ICONOS: Record<string, React.ReactNode> = {
   analisis_suelo: <FlaskConical size={18} className="text-amber-600" />,
-  mapas: <Map size={18} className="text-blue-600" />,
-  caso_negocio: <Briefcase size={18} className="text-violet-600" />,
   convenios: <ScrollText size={18} className="text-green-700" />,
+  pnl: <Briefcase size={18} className="text-violet-600" />,
 }
 
 export default async function DocumentacionPage({

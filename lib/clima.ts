@@ -32,6 +32,8 @@ export interface ClimateSeries {
   /** normalized 0-1 daily averages, oldest → newest */
   tempSeries: number[]
   humSeries: number[]
+  /** fecha "YYYY-MM-DD" de cada punto, mismo orden/índice que tempSeries/humSeries */
+  dates: string[]
   /** raw min/max for legend tooltips */
   tempMin: number
   tempMax: number
@@ -252,6 +254,11 @@ export async function getClimateSeries(agricultorKey: string, days = 14): Promis
     .eq('station_id', stationId)
     .gte('ts', sinceTs)
     .order('ts', { ascending: true })
+    // Lecturas cada ~15 min => hasta ~96/día. Sin este limit explícito, el
+    // default de PostgREST (1000 filas) cortaba una ventana de 30 días a la
+    // altura del día ~10-11 (1000/96 ≈ 10.4), mostrando el mes "incompleto"
+    // aunque los datos de días posteriores sí existían en la base.
+    .limit(days * 100)
 
   if (!data || data.length === 0) return emptySeries(await esSensorSoloLluvia(supabase, stationId))
 
@@ -287,6 +294,7 @@ export async function getClimateSeries(agricultorKey: string, days = 14): Promis
   return {
     tempSeries: dailyTemp.map(v => normalize(v, tempMin, tempMax)),
     humSeries:  dailyHum.map(v => normalize(v, humMin, humMax)),
+    dates: days_sorted,
     tempMin,
     tempMax,
     sinSensorTemperatura: false,
@@ -319,7 +327,7 @@ function normalize(v: number, min: number, max: number): number {
 }
 
 function emptySeries(sinSensorTemperatura = false): ClimateSeries {
-  return { tempSeries: [], humSeries: [], tempMin: 0, tempMax: 0, sinSensorTemperatura }
+  return { tempSeries: [], humSeries: [], dates: [], tempMin: 0, tempMax: 0, sinSensorTemperatura }
 }
 
 function describeCondition(lluvia: number | null, solar: number | null, hum: number | null): string {

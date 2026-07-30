@@ -13,6 +13,11 @@
  * El eje Y usa un rango fijo (10-40°C) en vez de autoescalar al min/max real
  * de los datos: así el gráfico queda centrado y comparable entre lotes, sin
  * que una variación chica de un par de grados se vea exagerada.
+ *
+ * El eje X muestra "día mes" (1 ene, 2 ene…) tomado de `series.dates`, no un
+ * offset relativo ("-5d") — el usuario lo pidió así para leerlo como un
+ * calendario en vez de "hace N días", con el mes explícito porque la
+ * ventana de 30 días puede cruzar un cambio de mes.
  */
 
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
@@ -29,22 +34,27 @@ function denormalize(v: number, min: number, max: number): number {
   return min + v * (max - min)
 }
 
+const MESES_ABREV = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic']
+
+/** "YYYY-MM-DD" -> "5 jul", sin pasar por Date (evita líos de timezone). */
+function formatEjeX(fecha: string): string {
+  const dia = Number(fecha.slice(8, 10))
+  const mes = MESES_ABREV[Number(fecha.slice(5, 7)) - 1]
+  return `${dia} ${mes}`
+}
+
 export default function TemperatureChart({ series }: Props) {
-  const n = series.tempSeries.length
-  const data = series.tempSeries.map((v, i) => {
-    const offset = n - 1 - i
-    return {
-      label: offset === 0 ? 'Hoy' : `-${offset}d`,
-      temp_c: Number(denormalize(v, series.tempMin, series.tempMax).toFixed(1)),
-    }
-  })
+  const data = series.tempSeries.map((v, i) => ({
+    label: formatEjeX(series.dates[i]),
+    temp_c: Number(denormalize(v, series.tempMin, series.tempMax).toFixed(1)),
+  }))
 
   return (
     <div className="rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-900">
       <div className="mb-2">
-        <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-100">Temperatura</h3>
+        <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-100">Temperatura mensual</h3>
         <p className="text-[11px] leading-snug text-gray-500 dark:text-gray-400">
-          Promedio diario de la estación asignada
+          Promedio diario de la estación asignada, por día del mes
         </p>
       </div>
 

@@ -31,6 +31,8 @@ interface PendingFile {
   categoria: CategoriaId
   status: 'pending' | 'uploading' | 'done' | 'error'
   errorMsg?: string
+  /** Si la subida local funcionó pero el reenvío a productorhub falló: no bloquea, solo se avisa. */
+  syncWarning?: string
 }
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
@@ -142,12 +144,12 @@ export default function DocumentoUploader({ agricultores }: { agricultores: Agri
 
     try {
       const res = await fetch('/api/documentos/upload', { method: 'POST', body: fd })
-      const json = await res.json() as { ok: boolean; id?: string; error?: string }
+      const json = await res.json() as { ok: boolean; id?: string; error?: string; sync_warning?: string }
       if (!res.ok || !json.ok) {
         updateRow(p.id, { status: 'error', errorMsg: json.error ?? `Error ${res.status}` })
         return
       }
-      updateRow(p.id, { status: 'done' })
+      updateRow(p.id, { status: 'done', syncWarning: json.sync_warning })
     } catch (e) {
       updateRow(p.id, { status: 'error', errorMsg: e instanceof Error ? e.message : 'Error de red' })
     }
@@ -315,7 +317,16 @@ export default function DocumentoUploader({ agricultores }: { agricultores: Agri
                     </button>
                   )}
                   {p.status === 'uploading' && <Loader2 size={16} className="animate-spin text-green-600" />}
-                  {p.status === 'done' && <Check size={16} className="text-green-600" />}
+                  {p.status === 'done' && (
+                    <span className="inline-flex items-center gap-1">
+                      <Check size={16} className="text-green-600" />
+                      {p.syncWarning && (
+                        <span title={p.syncWarning} className="text-amber-600">
+                          <AlertCircle size={14} />
+                        </span>
+                      )}
+                    </span>
+                  )}
                   {p.status === 'error' && (
                     <span title={p.errorMsg} className="text-red-600 inline-flex items-center gap-1">
                       <AlertCircle size={16} />

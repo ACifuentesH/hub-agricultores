@@ -14,23 +14,18 @@
 export const CATEGORIAS = [
   {
     id: 'analisis_suelo',
-    label: 'Análisis de suelo',
-    descripcion: 'Resultados de laboratorio: fertilidad, textura y recomendaciones.',
-  },
-  {
-    id: 'mapas',
-    label: 'Mapas',
-    descripcion: 'Planos de la finca, poligonales y mapas de lotes.',
-  },
-  {
-    id: 'caso_negocio',
-    label: 'Caso de negocio',
-    descripcion: 'Proyecciones de costos, rendimiento y rentabilidad del ciclo.',
+    label: 'Análisis de suelo y agua',
+    descripcion: 'Resultados de laboratorio: fertilidad, textura, calidad de agua y recomendaciones.',
   },
   {
     id: 'convenios',
     label: 'Convenios',
     descripcion: 'Contratos y acuerdos del programa de agricultura por contrato.',
+  },
+  {
+    id: 'pnl',
+    label: 'P&L',
+    descripcion: 'Proyecciones de costos, rendimiento y rentabilidad del ciclo.',
   },
 ] as const
 

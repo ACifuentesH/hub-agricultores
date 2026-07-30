@@ -136,10 +136,9 @@ export const ETAPA_ALIAS: { stage: Stage; palabras: string[] }[] = [
 
 /** Qué significa cada sección del módulo Documentación. */
 export const DOC_EXPLICACION: Record<string, string> = {
-  analisis_suelo: 'Los análisis de suelo son los resultados del laboratorio: pH, materia orgánica, fósforo, potasio y textura. Sirven para decidir el encalado y la fórmula de fertilización.',
-  mapas: 'Los mapas son los planos de la finca: poligonales de los lotes, superficies y ubicación.',
-  caso_negocio: 'El caso de negocio reúne las proyecciones de costos, rendimiento esperado y rentabilidad del ciclo.',
+  analisis_suelo: 'Los análisis de suelo y agua son los resultados del laboratorio: pH, materia orgánica, fósforo, potasio, textura y calidad de agua. Sirven para decidir el encalado y la fórmula de fertilización.',
   convenios: 'Los convenios son los contratos y acuerdos firmados dentro del programa de agricultura por contrato.',
+  pnl: 'El P&L reúne las proyecciones de costos, rendimiento esperado y rentabilidad del ciclo.',
 }
 
 /** Cómo se obtuvo el dato de clima, explicado sin jerga. */

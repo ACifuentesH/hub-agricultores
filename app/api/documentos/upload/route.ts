@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { getUserProfile } from '@/lib/auth'
 import { CATEGORIAS, ACEPTADOS_MIME, MAX_BYTES, type CategoriaId } from '@/lib/documentos'
+import { subirAProductorHub } from '@/lib/productorhub-storage'
 
 export const dynamic = 'force-dynamic'
 
@@ -127,5 +128,17 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, error: insErr.message }, { status: 500 })
   }
 
-  return NextResponse.json({ ok: true, id: inserted.id })
+  // Reenvío best-effort al bucket `productorhub` (proyecto Supabase del
+  // equipo que hereda la plataforma): el guardado de arriba ya es la fuente
+  // de verdad durante la transición, así que un fallo acá solo se informa,
+  // nunca revierte el upload. Mismo `path` que en `analisis-suelo`.
+  let syncWarning: string | undefined
+  try {
+    const buffer = Buffer.from(await file.arrayBuffer())
+    await subirAProductorHub(path, buffer, file.type || 'application/octet-stream')
+  } catch (err) {
+    syncWarning = err instanceof Error ? err.message : 'No se pudo sincronizar con productorhub'
+  }
+
+  return NextResponse.json({ ok: true, id: inserted.id, sync_warning: syncWarning })
 }

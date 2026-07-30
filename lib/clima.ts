@@ -1,4 +1,5 @@
 import { createClient } from './supabase/server'
+import type { AgricultorOption } from './access'
 
 /** Origen de los datos de clima para un agricultor. */
 export type ClimaFuente = 'davis' | 'triangulated' | 'sin_datos'
@@ -31,9 +32,19 @@ export interface ClimateSeries {
   /** normalized 0-1 daily averages, oldest → newest */
   tempSeries: number[]
   humSeries: number[]
+  /** fecha "YYYY-MM-DD" de cada punto, mismo orden/índice que tempSeries/humSeries */
+  dates: string[]
   /** raw min/max for legend tooltips */
   tempMin: number
   tempMax: number
+  /**
+   * true cuando la estación de esta serie nunca reportó temp_c (hardware de
+   * solo-lluvia, confirmado con datos reales: varias estaciones del proyecto
+   * de seguimiento de lluvia traen miles de filas con lluvia_mm pero
+   * temp_c/hum_pct siempre null) — distinto de un hueco temporal de datos en
+   * una estación que sí mide temperatura.
+   */
+  sinSensorTemperatura: boolean
 }
 
 export interface ForecastDay {
@@ -243,8 +254,13 @@ export async function getClimateSeries(agricultorKey: string, days = 14): Promis
     .eq('station_id', stationId)
     .gte('ts', sinceTs)
     .order('ts', { ascending: true })
+    // Lecturas cada ~15 min => hasta ~96/día. Sin este limit explícito, el
+    // default de PostgREST (1000 filas) cortaba una ventana de 30 días a la
+    // altura del día ~10-11 (1000/96 ≈ 10.4), mostrando el mes "incompleto"
+    // aunque los datos de días posteriores sí existían en la base.
+    .limit(days * 100)
 
-  if (!data || data.length === 0) return emptySeries()
+  if (!data || data.length === 0) return emptySeries(await esSensorSoloLluvia(supabase, stationId))
 
   // Bucket by day (fecha_hora is "naive" string YYYY-MM-DD HH:MM:SS treated as UTC)
   const byDay = new Map<string, { temps: number[]; hums: number[] }>()
@@ -261,6 +277,15 @@ export async function getClimateSeries(agricultorKey: string, days = 14): Promis
   const dailyTemp = days_sorted.map(d => avg(byDay.get(d)!.temps))
   const dailyHum  = days_sorted.map(d => avg(byDay.get(d)!.hums))
 
+  // Estaciones de solo-lluvia (sin sensor de temperatura/humedad) traen filas
+  // en la ventana pero con temp_c/hum_pct siempre null — dailyTemp queda
+  // entero de NaN. Sin este chequeo, tempMin/tempMax quedaban en
+  // Infinity/-Infinity y denormalize() devolvía NaN en vez de mostrar el
+  // estado vacío correctamente (se veía un chart en blanco, no el mensaje).
+  if (dailyTemp.every(v => !Number.isFinite(v))) {
+    return emptySeries(await esSensorSoloLluvia(supabase, stationId))
+  }
+
   const tempMin = Math.min(...dailyTemp.filter(Number.isFinite))
   const tempMax = Math.max(...dailyTemp.filter(Number.isFinite))
   const humMin  = Math.min(...dailyHum.filter(Number.isFinite))
@@ -269,9 +294,25 @@ export async function getClimateSeries(agricultorKey: string, days = 14): Promis
   return {
     tempSeries: dailyTemp.map(v => normalize(v, tempMin, tempMax)),
     humSeries:  dailyHum.map(v => normalize(v, humMin, humMax)),
+    dates: days_sorted,
     tempMin,
     tempMax,
+    sinSensorTemperatura: false,
   }
+}
+
+/** Chequeo barato (limit 1, ya filtrado por station_id) de si esta estación alguna vez reportó temp_c. */
+async function esSensorSoloLluvia(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  stationId: string,
+): Promise<boolean> {
+  const { data } = await supabase
+    .from('weather_readings')
+    .select('ts')
+    .eq('station_id', stationId)
+    .not('temp_c', 'is', null)
+    .limit(1)
+  return !data || data.length === 0
 }
 
 function avg(xs: number[]): number {
@@ -285,8 +326,8 @@ function normalize(v: number, min: number, max: number): number {
   return Math.max(0, Math.min(1, (v - min) / (max - min)))
 }
 
-function emptySeries(): ClimateSeries {
-  return { tempSeries: [], humSeries: [], tempMin: 0, tempMax: 0 }
+function emptySeries(sinSensorTemperatura = false): ClimateSeries {
+  return { tempSeries: [], humSeries: [], dates: [], tempMin: 0, tempMax: 0, sinSensorTemperatura }
 }
 
 function describeCondition(lluvia: number | null, solar: number | null, hum: number | null): string {
@@ -429,4 +470,31 @@ function formatShortDate(iso: string): string {
   // Force UTC interpretation so "2026-04-20" doesn't shift by timezone
   const d = new Date(iso + 'T00:00:00')
   return d.toLocaleDateString('es-VE', { weekday: 'short', day: 'numeric', month: 'short' })
+}
+
+/**
+ * Lista de agricultores para el selector de master, SOLO en /clima: acá no
+ * tiene sentido mostrar los "perfiles gemelos" (mismo productor, dos
+ * AgricultorKey — una por ciclo, ver AGENTS.md) porque ni el clima actual ni
+ * el seguimiento de lluvia dependen del ciclo. Se filtra a las filas cuyo
+ * `ciclo` incluye 2026 — NUNCA con `.eq('ciclo', '2026')`, porque
+ * `agropecuaria.ciclo` a veces trae el valor combinado "2025,2026" para un
+ * agricultor con lotes en ambos ciclos bajo la misma key (regla de
+ * AGENTS.md: ese campo "no sirve para filtrar" con igualdad exacta).
+ *
+ * A diferencia de `listAgricultores()` (lib/access.ts, usada en
+ * documentación/cultivo/master), acá NO se le agrega el sufijo "· ciclo" al
+ * nombre: al quedar un solo perfil por productor no hace falta desambiguar.
+ */
+export async function listAgricultores2026(): Promise<AgricultorOption[]> {
+  const supabase = await createClient()
+  const { data } = await supabase
+    .from('agropecuaria')
+    .select('AgricultorKey, nombre_agropecuaria, ciclo')
+    .ilike('ciclo', '%2026%')
+    .order('nombre_agropecuaria', { ascending: true })
+  return (data ?? []).map(a => ({
+    key: a.AgricultorKey as string,
+    nombre: (a.nombre_agropecuaria as string | null) ?? (a.AgricultorKey as string),
+  }))
 }

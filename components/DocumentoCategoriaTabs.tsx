@@ -1,14 +1,13 @@
 'use client'
 
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
-import { FlaskConical, Map, Briefcase, ScrollText } from 'lucide-react'
+import { FlaskConical, Briefcase, ScrollText } from 'lucide-react'
 import type { CategoriaId } from '@/lib/documentos'
 
 const ICONOS: Record<CategoriaId, React.ComponentType<{ size?: number; className?: string }>> = {
   analisis_suelo: FlaskConical,
-  mapas: Map,
-  caso_negocio: Briefcase,
   convenios: ScrollText,
+  pnl: Briefcase,
 }
 
 interface Props {

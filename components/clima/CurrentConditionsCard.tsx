@@ -84,13 +84,6 @@ export default function CurrentConditionsCard({
             value={origen}
           />
         </div>
-
-        {source.fuente === 'triangulated' && source.estacionesUsadas && (
-          <p className="mt-4 rounded border border-amber-200/50 bg-amber-50/50 p-2.5 text-[11px] text-amber-700 dark:border-amber-900/40 dark:bg-amber-950/30 dark:text-amber-300">
-            <strong>Estimación triangulada:</strong> {source.estacionesUsadas}.
-            {source.precision && ` Precisión estimada: ${source.precision}.`}
-          </p>
-        )}
       </Card.Content>
     </Card>
   )

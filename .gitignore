@@ -40,6 +40,11 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# proyecto externo de referencia (seguimiento-lluvia-saturno): tiene su propio
+# .git y repo en GitHub — no se vendoriza acá, solo se lee como fuente para
+# portar componentes al módulo /clima.
+/seguimiento-lluvia-saturno/
+
 # reportes generados localmente por scripts de import masivo (contienen
 # nombres/keys reales de agricultores, no van al repo)
 scripts/bulk-import-report.csv

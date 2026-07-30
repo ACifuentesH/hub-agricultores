@@ -25,14 +25,13 @@ import AgricultorRainMonthlyChart from '@/components/clima/AgricultorRainMonthly
 import ClimaVistaTabs from '@/components/clima/master/ClimaVistaTabs'
 import GlobalAgricultoresTable from '@/components/clima/master/GlobalAgricultoresTable'
 import PorAgricultorAccordion from '@/components/clima/master/PorAgricultorAccordion'
-import RendimientoPorFincaAccordion from '@/components/clima/master/RendimientoPorFincaAccordion'
 import ZonasComparisonSection from '@/components/clima/master/ZonasComparisonSection'
 import DistribucionProbabilidadChart from '@/components/clima/master/DistribucionProbabilidadChart'
 
 // Datos vivos: nunca cachear
 export const dynamic = 'force-dynamic'
 
-const VISTAS_MASTER = ['mi-agricultor', 'por-agricultor', 'global', 'rendimiento', 'zonas'] as const
+const VISTAS_MASTER = ['mi-agricultor', 'por-agricultor', 'global', 'zonas'] as const
 type Vista = (typeof VISTAS_MASTER)[number]
 
 /** A diferencia de `resolveCategoria` (lib/documentos.ts), acá el default depende de si ya hay agricultor elegido. */
@@ -95,7 +94,6 @@ export default async function ClimaPage({
 
       {vista === 'por-agricultor' && <PorAgricultorAccordion lotes={await getTodosLosLotesGlobal()} />}
       {vista === 'global' && <GlobalAgricultoresTable lotes={await getTodosLosLotesGlobal()} />}
-      {vista === 'rendimiento' && <RendimientoPorFincaAccordion lotes={await getTodosLosLotesGlobal()} />}
       {vista === 'zonas' && <ZonasVistaContent />}
     </div>
   )

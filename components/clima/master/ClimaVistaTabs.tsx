@@ -8,7 +8,6 @@ const VISTAS = [
   { value: 'mi-agricultor', label: 'Mi agricultor' },
   { value: 'por-agricultor', label: 'Por agricultor' },
   { value: 'global', label: 'Global' },
-  { value: 'rendimiento', label: 'Rendimiento' },
   { value: 'zonas', label: 'Zonas' },
 ] as const
 
@@ -29,7 +28,7 @@ interface Props {
  *
  * La página decide qué hacer con combinaciones no aplicables (p. ej.
  * "Mi agricultor" sin `?agricultor=` seleccionado) — este componente solo
- * pinta las 5 pestañas.
+ * pinta las 4 pestañas.
  */
 export default function ClimaVistaTabs({ vistaActual }: Props) {
   const router = useRouter()

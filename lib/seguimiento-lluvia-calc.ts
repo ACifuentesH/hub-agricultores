@@ -33,19 +33,6 @@ export function daysPct(dt: number | null, dur: number | null): number | null {
   return Math.min(100, Math.max(0, (dt / d) * 100))
 }
 
-// Rendimiento calculado a partir de la lluvia acumulada del lote (x, en mm),
-// vía regresión cuadrática: y = ax² + bx + c (R² = 0.3599). Coeficientes
-// tal cual el proyecto original — no recalculados acá.
-const RENDIMIENTO_COEF_A = -7.0744e-5
-const RENDIMIENTO_COEF_B = 0.034128085
-const RENDIMIENTO_COEF_C = 1.288531493
-
-export function rendimientoCalculado(mmLluvia: number | null): number | null {
-  if (mmLluvia === null || mmLluvia === undefined) return null
-  const x = Number(mmLluvia)
-  return RENDIMIENTO_COEF_A * x * x + RENDIMIENTO_COEF_B * x + RENDIMIENTO_COEF_C
-}
-
 /**
  * Estado de la fase de llenado en función del avance de días del periodo
  * crítico (dias_transcurridos / duracion_dias), no de la lluvia acumulada.

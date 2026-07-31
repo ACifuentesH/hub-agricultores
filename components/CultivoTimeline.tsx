@@ -126,6 +126,17 @@ export default function CultivoTimeline({ fechaSiembra, diasCiclo = 120 }: Props
             })}
           </div>
 
+          {/* Suelo único. Antes cada SVG traía su propia línea: seis trazos
+              contiguos con opacidad .4 se solapaban en los bordes y se leían
+              como escalones en vez de como un terreno continuo. */}
+          <div
+            className="absolute inset-x-0 bottom-0 h-px pointer-events-none"
+            style={{
+              background:
+                'linear-gradient(to right, transparent, rgba(120,53,15,.9) 8%, rgba(120,53,15,.9) 92%, transparent)',
+            }}
+          />
+
           {/* Resplandor de la etapa actual, pegado al borde inferior de la
               franja para que caiga sobre la barra de meses */}
           {siembraPct !== null && cosechaPct !== null && (

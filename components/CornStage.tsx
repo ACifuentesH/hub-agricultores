@@ -13,8 +13,22 @@ interface Props {
 }
 
 /**
- * Stylized SVG of a corn plant at a given growth stage.
- * Animates a vertical scale from 0 → 1, anchored to the soil line.
+ * Planta de maíz estilizada, por etapa fenológica (v2 — ver
+ * `docs/corn-stage-v2.md`).
+ *
+ * Cambios respecto a la v1: hojas como paths rellenos y ahusados en vez de
+ * trazos de grosor constante (parecían alambre), pares de hojas completos en
+ * todas las etapas, alturas que crecen de forma monótona (10→26→46→62→68→70,
+ * sin el salto ni la meseta que tenía antes) y la mazorca alojada en el hueco
+ * entre nodos con su pedúnculo, en vez de cruzada sobre las hojas.
+ *
+ * **La línea de suelo ya no va dentro del SVG**: la dibuja la timeline una
+ * sola vez debajo de la fila de plantas. Seis líneas superpuestas con distinta
+ * opacidad se notaban como escalones.
+ *
+ * **El estado (pasada / actual / futura) lo aplica quien lo usa**, no este
+ * componente: la timeline distingue tres casos y aquí solo cabrían dos, así
+ * que las etapas ya recorridas se verían apagadas igual que las futuras.
  */
 export default function CornStage({ stage, delay = 0, size = 64, className = '' }: Props) {
   return (
@@ -27,24 +41,16 @@ export default function CornStage({ stage, delay = 0, size = 64, className = '' 
         viewBox="0 0 64 96"
         width={size}
         height={size * 1.5}
-        className="overflow-visible"
+        className="corn-stage overflow-visible"
         style={{
           transformOrigin: '50% 100%',
-          animation: `cornGrow 700ms cubic-bezier(0.34, 1.4, 0.64, 1) ${delay}s both`,
+          // Escala uniforme, no solo scaleY: crecer estirando el eje vertical
+          // aplastaba la planta durante toda la entrada.
+          animation: `cornGrowV2 760ms cubic-bezier(.16,1,.3,1) ${delay}s both`,
         }}
       >
-        {/* soil baseline */}
-        <line x1="4" y1="92" x2="60" y2="92" stroke="#78350f" strokeWidth="1.5" strokeLinecap="round" opacity="0.4" />
-
         {renderStage(stage)}
       </svg>
-
-      <style jsx>{`
-        @keyframes cornGrow {
-          from { transform: scaleY(0); opacity: 0; }
-          to   { transform: scaleY(1); opacity: 1; }
-        }
-      `}</style>
     </div>
   )
 }
@@ -60,128 +66,131 @@ function renderStage(stage: Stage) {
   }
 }
 
-/* ───────── Stage 0 — V0 Germinación: tiny sprout ───────── */
+/* ───────── 0 · V0 · Germinación (alto 10) ───────── */
 function Stage0() {
   return (
     <g>
-      <path d="M32 92 Q30 85 28 80" stroke="#65a30d" strokeWidth="2" strokeLinecap="round" fill="none" />
-      <path d="M32 92 Q34 85 36 80" stroke="#65a30d" strokeWidth="2" strokeLinecap="round" fill="none" />
-      <ellipse cx="28" cy="80" rx="3" ry="1.5" fill="#84cc16" transform="rotate(-30 28 80)" />
-      <ellipse cx="36" cy="80" rx="3" ry="1.5" fill="#84cc16" transform="rotate(30 36 80)" />
+      <path d="M32 92 L32 82" stroke="#65a30d" strokeWidth="2.4" strokeLinecap="round" />
+      <path d="M32 84.4 Q25 78 18 81 Q25 86 32 87.6 Z" fill="#84cc16" />
+      <path d="M32 84.4 Q39 78 46 81 Q39 86 32 87.6 Z" fill="#a3e635" />
+      <path d="M32 82 Q29.5 78 32 74 Q34.5 78 32 82 Z" fill="#a3e635" />
     </g>
   )
 }
 
-/* ───────── Stage 1 — V3-V6 Establecimiento: small plant, a few leaves ───────── */
+/* ───────── 1 · V3–V6 · Establecimiento (alto 26) ───────── */
 function Stage1() {
   return (
     <g>
-      {/* stem */}
-      <line x1="32" y1="92" x2="32" y2="68" stroke="#16a34a" strokeWidth="2.5" strokeLinecap="round" />
-      {/* leaves */}
-      <path d="M32 80 Q22 76 16 78" stroke="#16a34a" strokeWidth="3" strokeLinecap="round" fill="none" />
-      <path d="M32 80 Q42 76 48 78" stroke="#16a34a" strokeWidth="3" strokeLinecap="round" fill="none" />
-      <path d="M32 72 Q24 66 20 64" stroke="#22c55e" strokeWidth="3" strokeLinecap="round" fill="none" />
-      <path d="M32 72 Q40 66 44 64" stroke="#22c55e" strokeWidth="3" strokeLinecap="round" fill="none" />
-      {/* top crown */}
-      <path d="M32 68 Q30 64 32 60 Q34 64 32 68" fill="#22c55e" />
+      <path d="M32 92 L32 66" stroke="#15803d" strokeWidth="2.6" strokeLinecap="round" />
+      <path d="M32 80.2 Q23.5 72 15 75 Q23.5 79 32 83.8 Z" fill="#16a34a" />
+      <path d="M32 80.2 Q40.5 72 49 75 Q40.5 79 32 83.8 Z" fill="#16a34a" />
+      <path d="M32 70.2 Q25.5 61 19 64 Q25.5 68 32 73.8 Z" fill="#22c55e" />
+      <path d="M32 70.2 Q38.5 61 45 64 Q38.5 68 32 73.8 Z" fill="#22c55e" />
+      <path d="M32 67 Q28.5 60 32 54 Q35.5 60 32 67 Z" fill="#4ade80" />
     </g>
   )
 }
 
-/* ───────── Stage 2 — V7-V10 Crecimiento: taller, fuller leaves ───────── */
+/* ───────── 2 · V7–V10 · Crecimiento (alto 46) ───────── */
 function Stage2() {
   return (
     <g>
-      <line x1="32" y1="92" x2="32" y2="48" stroke="#15803d" strokeWidth="3" strokeLinecap="round" />
-      <path d="M32 84 Q18 80 10 84" stroke="#15803d" strokeWidth="3.5" strokeLinecap="round" fill="none" />
-      <path d="M32 84 Q46 80 54 84" stroke="#15803d" strokeWidth="3.5" strokeLinecap="round" fill="none" />
-      <path d="M32 72 Q18 66 12 64" stroke="#16a34a" strokeWidth="3.5" strokeLinecap="round" fill="none" />
-      <path d="M32 72 Q46 66 52 64" stroke="#16a34a" strokeWidth="3.5" strokeLinecap="round" fill="none" />
-      <path d="M32 60 Q22 54 16 52" stroke="#22c55e" strokeWidth="3" strokeLinecap="round" fill="none" />
-      <path d="M32 60 Q42 54 48 52" stroke="#22c55e" strokeWidth="3" strokeLinecap="round" fill="none" />
-      <path d="M32 48 Q30 44 32 40 Q34 44 32 48" fill="#22c55e" />
+      <path d="M32 92 L32 46" stroke="#166534" strokeWidth="3" strokeLinecap="round" />
+      <path d="M32 84.2 Q20 76 8 79 Q20 83 32 87.8 Z" fill="#15803d" />
+      <path d="M32 84.2 Q44 76 56 79 Q44 83 32 87.8 Z" fill="#15803d" />
+      <path d="M32 72.2 Q21.5 63 11 66 Q21.5 70 32 75.8 Z" fill="#16a34a" />
+      <path d="M32 72.2 Q42.5 63 53 66 Q42.5 70 32 75.8 Z" fill="#16a34a" />
+      <path d="M32 58.2 Q24.5 49 17 52 Q24.5 56 32 61.8 Z" fill="#22c55e" />
+      <path d="M32 58.2 Q39.5 49 47 52 Q39.5 56 32 61.8 Z" fill="#22c55e" />
+      <path d="M32 47 Q28 39 32 32 Q36 39 32 47 Z" fill="#4ade80" />
     </g>
   )
 }
 
-/* ───────── Stage 3 — V12-VT Floración: tall, tassel on top ───────── */
+/* ───────── 3 · V12–VT · Floración (alto 62 + espiga) ───────── */
 function Stage3() {
   return (
     <g>
-      <line x1="32" y1="92" x2="32" y2="28" stroke="#166534" strokeWidth="3" strokeLinecap="round" />
-      <path d="M32 86 Q16 82 6 86" stroke="#166534" strokeWidth="3.5" strokeLinecap="round" fill="none" />
-      <path d="M32 86 Q48 82 58 86" stroke="#166534" strokeWidth="3.5" strokeLinecap="round" fill="none" />
-      <path d="M32 72 Q16 66 8 64" stroke="#15803d" strokeWidth="3.5" strokeLinecap="round" fill="none" />
-      <path d="M32 72 Q48 66 56 64" stroke="#15803d" strokeWidth="3.5" strokeLinecap="round" fill="none" />
-      <path d="M32 56 Q20 50 14 48" stroke="#16a34a" strokeWidth="3" strokeLinecap="round" fill="none" />
-      <path d="M32 56 Q44 50 50 48" stroke="#16a34a" strokeWidth="3" strokeLinecap="round" fill="none" />
-      <path d="M32 40 Q24 34 20 32" stroke="#22c55e" strokeWidth="2.5" strokeLinecap="round" fill="none" />
-      <path d="M32 40 Q40 34 44 32" stroke="#22c55e" strokeWidth="2.5" strokeLinecap="round" fill="none" />
-      {/* tassel */}
-      <path d="M32 28 Q28 22 26 16" stroke="#d4d4aa" strokeWidth="1.5" strokeLinecap="round" fill="none" />
-      <path d="M32 28 Q36 22 38 16" stroke="#d4d4aa" strokeWidth="1.5" strokeLinecap="round" fill="none" />
-      <path d="M32 28 L32 14" stroke="#d4d4aa" strokeWidth="1.5" strokeLinecap="round" />
-      <circle cx="32" cy="14" r="1.5" fill="#eab308" />
-      <circle cx="26" cy="16" r="1.2" fill="#eab308" />
-      <circle cx="38" cy="16" r="1.2" fill="#eab308" />
+      <path d="M32 92 L32 30" stroke="#166534" strokeWidth="3.2" strokeLinecap="round" />
+      <path d="M32 84.2 Q18.5 76 5 79 Q18.5 83 32 87.8 Z" fill="#14532d" />
+      <path d="M32 84.2 Q45.5 76 59 79 Q45.5 83 32 87.8 Z" fill="#14532d" />
+      <path d="M32 70.2 Q19.5 61 7 64 Q19.5 68 32 73.8 Z" fill="#166534" />
+      <path d="M32 70.2 Q44.5 61 57 64 Q44.5 68 32 73.8 Z" fill="#166534" />
+      <path d="M32 56.2 Q22.5 47 13 50 Q22.5 54 32 59.8 Z" fill="#15803d" />
+      <path d="M32 56.2 Q41.5 47 51 50 Q41.5 54 32 59.8 Z" fill="#15803d" />
+      <path d="M32 42.2 Q25.5 34 19 37 Q25.5 41 32 45.8 Z" fill="#22c55e" />
+      <path d="M32 42.2 Q38.5 34 45 37 Q38.5 41 32 45.8 Z" fill="#22c55e" />
+      {/* espiga (tassel) fresca */}
+      <path d="M32 30 L32 13" stroke="#fde68a" strokeWidth="1.6" strokeLinecap="round" />
+      <path d="M32 30 Q26 23 24 15" stroke="#fde68a" strokeWidth="1.4" strokeLinecap="round" fill="none" />
+      <path d="M32 30 Q38 23 40 15" stroke="#fde68a" strokeWidth="1.4" strokeLinecap="round" fill="none" />
+      <circle cx="32" cy="13" r="1.3" fill="#eab308" />
+      <circle cx="24" cy="15" r="1.1" fill="#eab308" />
+      <circle cx="40" cy="15" r="1.1" fill="#eab308" />
     </g>
   )
 }
 
-/* ───────── Stage 4 — R1-R4 Llenado: tassel + green cob developing ───────── */
+/* ───────── 4 · R1–R4 · Llenado (alto 68, mazorca verde con barbas) ───────── */
 function Stage4() {
   return (
     <g>
-      <line x1="32" y1="92" x2="32" y2="22" stroke="#166534" strokeWidth="3.5" strokeLinecap="round" />
-      <path d="M32 86 Q14 82 4 86" stroke="#166534" strokeWidth="3.5" strokeLinecap="round" fill="none" />
-      <path d="M32 86 Q50 82 60 86" stroke="#166534" strokeWidth="3.5" strokeLinecap="round" fill="none" />
-      <path d="M32 70 Q16 64 8 62" stroke="#15803d" strokeWidth="3.5" strokeLinecap="round" fill="none" />
-      <path d="M32 70 Q48 64 56 62" stroke="#15803d" strokeWidth="3.5" strokeLinecap="round" fill="none" />
-      {/* green cob with husk */}
-      <ellipse cx="42" cy="58" rx="4" ry="8" fill="#84cc16" transform="rotate(20 42 58)" />
-      <path d="M40 50 L46 56" stroke="#a3e635" strokeWidth="1" />
-      <path d="M44 50 L48 58" stroke="#a3e635" strokeWidth="1" />
-      <path d="M32 50 Q22 44 16 42" stroke="#16a34a" strokeWidth="3" strokeLinecap="round" fill="none" />
-      <path d="M32 38 Q24 32 20 30" stroke="#22c55e" strokeWidth="2.5" strokeLinecap="round" fill="none" />
-      <path d="M32 38 Q40 32 44 30" stroke="#22c55e" strokeWidth="2.5" strokeLinecap="round" fill="none" />
-      {/* tassel */}
-      <path d="M32 22 Q28 16 26 10" stroke="#d4a574" strokeWidth="1.5" strokeLinecap="round" fill="none" />
-      <path d="M32 22 Q36 16 38 10" stroke="#d4a574" strokeWidth="1.5" strokeLinecap="round" fill="none" />
-      <path d="M32 22 L32 8" stroke="#d4a574" strokeWidth="1.5" strokeLinecap="round" />
-      <circle cx="32" cy="8" r="1.5" fill="#a16207" />
+      <path d="M32 92 L32 24" stroke="#166534" strokeWidth="3.4" strokeLinecap="round" />
+      <path d="M32 84.2 Q18 76 4 79 Q18 83 32 87.8 Z" fill="#14532d" />
+      <path d="M32 84.2 Q46 76 60 79 Q46 83 32 87.8 Z" fill="#14532d" />
+      <path d="M32 68.2 Q19.5 59 7 62 Q19.5 66 32 71.8 Z" fill="#166534" />
+      <path d="M32 68.2 Q44.5 59 57 62 Q44.5 66 32 71.8 Z" fill="#166534" />
+      {/* pedúnculo + mazorca alojada entre nodos */}
+      <path d="M32 62 Q36.5 61 39.5 58.5" stroke="#15803d" strokeWidth="2" strokeLinecap="round" fill="none" />
+      <ellipse cx="43" cy="55" rx="4.2" ry="8.5" fill="#84cc16" transform="rotate(22 43 55)" />
+      <path d="M41.5 48.5 Q43.5 55 42.5 62" stroke="#a3e635" strokeWidth=".9" fill="none" />
+      <path d="M45 49.5 Q47 55.5 45.5 62.5" stroke="#a3e635" strokeWidth=".9" fill="none" />
+      {/* barbas (silks) */}
+      <path d="M44 47 Q47 43 50 42" stroke="#fde68a" strokeWidth=".9" strokeLinecap="round" fill="none" />
+      <path d="M44.5 47 Q48.5 45 52 45.5" stroke="#fde68a" strokeWidth=".9" strokeLinecap="round" fill="none" />
+      <path d="M32 42.2 Q24.5 34 17 37 Q24.5 41 32 45.8 Z" fill="#15803d" />
+      <path d="M32 42.2 Q39.5 34 47 37 Q39.5 41 32 45.8 Z" fill="#15803d" />
+      <path d="M32 32.2 Q27 25 22 28 Q27 32 32 35.8 Z" fill="#22c55e" />
+      <path d="M32 32.2 Q37 25 42 28 Q37 32 32 35.8 Z" fill="#22c55e" />
+      <path d="M32 24 L32 8" stroke="#ca8a04" strokeWidth="1.6" strokeLinecap="round" />
+      <path d="M32 24 Q26 17 24 10" stroke="#ca8a04" strokeWidth="1.4" strokeLinecap="round" fill="none" />
+      <path d="M32 24 Q38 17 40 10" stroke="#ca8a04" strokeWidth="1.4" strokeLinecap="round" fill="none" />
+      <circle cx="32" cy="8" r="1.3" fill="#a16207" />
     </g>
   )
 }
 
-/* ───────── Stage 5 — R6 Madurez: golden mature corn ───────── */
+/* ───────── 5 · R6 · Madurez (alto 70, mazorca con granos) ───────── */
 function Stage5() {
   return (
     <g>
-      <line x1="32" y1="92" x2="32" y2="22" stroke="#854d0e" strokeWidth="3.5" strokeLinecap="round" />
-      <path d="M32 86 Q14 84 4 88" stroke="#a16207" strokeWidth="3.5" strokeLinecap="round" fill="none" />
-      <path d="M32 86 Q50 84 60 88" stroke="#a16207" strokeWidth="3.5" strokeLinecap="round" fill="none" />
-      <path d="M32 70 Q16 68 8 70" stroke="#a16207" strokeWidth="3" strokeLinecap="round" fill="none" />
-      <path d="M32 70 Q48 68 56 70" stroke="#a16207" strokeWidth="3" strokeLinecap="round" fill="none" />
-      {/* mature golden cob with kernels */}
-      <ellipse cx="42" cy="56" rx="5" ry="10" fill="#eab308" transform="rotate(20 42 56)" />
-      <g transform="rotate(20 42 56)">
-        <circle cx="42" cy="50" r="0.8" fill="#fef3c7" />
-        <circle cx="40" cy="52" r="0.8" fill="#fef3c7" />
-        <circle cx="44" cy="52" r="0.8" fill="#fef3c7" />
-        <circle cx="42" cy="55" r="0.8" fill="#fef3c7" />
-        <circle cx="40" cy="58" r="0.8" fill="#fef3c7" />
-        <circle cx="44" cy="58" r="0.8" fill="#fef3c7" />
-        <circle cx="42" cy="61" r="0.8" fill="#fef3c7" />
+      <path d="M32 92 L32 22" stroke="#854d0e" strokeWidth="3.4" strokeLinecap="round" />
+      <path d="M32 84.2 Q18 80 4 86 Q18 87 32 87.8 Z" fill="#854d0e" />
+      <path d="M32 84.2 Q46 80 60 86 Q46 87 32 87.8 Z" fill="#854d0e" />
+      <path d="M32 68.2 Q19.5 64 7 70 Q19.5 71 32 71.8 Z" fill="#a16207" />
+      <path d="M32 68.2 Q44.5 64 57 70 Q44.5 71 32 71.8 Z" fill="#a16207" />
+      <path d="M32 62 Q36.5 61 39.5 58.5" stroke="#854d0e" strokeWidth="2" strokeLinecap="round" fill="none" />
+      <ellipse cx="43" cy="55" rx="4.8" ry="9" fill="#eab308" transform="rotate(20 43 55)" />
+      <g transform="rotate(20 43 55)" fill="#fef3c7">
+        <circle cx="43" cy="49" r=".75" />
+        <circle cx="41" cy="51.5" r=".75" />
+        <circle cx="45" cy="51.5" r=".75" />
+        <circle cx="43" cy="54" r=".75" />
+        <circle cx="41" cy="56.5" r=".75" />
+        <circle cx="45" cy="56.5" r=".75" />
+        <circle cx="43" cy="59" r=".75" />
+        <circle cx="41" cy="61.5" r=".75" />
+        <circle cx="45" cy="61.5" r=".75" />
       </g>
-      {/* dry husk */}
-      <path d="M38 50 Q34 56 36 64" stroke="#ca8a04" strokeWidth="1.5" fill="none" />
-      <path d="M46 50 Q50 56 48 64" stroke="#ca8a04" strokeWidth="1.5" fill="none" />
-      <path d="M32 38 Q24 34 20 32" stroke="#a16207" strokeWidth="2.5" strokeLinecap="round" fill="none" />
-      {/* dry tassel */}
-      <path d="M32 22 Q28 18 26 14" stroke="#92400e" strokeWidth="1.5" strokeLinecap="round" fill="none" />
-      <path d="M32 22 Q36 18 38 14" stroke="#92400e" strokeWidth="1.5" strokeLinecap="round" fill="none" />
-      <path d="M32 22 L32 12" stroke="#92400e" strokeWidth="1.5" strokeLinecap="round" />
+      {/* brácteas secas abiertas */}
+      <path d="M40 47.5 Q35 54 36.5 62" stroke="#ca8a04" strokeWidth="1.4" strokeLinecap="round" fill="none" />
+      <path d="M46.5 47.5 Q51.5 54 50 62" stroke="#ca8a04" strokeWidth="1.4" strokeLinecap="round" fill="none" />
+      <path d="M32 42.2 Q25 36 18 40 Q25 42 32 45.8 Z" fill="#a16207" />
+      <path d="M32 42.2 Q39 36 46 40 Q39 42 32 45.8 Z" fill="#a16207" />
+      <path d="M32 22 L32 10" stroke="#92400e" strokeWidth="1.5" strokeLinecap="round" />
+      <path d="M32 22 Q27 17 25 11" stroke="#92400e" strokeWidth="1.3" strokeLinecap="round" fill="none" />
+      <path d="M32 22 Q37 17 39 11" stroke="#92400e" strokeWidth="1.3" strokeLinecap="round" fill="none" />
     </g>
   )
 }

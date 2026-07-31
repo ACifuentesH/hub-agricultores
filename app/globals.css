@@ -96,6 +96,21 @@ body {
 .leaf-sway-slow { transform-origin: bottom center; animation: sway-slow  6s ease-in-out infinite; }
 .particle       { animation: drift 18s linear infinite; }
 
+/* ── CornStage v2: entrada de las plantas de la timeline ─────────── */
+/* Escala uniforme y no solo scaleY, que aplastaba la planta al crecer.
+   El easing no rebasa el 100 %: con overshoot la planta "saltaba". */
+@keyframes cornGrowV2 {
+  from { transform: scale(.62) translateY(6px); opacity: 0; }
+  to   { transform: scale(1) translateY(0);     opacity: 1; }
+}
+@keyframes leafSwayV2 {
+  0%, 100% { transform: rotate(-1.2deg); }
+  50%      { transform: rotate(1.2deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .corn-stage { animation: none !important; }
+}
+
 /* ── Login: fondo animado del panel de marca ─────────────────────── */
 @keyframes bgKenBurns {
   0%   { transform: scale(1.06) translate3d(0, 0, 0); }

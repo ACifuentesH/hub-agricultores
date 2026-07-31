@@ -53,13 +53,15 @@ export default function UserMenu({ email, displayName, role }: Props) {
       <div ref={dropdownRef} className="relative">
         <button
           onClick={() => setOpen(o => !o)}
-          className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+          className="flex items-center gap-2 rounded-lg px-1.5 py-1.5 transition-colors hover:bg-gray-100 sm:px-2.5 dark:hover:bg-gray-800"
           aria-label="Menú de usuario"
         >
-          <div className="w-7 h-7 rounded-full bg-green-700 text-white flex items-center justify-center text-xs font-semibold">
+          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-green-700 text-xs font-semibold text-white">
             {(displayName || email).slice(0, 2).toUpperCase()}
           </div>
-          <span className="text-sm font-medium text-green-800 dark:text-green-300 max-w-[180px] truncate">
+          {/* En el teléfono solo queda la inicial: el nombre de la agropecuaria
+              empujaba el título del módulo fuera de la cabecera. */}
+          <span className="hidden max-w-[180px] truncate text-sm font-medium text-green-800 sm:inline dark:text-green-300">
             {displayName}
           </span>
         </button>

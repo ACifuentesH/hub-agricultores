@@ -107,11 +107,15 @@ export default async function DocumentacionPage({
                 Estado de resultados (P&amp;L)
               </h2>
               <p className="mt-0.5 text-xs text-gray-500 dark:text-gray-400">
-                Costos por unidad de producción: semillas, agroquímicos, fertilizantes,
-                mecanización, servicio técnico y financiamiento. En Excel, con resumen y detalle.
+                Costos por finca: semillas, agroquímicos, fertilizantes, enmiendas,
+                mecanización, servicio técnico, financiamiento y cosecha. En PDF, con el
+                monto total y el costo por hectárea de cada finca.
               </p>
             </div>
-            <DescargarPLBtn agricultorKey={scope.isMaster ? scope.agricultorKey : null} />
+            <DescargarPLBtn
+              agricultorKey={scope.isMaster ? scope.agricultorKey : null}
+              isMaster={scope.isMaster}
+            />
           </div>
         </div>
       </div>

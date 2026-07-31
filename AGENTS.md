@@ -165,6 +165,32 @@ ciclo (es lo que hace `AvanceCultivoChart`).
 - Paleta oscura: la escala `gray` de Tailwind está redefinida bajo `.dark` en
   `globals.css` para dar un carbón cálido. Cambiar esas variables afecta toda la
   app en modo oscuro.
+- **La barra lateral es retráctil** (31-jul-2026): riel de iconos (64 px) o
+  completa (224 px), con la preferencia en `localStorage['saturno:sidebar']`. El
+  estado inicial lo decide el breakpoint **en CSS**, no en JS: con `w-16 lg:w-56`
+  antes de hidratar, el HTML del servidor ya sale correcto y no se ve el salto de
+  224 px a 64 px en el teléfono. Si se toca, mantener ese doble juego de clases.
+- **Un solo árbol de DOM para ambos estados** de la barra: colapsar es estrechar
+  y esconder los textos, nunca renderizar otra estructura — es lo que permite que
+  las clases previas a la hidratación sean simplemente responsive.
+- **Tablas anchas: `overflow-x-auto` + `min-w-[…]` en la `<table>`.** Sin el
+  `min-w` la tabla se comprime hasta el ancho del teléfono y parte cada celda en
+  tres líneas; con él se desplaza y las filas siguen leyéndose.
+
+## Reportes
+
+- **El P&L es por finca, no por lote.** `pl_unidad` trae una fila por unidad de
+  producción (la finca) con los costos ya totalizados por Saturno; no existe
+  desglose por lote. El armado del documento vive en `lib/reportes-pl.ts`, aparte
+  del route handler, para que no dependa de la sesión ni de la base.
+- **El agricultor solo descarga PDF.** El Excel (`?formato=xlsx`) es del master:
+  el endpoint responde 403 a cualquier otro rol — ocultar el botón no es la
+  barrera. Motivo: al agricultor se le entrega un documento cerrado y legible en
+  el teléfono, no una hoja editable que pueda circular como si fuera la fuente
+  de la verdad.
+- Los reportes por lote (`/api/reports/pdf`, `/api/reports/excel`,
+  `ReportButtons`) se eliminaron el 31-jul-2026: los reemplaza el estado de
+  resultados por finca. No reintroducirlos.
 
 ## Seguridad
 

@@ -61,7 +61,7 @@ export default function CultivoTimeline({ fechaSiembra, diasCiclo = 120 }: Props
 
   return (
     <div
-      className="relative rounded-2xl bg-gradient-to-b from-gray-950 to-gray-900 border border-green-500/20 p-6"
+      className="relative rounded-2xl bg-gradient-to-b from-gray-950 to-gray-900 border border-green-500/20 p-4 sm:p-6"
       style={{ boxShadow: '0 0 40px rgba(34, 197, 94, 0.08), inset 0 0 30px rgba(0, 0, 0, 0.3)' }}
     >
       {/* Panel label */}
@@ -80,15 +80,16 @@ export default function CultivoTimeline({ fechaSiembra, diasCiclo = 120 }: Props
           siempre encima de los meses, pase lo que pase con el alto del panel. */}
       <div className="relative pb-12">
         {/* Franja superior: 128 px reparten el marcador "Hoy" (~34 px arriba) y
-            las plantas de 48 px apoyadas abajo, sin que se toquen. */}
-        <div className="relative h-32">
+            las plantas de 48 px apoyadas abajo, sin que se toquen. En el
+            teléfono la franja baja a 96 px porque las plantas van al 60 %. */}
+        <div className="relative h-24 sm:h-32">
           {/* Hoy marker (glowing pill + arrow) */}
           <div
             className="absolute top-0 -translate-x-1/2 flex flex-col items-center z-30"
             style={{ left: `${todayPct * 100}%` }}
           >
             <div
-              className="px-3 py-1 rounded-full bg-green-500 text-white text-xs font-semibold shadow-lg"
+              className="px-2 sm:px-3 py-1 rounded-full bg-green-500 text-white text-[10px] sm:text-xs font-semibold shadow-lg"
               style={{ boxShadow: '0 0 15px rgba(34, 197, 94, 0.6), 0 0 30px rgba(34, 197, 94, 0.3)' }}
             >
               Hoy
@@ -106,7 +107,10 @@ export default function CultivoTimeline({ fechaSiembra, diasCiclo = 120 }: Props
               return (
                 <div
                   key={stage}
-                  className="absolute -translate-x-1/2"
+                  // Seis plantas de 48 px sobre ~280 px de ancho útil se pisaban
+                  // unas a otras en el teléfono: al 60 % vuelven a leerse como
+                  // seis etapas distintas. origin-bottom las mantiene apoyadas.
+                  className="absolute -translate-x-1/2 scale-[0.6] origin-bottom sm:scale-100"
                   style={{
                     left: `${leftPct}%`,
                     bottom: 0,
@@ -140,9 +144,12 @@ export default function CultivoTimeline({ fechaSiembra, diasCiclo = 120 }: Props
           {months.map((m, i) => (
             <div
               key={i}
-              className="relative text-center py-3 text-xs font-medium text-gray-500 border-r border-gray-800 last:border-r-0"
+              className="relative text-center py-2 sm:py-3 text-[10px] sm:text-xs font-medium text-gray-500 border-r border-gray-800 last:border-r-0"
             >
-              {m}
+              {/* Doce celdas sobre 280 px dan 23 px cada una: no cabe "Ene".
+                  En el teléfono queda la inicial, que basta para ubicarse. */}
+              <span className="sm:hidden">{m.charAt(0)}</span>
+              <span className="hidden sm:inline">{m}</span>
               {/* Tick on top */}
               <span className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-1.5 bg-gray-600" />
             </div>

@@ -10,7 +10,6 @@ import MasterAgricultorSelector from '@/components/MasterAgricultorSelector'
 import MasterEmptyState from '@/components/MasterEmptyState'
 import IrrigationRing from '@/components/IrrigationRing'
 import ClimateSparkline from '@/components/ClimateSparkline'
-import ReportButtons from '@/components/ReportButtons'
 import DataSourceBadge from '@/components/DataSourceBadge'
 import { CloudSun, CloudRain, Sun, Cloud, Sprout, AlertCircle, CalendarOff, FlaskConical } from 'lucide-react'
 import { freshnessLevel, freshnessTextClass, formatDateShort } from '@/lib/freshness'
@@ -268,11 +267,6 @@ export default async function CultivoPage({
                 <UltimaVisitaCard v={visitaDe(l.lote_id) ?? null} />
               </div>
 
-              {/* Reports row */}
-              <div className="flex items-center gap-3 pt-2">
-                <span className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">Reportes</span>
-                <ReportButtons loteId={l.lote_id} loteName={l.nombre_lote} />
-              </div>
             </div>
           )
         })}
@@ -297,7 +291,7 @@ export default async function CultivoPage({
             </h2>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full min-w-[680px] text-sm">
               <thead className="bg-amber-100/40 dark:bg-amber-950/30 text-amber-800 dark:text-amber-300 text-[11px] uppercase">
                 <tr>
                   <th className="px-4 py-2 text-left">Lote</th>
@@ -371,7 +365,7 @@ export default async function CultivoPage({
               </div>
 
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="w-full min-w-[720px] text-sm">
                   <thead className="bg-gray-50 text-xs uppercase text-gray-500 dark:bg-gray-800 dark:text-gray-400">
                     <tr>
                       <th className="px-4 py-3 text-left">Producto</th>

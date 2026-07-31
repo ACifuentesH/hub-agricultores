@@ -12,6 +12,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [anim, setAnim] = useState(true)
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault()
@@ -37,13 +38,74 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen grid lg:grid-cols-5 bg-white dark:bg-gray-950">
+    <div
+      data-anim={anim ? 'on' : 'off'}
+      className="min-h-screen grid lg:grid-cols-5 bg-white dark:bg-gray-950"
+    >
       {/* Brand panel — left 60% on desktop */}
-      <div
-        className="relative lg:col-span-3 hidden lg:flex flex-col justify-between p-12 text-white bg-cover bg-center"
-        style={{ backgroundImage: "url('/login-bg.jpg')" }}
-      >
-        <div className="absolute inset-0 bg-gradient-to-br from-green-950/80 via-green-900/50 to-emerald-950/85" />
+      <div className="relative lg:col-span-3 hidden lg:flex flex-col justify-between p-12 text-white overflow-hidden isolate bg-green-950">
+        {/* Capa 1 — foto con Ken Burns */}
+        <div
+          className="absolute -inset-[6%] z-0 bg-cover bg-center login-kenburns"
+          style={{ backgroundImage: "url('/login-bg.jpg')" }}
+        />
+
+        {/* Capa 2 — degradado de marca (mismas opacidades que hoy) */}
+        <div className="absolute inset-0 z-[1] bg-gradient-to-br from-green-950/80 via-green-900/50 to-emerald-950/85" />
+
+        {/* Capa 3 — barrido de luz verde-lima */}
+        <div
+          className="absolute -inset-[30%] z-[2] blur-2xl mix-blend-screen login-sweep"
+          style={{
+            background:
+              'radial-gradient(45% 40% at 30% 35%, rgba(163,230,53,.30) 0%, rgba(34,197,94,.12) 40%, transparent 72%)',
+          }}
+        />
+
+        {/* Capa 4 — neblina ámbar */}
+        <div
+          className="absolute -inset-[20%] z-[2] blur-3xl mix-blend-screen login-haze"
+          style={{
+            background:
+              'radial-gradient(50% 45% at 72% 78%, rgba(234,179,8,.22) 0%, transparent 68%)',
+          }}
+        />
+
+        {/* Capa 5 — base del campo con vaivén */}
+        <div className="absolute inset-x-0 bottom-0 h-[34%] z-[2] bg-gradient-to-t from-green-950/70 to-transparent login-field" />
+
+        {/* Capa 6 — partículas de polen */}
+        <div className="absolute inset-0 z-[3] pointer-events-none overflow-hidden">
+          {[
+            { left: '12%', size: 5, dur: 19, delay: 0, color: 'rgba(214,255,180,.9)', glow: true },
+            { left: '28%', size: 3, dur: 26, delay: -6, color: 'rgba(255,244,200,.85)', glow: false },
+            { left: '44%', size: 6, dur: 23, delay: -13, color: 'rgba(190,250,160,.7)', glow: true },
+            { left: '61%', size: 4, dur: 30, delay: -3, color: 'rgba(255,255,255,.75)', glow: false },
+            { left: '78%', size: 3, dur: 21, delay: -17, color: 'rgba(253,230,138,.9)', glow: false },
+            { left: '88%', size: 5, dur: 27, delay: -9, color: 'rgba(214,255,180,.6)', glow: true },
+          ].map((m, i) => (
+            <span
+              key={i}
+              className="absolute rounded-full login-mote"
+              style={{
+                left: m.left,
+                bottom: '-4%',
+                width: m.size,
+                height: m.size,
+                background: m.color,
+                boxShadow: m.glow ? '0 0 15px rgba(132,204,22,.45)' : undefined,
+                animationDuration: `${m.dur}s`,
+                animationDelay: `${m.delay}s`,
+              }}
+            />
+          ))}
+        </div>
+
+        {/* Capa 7 — viñeta */}
+        <div
+          className="absolute inset-0 z-[4] pointer-events-none"
+          style={{ boxShadow: 'inset 0 0 160px 40px rgba(2,26,12,.55)' }}
+        />
 
         <div className="relative z-10 flex items-center gap-2.5">
           <div className="w-9 h-9 rounded-lg bg-white/15 backdrop-blur flex items-center justify-center border border-white/20">
@@ -83,6 +145,27 @@ export default function LoginPage() {
         <div className="relative z-10 text-xs text-green-200/60">
           © {new Date().getFullYear()} Programa Saturno
         </div>
+
+        <button
+          type="button"
+          onClick={() => setAnim((v) => !v)}
+          aria-pressed={anim}
+          className="absolute bottom-11 right-12 z-20 inline-flex items-center gap-[7px] rounded px-[9px] py-[5px] text-[10px] font-medium tracking-wide text-white/85 border border-white/20 bg-white/10 backdrop-blur-sm transition-colors hover:bg-white/20 hover:border-white/40"
+        >
+          <span
+            className="relative w-[22px] h-3 rounded-[3px] border border-white/30 shrink-0 transition-colors"
+            style={{ background: anim ? 'rgba(163,230,53,.25)' : 'rgba(255,255,255,.12)' }}
+          >
+            <span
+              className="absolute top-px w-2 h-2 rounded-[2px] transition-all"
+              style={{
+                left: anim ? 11 : 1,
+                background: anim ? '#a3e635' : 'rgba(255,255,255,.5)',
+              }}
+            />
+          </span>
+          {anim ? 'Animación activada' : 'Animación desactivada'}
+        </button>
       </div>
 
       {/* Form panel — right 40% on desktop, full width on mobile */}

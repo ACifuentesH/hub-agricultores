@@ -127,7 +127,7 @@ documentos) y acceso directo a la vista de cada uno.
 
 | Componente | Para qué |
 |---|---|
-| `Sidebar` | Navegación. Propaga `?agricultor=` entre pantallas |
+| `Sidebar` | Navegación. Propaga `?agricultor=` entre pantallas. Retráctil: riel de iconos (64 px) o barra completa (224 px), recordado en `localStorage['saturno:sidebar']`. En el teléfono arranca en riel y, si se abre, flota sobre el contenido con fondo oscuro detrás |
 | `ModuloTitulo` | Título del módulo en la cabecera fija |
 | `UserMenu` | Menú de usuario del header |
 | `ThemeToggle` | Claro / oscuro |
@@ -138,10 +138,14 @@ documentos) y acceso directo a la vista de cada uno.
 | `LoadingCampo` | Animación de marca: una planta de maíz germinando |
 | `Skeleton` | Primitivas para los `loading.tsx` |
 | `DataSourceBadge` | De dónde viene el dato de clima |
-| `ReportButtons`, `DescargarHistoricoClimaBtn` | Exportables (Excel / PDF / histórico) |
+| `DescargarPLBtn`, `DescargarHistoricoClimaBtn` | Exportables (estado de resultados / histórico de clima) |
 
 **Retirados de la interfaz, código conservado:** `PredictorSiembraPanel` (junto con
 `lib/predictor.ts`).
+
+**Retirados por completo:** `ReportButtons` y sus rutas `/api/reports/pdf` y
+`/api/reports/excel` — eran un reporte por lote. Los reemplaza el estado de
+resultados por finca (ver más abajo).
 
 ---
 

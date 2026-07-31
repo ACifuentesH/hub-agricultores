@@ -235,8 +235,11 @@ export default async function DashboardPage({
         <div className="border-b border-gray-100 px-5 py-4 dark:border-gray-800">
           <h2 className="font-semibold text-gray-700 dark:text-gray-200">Mis lotes</h2>
         </div>
+        {/* min-w + overflow-x: en el teléfono la tabla se desplaza en lugar de
+            comprimirse; sin él, ocho columnas en 326 px partían cada celda en
+            tres líneas y no había forma de leer una fila. */}
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full min-w-[820px] text-sm">
             <thead className="bg-gray-50 text-xs uppercase text-gray-500 dark:bg-gray-800 dark:text-gray-400">
               <tr>
                 <th scope="col" className="px-4 py-3 text-left">Lote</th>

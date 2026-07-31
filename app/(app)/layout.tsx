@@ -32,10 +32,10 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       <Sidebar role={profile?.role ?? 'farmer'} />
       {/* min-w-0 evita que una tabla ancha empuje el layout y rompa el sticky */}
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-30 flex items-center justify-between gap-4 border-b border-gray-200 bg-white px-6 py-3 dark:border-gray-800 dark:bg-gray-900">
+        <header className="sticky top-0 z-30 flex items-center justify-between gap-2 border-b border-gray-200 bg-white px-3 py-3 sm:gap-4 sm:px-6 dark:border-gray-800 dark:bg-gray-900">
           <div className="flex min-w-0 items-baseline gap-3">
             <ModuloTitulo />
-            <span className="hidden truncate text-sm text-gray-500 sm:inline dark:text-gray-400">
+            <span className="hidden truncate text-sm text-gray-500 lg:inline dark:text-gray-400">
               Programa Saturno
             </span>
           </div>
@@ -45,7 +45,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             role={(profile?.role ?? 'farmer') as 'master' | 'farmer'}
           />
         </header>
-        <main className="flex-1 p-6">{children}</main>
+        <main className="flex-1 p-4 sm:p-6">{children}</main>
       </div>
       <AsistenteWidget
         defaultAgricultorKey={profile?.agricultor_key ?? null}

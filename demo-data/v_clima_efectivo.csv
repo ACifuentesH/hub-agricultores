@@ -1,0 +1,56 @@
+agricultor_key,nombre_agropecuaria,codigo_up,estado,fuente,davis_key,station_id,match_type,fecha_real,temp_real,hum_real,lluvia_real,lat,lon
+AGOSTINOCECCARELLOMANCIN,Agostino Ceccarello Mancin,P05,Portuguesa,davis,P05-Santa Cruz-Saturno,212477,auto_codigo_up,2026-04-05 23:30:00,34.4,45.9,0.00,,
+AGROVENETAC.A.,"Agroveneta, C.A.",G07,Aragua,davis,G07-El Apamate-Saturno,220773,auto_codigo_up,2026-08-02 22:00:00,31.5,69.9,0.00,,
+ANGELAGUEDEZ,Angela Guedez,P02,Portuguesa,davis,P10-Turen Las Cúpulas-Saturno,212695,override,2026-08-02 22:00:00,32.2,70.7,0.00,9.272763,-69.150193
+ANGELAROSAGUEDEZMORALES,Angela Rosa Guedez Morales,AUTO-001,,davis,P10-Turen Las Cúpulas-Saturno,212695,herencia_ciclo,2026-08-02 22:00:00,32.2,70.7,0.00,9.272829,-69.150158
+ANTONIOFABIOCECCARELLO,Antonio Fabio Ceccarello,P13,Portuguesa,sin_datos,,,,,,,,,
+ANTONIOLUISZAMBRANOACUNA,Antonio Luis Zambrano Acuña,AUTO-002,,davis,G04-Las Mercedes-Saturno,186730,herencia_ciclo,2026-08-02 21:00:00,31.2,65.0,0.00,9.281072,-66.454991
+ANTONIOZAMBRANO,Antonio Zambrano,G03,Guárico,davis,G04-Las Mercedes-Saturno,186730,override,2026-08-02 21:00:00,31.2,65.0,0.00,9.286458,-66.44004
+CELSOFANTINELFURLANIS,Celso Fantinel Furlanis,AUTO-003,,davis,G07-El Apamate-Saturno,220773,codigo_de_lote,2026-08-02 22:00:00,31.5,69.9,0.00,,
+CESARIGORPADILLAMARTINEZ,Cesar Igor Padilla Martinez,AUTO-004,,davis,P16-Saturno La Padillera,235240,override,2026-08-02 22:00:00,33.3,67.9,0.00,9.487415,-69.231113
+DANIELVANELLA,Daniel Vanella,,,davis,P04-Chaconera-Saturno,187561,override,2026-08-02 22:00:00,31.5,70.3,0.00,,
+DENNISLEONARDOALIBARDIMASCHIO,Dennis Leonardo Alibardi Maschio,P04,Portuguesa,davis,P08-Turen La Colonia-Saturno,212609,override,2026-08-02 22:00:00,32.4,70.6,0.00,9.292509,-69.073777
+EDOARDOCECCARELLO,Edoardo Ceccarello,P07,Portuguesa,davis,P14 - El Palmar - Saturno,215150,override,2026-08-02 21:00:00,32.7,65.5,0.00,,
+ELISABUSTAMANTE,Elisa Bustamante,AUTO-006,,davis,P19-Saturno-Los Caminos,236176,override,2026-08-02 22:00:00,31.2,65.5,0.00,9.577373,-69.275786
+EZEQUIELJOSEFONTIVEROSBRICENO,Ezequiel Jose Fontiveros Briceño,AUTO-007,,davis,P15 Saturno Don Fonti,235225,override,2026-08-02 22:00:00,31.7,64.6,0.00,9.503572,-69.224521
+FRANCISCOENRIQUEGONZALEZROSELLI,Francisco Enrique González Roselli,AUTO-008,,davis,G04-Las Mercedes-Saturno,186730,override,2026-08-02 21:00:00,31.2,65.0,0.00,9.169989,-66.403655
+FRANCISCOENRIQUEGONZÁLEZROSELLI,Francisco Enrique González Roselli,G05,Guárico,davis,G04-Las Mercedes-Saturno,186730,override,2026-08-02 21:00:00,31.2,65.0,0.00,9.169989,-66.403655
+FRANCISCOJOSEMARQUEZ,Francisco Jose Márquez,AUTO-009,,davis,P18-Saturno-San Francisco,235418,override,2026-08-02 17:30:00,33.2,68.1,0.00,8.726444,-69.674614
+HECTORDAVIDPEREZGONZALEZ,Hector David Perez Gonzalez,AUTO-036,,sin_datos,,,,,,,,9.922595,-69.038685
+HENRYJOSECORDONESLINAREZ,Henry Jose Cordones Linarez,AUTO-010,,sin_datos,,,,,,,,9.299292,-69.318696
+JOSEDARIOGALLUCCIREQUENA,Jose Dario Gallucci Requena,AUTO-011,,davis,G13-Palmartupío-Saturno,238407,override,2026-08-02 22:00:00,28.9,78.9,0.00,8.971495,-65.588415
+JOSEGREGORIOBALZAFAJARDO,Jose Gregorio Balza Fajardo,G04,Guárico,davis,G06-Mahomal-Saturno,213617,override,2026-08-02 22:00:00,30.7,71.4,0.00,9.051915,-65.475202
+JOSEGREGORIOSANCHEZMENDOZA,Jose Gregorio Sanchez Mendoza,AUTO-013,,davis,Y04-Saturno-La Vaquera,235597,override,2026-08-02 22:00:00,27.4,81.5,0.00,10.198415,-68.949747
+JOSEROLANDOCALDERAARVELAIZ,Jose Rolando Caldera Arvelaiz,AUTO-014,,davis,G10-San Pedro-Saturno,238339,override,2026-08-02 01:45:00,26.9,83.0,0.00,9.242778,-65.66
+JOSEROLANDOCALDERARONDON,Jose Rolando Caldera Rondon,AUTO-015,,davis,G12-Buenavista-Saturno,238383,codigo_de_lote,2026-08-02 22:00:00,29.1,77.0,0.00,9.270833,-65.584167
+JUANCASTRO,Juan Castro,,,davis,P02-Cojedito-Saturno,184965,override,2026-08-02 22:00:00,33.7,68.0,0.00,,
+JUANHERNANDEZDIAZ,Juan Hernández Díaz,AUTO-016,,sin_datos,,,,,,,,9.528818,-66.662863
+JUANVICENTERISSO,Juan Vicente Risso,AUTO-017,,davis,G14-La Vilereña-Saturno,241484,codigo_de_lote,2026-08-02 22:00:00,31.7,57.0,0.00,8.941468,-65.765903
+JULIOANTONIOCOLMENAREZMENDOZA,Julio Antonio Colmenarez Mendoza,AUTO-018,,davis,B01-Saturno-La Campesina,235263,override,2026-08-02 22:00:00,31.9,67.1,0.00,8.666117,-69.994108
+LEOSCARMACHADOSILVEIRA,Leoscar Machado Silveira,AUTO-019,,sin_datos,,,,,,,,8.960833,-65.715199
+LORENAJOHANAORLANDOTESTI,Lorena Johana Orlando Testi,AUTO-020,,sin_datos,,,,,,,,9.277776,-69.064988
+LUIGIARTUROTONDINICALA,Luigi Arturo Tondini Cala,P01,Portuguesa,davis,P01-Pajones-Saturno,184921,auto_codigo_up,2026-08-02 22:00:00,31.9,68.0,0.00,9.194081,-68.955954
+LUIGIDONELLOTOGNETTI,Luigi Donello Tognetti,P06,Portuguesa,davis,P06-Esteros de Canoita-Saturno,212516,auto_codigo_up,2026-08-02 22:00:00,32.1,66.3,0.00,9.310568,-69.102592
+LUISALBERTOROJASPIERETTI,Luis Alberto Rojas Pieretti,G01,Guárico,davis,G02-Los Espinitos-Saturno,186669,override,2026-08-02 22:00:00,29.6,77.6,0.00,8.995497,-65.519262
+MANUELGARCÍAMESA,Manuel García Mesa,P08,Portuguesa,davis,P08-Turen La Colonia-Saturno,212609,auto_codigo_up,2026-08-02 22:00:00,32.4,70.6,0.00,,
+MARBELLISDELPILARARIASMENDOZA,Marbellis del Pilar Arias Mendoza,P09,Portuguesa,davis,P05-Santa Cruz-Saturno,212477,override,2026-04-05 23:30:00,34.4,45.9,0.00,,
+MARCOFANTINELFURLANIS,Marco Fantinel Furlanis,,,sin_datos,,,,,,,,,
+MARIAANGELICAESPARRAGOZASALAZAR,Maria Angelica Esparragoza Salazar,AUTO-023,,sin_datos,,,,,,,,9.128548,-66.71315
+MEIZTOHMEELCHAIR,Meiz Tohme Elchair,AUTO-024,,davis,G12-Buenavista-Saturno,238383,override,2026-08-02 22:00:00,29.1,77.0,0.00,9.151968,-65.809468
+MIGUELANGELTOHMELEDEZMA,Miguel Ángel Tohme Ledezma,AUTO-037,,sin_datos,,,,,,,,9.032829,-65.949342
+MILKOPAGLIARELLADIBERARDIN,Milko Pagliarella Di Berardin,C02,Cojedes,davis,P01-Pajones-Saturno,184921,override,2026-08-02 22:00:00,31.9,68.0,0.00,9.534066,-68.888809
+NORBERTOSEGOVICH,Norberto Segovich,,,davis,P03-Queseras-Saturno,200814,override,2026-08-02 22:00:00,31.7,71.5,0.00,,
+OSCARLUISMURILLOZERPA,Oscar Luis Murillo Zerpa,G02,Guárico,davis,G01-San Geronimo - Saturno,185450,override,2026-08-02 21:00:00,30.0,71.0,0.00,9.170779,-65.746372
+OSCARMURILLOZERPA,Oscar Murillo Zerpa,AUTO-026,,davis,G01-San Geronimo - Saturno,185450,override,2026-08-02 21:00:00,30.0,71.0,0.00,9.170779,-65.746372
+PEDROVICENTEGOMEZARVELAEZ,Pedro Vicente Gomez Arvelaez,AUTO-027,,davis,G09-Saturno-Mochuelo,238308,override,2026-07-27 21:00:00,33.2,58.6,0.00,9.285273,-65.744015
+RAMONEUGENIOARRUEBARRENAGAROFALO,Ramon Eugenio Arruebarrena Garofalo,G06,Guárico,davis,G06-Mahomal-Saturno,213617,auto_codigo_up,2026-08-02 22:00:00,30.7,71.4,0.00,9.232104,-65.609187
+RICHARDJOSEAPOSTOLNUNEZ,Richard Jose Apostol Nuñez,AUTO-028,,davis,Y06-Saturno-Radio Faro,238060,override,2026-08-02 22:00:00,32.6,65.0,0.00,9.965387,-69.061065
+SEBASTIANARMANDOBONETPLAZA,Sebastian Armando Bonet Plaza,P11,Portuguesa,davis,P11-La Ensenada-Saturno,212723,auto_codigo_up,2026-07-23 13:45:00,23.8,93.5,0.00,9.1080346,-68.837063
+TONYALEJANDROPESTANAPEREZ,Tony Alejandro Pestana Perez,AUTO-030,,davis,P17-Saturno-Monte De Luna,235347,override,2026-08-02 22:00:00,31.6,71.8,0.00,9.220427,-68.884945
+VENTURINOCICCONETTISANLORENZO,Venturino Cicconetti San Lorenzo,C01,Cojedes,davis,C01-Las Majaguas-Saturno,212761,override,2026-08-02 22:00:00,32.3,67.0,0.00,9.57224,-68.950615
+VICTORRAMONOROPEZAORTIZ,Victor Ramon Oropeza Ortiz,AUTO-031,,davis,Y05-La Victoriana,237976,override,2026-08-02 22:00:00,29.9,75.0,0.00,10.089309,-69.040672
+VIRBELJOSEGRIMANALFIN,Virbel Jose Griman Alfin,AUTO-032,,davis,Y03-Saturno-La Fé,235420,override,2026-08-02 22:00:00,30.3,69.9,0.00,9.967695,-69.044371
+WILLIAMSMANUELCANELONGONZALEZ,Williams Manuel Canelon Gonzalez,AUTO-033,,davis,Y02-Saturno- La Ceiba,235411,override,2026-08-02 22:00:00,30.8,65.7,0.00,9.963967,-69.042697
+WILLIAMSSALAZAR,Williams Salazar,P03,Portuguesa,davis,P12-Rio Acarigua-Saturno,213450,override,2026-08-02 22:00:00,31.6,65.9,0.00,9.494229,-69.289487
+WOLFGANGSTEGER,Wolfgang Steger,AUTO-034,,sin_datos,,,,,,,,9.224214,-69.043375
+YAROELCHAER,Yaro El Chaer,AUTO-035,,davis,Y07-Finca Galo,238570,override,2026-08-02 22:00:00,28.8,72.8,0.00,10.196566,-68.868314

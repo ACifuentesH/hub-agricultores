@@ -4,8 +4,18 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Sprout, ArrowRight, Eye, EyeOff } from 'lucide-react'
+import DemoLoginGate from '@/components/DemoLoginGate'
 
 export default function LoginPage() {
+  // Modo demo: pantalla de clave en vez del login real (Supabase Auth está
+  // suspendido, ver AGENTS.md). Con DEMO_MODE apagado esto nunca se evalúa.
+  if (process.env.NEXT_PUBLIC_DEMO_MODE === 'true') {
+    return <DemoLoginGate />
+  }
+  return <RealLoginForm />
+}
+
+function RealLoginForm() {
   const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')

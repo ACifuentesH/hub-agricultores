@@ -1,0 +1,443 @@
+lote_id,agricultor_key,ciclo,nombre,ha_plan,ha_encaladas,inicio_siembra,ha_sembradas,ha_perdidas,ha_cosechadas,estado_lote,fase,fecha_visita,tecnico,observaciones,acuerdos,estado_experto,cosecha_estimada,avance_pct
+00f88205,DENNISLEONARDOALIBARDIMASCHIO,2025,L05 LOTE 25 ha B,17.2,0,"lunes, 5 de mayo de 2025",17.2,0,17.2,,,,,,,,,
+025c824d,JOSEGREGORIOBALZAFAJARDO,2025,L05 LOTE LOMAS DE MEDANO,6.2,0,"sábado, 24 de mayo de 2025",6.2,0,6.2,,,,,,,,,
+04c6dec5,VENTURINOCICCONETTISANLORENZO,2025,PERLA LOTE 06,29,0,"jueves, 29 de mayo de 2025",28.6,7,22,Regular,,,,,,,,
+04fd7636,LUIGIDONELLOTOGNETTI,2025,L05 LOTE-03 C,15,0,"sábado, 31 de mayo de 2025",15,0,6.9,,,,,,,,,
+05b01019,JOSEGREGORIOBALZAFAJARDO,2025,L03 LOTE LOMA AMARILLA,10.2,0,"lunes, 26 de mayo de 2025",10.2,0,10.2,Bueno,,,,,,,,
+0ad52e40,MARBELLISDELPILARARIASMENDOZA,2025,L12 LOTE SANTACRUZ II-LOTE 5A,16.2,0,"martes, 13 de mayo de 2025",16.2,0,16.2,Regular,,,,,,,,
+0b454222,WILLIAMSSALAZAR,2025,L12 LOTE L2E,14,0,"viernes, 16 de mayo de 2025",14,0.15,13.85,Regular,,,,,,,,
+0b4c1412,WILLIAMSSALAZAR,2025,L16 LOTE LOS MANGOS,23,0,"sábado, 28 de junio de 2025",23,1.2,21.8,Bueno,,,,,,,,
+0e7d2db5,WILLIAMSSALAZAR,2025,L13 LOTE LAS 50 B LOTE,26,0,"viernes, 16 de mayo de 2025",26,5.61,20.39,Bueno,,,,,,,,
+0f13d0e2,WILLIAMSSALAZAR,2025,L15 LOTE LAS 60 B,30.5,0,"domingo, 6 de julio de 2025",30.5,0.8,29.7,Regular,,,,,,,,
+0f74b8fe,LUISALBERTOROJASPIERETTI,2025,L11 LOTE EL DRAGAL 4-1,17.6,0,"martes, 20 de mayo de 2025",17.6,0,17.6,,,,,,,,,
+0fd2f6bc,MARBELLISDELPILARARIASMENDOZA,2025,L01 LOTE SANTACRUZ I-LOTE 1,19.2,0,"lunes, 5 de mayo de 2025",19.2,2.19,16.99,Regular,,,,,,,,
+117b21b3,JOSEGREGORIOBALZAFAJARDO,2025,L06 LOTE A,20.8,0,"domingo, 25 de mayo de 2025",20.8,0,20.8,Bueno,,,,,,,,
+11c08e47,MARBELLISDELPILARARIASMENDOZA,2025,L15 LOTE SANTACRUZ II-LOTE 6B,18.2,0,"martes, 13 de mayo de 2025",13.24,4,9.24,Malo,,,,,,,,
+1261b101,LUISALBERTOROJASPIERETTI,2025,L01 LOTE DETRÁS DE LA CASA OESTE,9.6,0,"domingo, 25 de mayo de 2025",9.6,0,9.6,Bueno,,,,,,,,
+15201be5,JOSEGREGORIOBALZAFAJARDO,2025,L04 LOTE LOMA BARRIGA,5.7,0,"lunes, 26 de mayo de 2025",5.7,0,5.7,,,,,,,,,
+18992f7f,ANGELAGUEDEZ,2025,L02 LOTE 2A,10.6,0,,0,0,0,,,,,,,,,
+1b6cdb1d,MANUELGARCÍAMESA,2025,L02 LOTE-02,35.1,0,"viernes, 30 de mayo de 2025",35.1,0,39.1,Bueno,,,,,,,,
+1dfe65d0,LUISALBERTOROJASPIERETTI,2025,L02 LOTE LOS MANGOS,27.2,0,"jueves, 15 de mayo de 2025",27.2,0,27.2,Bueno,,,,,,,,
+1e9f7ae7,JOSEGREGORIOBALZAFAJARDO,2025,L02 LOTE CIRUELA ARRIBA,21.2,0,"martes, 27 de mayo de 2025",21.2,0,21,,,,,,,,,
+1f393866,EDOARDOCECCARELLO,2025,L04 LOTE 3D,12.2,0,"jueves, 29 de mayo de 2025",12.2,0,12.2,,,,,,,,,
+1f916b64,MANUELGARCÍAMESA,2025,L05 LOTE 4A,17.1,0,,0,0,0,,,,,,,,,
+22ad474f,AGROVENETAC.A.,2025,L03 LOTE VICTORIERO 1B,27.9,0,"viernes, 27 de junio de 2025",27.9,0,25,Muy bueno,,,,,,,,
+22cb123f,JOSEGREGORIOBALZAFAJARDO,2025,L07 LOTE B,17,0,"sábado, 24 de mayo de 2025",17,0,17,Bueno,,,,,,,,
+2391e96c,JOSEGREGORIOBALZAFAJARDO,2025,L08 LOTE C,20.3,0,"sábado, 24 de mayo de 2025",20.3,0,20.3,,,,,,,,,
+24c51500,WILLIAMSSALAZAR,2025,L03 LOTE LA CASA C,31,0,"jueves, 19 de junio de 2025",31,0.25,30.75,Bueno,,,,,,,,
+3001fa76,LUISALBERTOROJASPIERETTI,2025,L03 LOTE DETRÁS DE LA CASA B,3.4,0,"domingo, 25 de mayo de 2025",3.4,0,3.4,Bueno,,,,,,,,
+320ce4aa,FRANCISCOENRIQUEGONZÁLEZROSELLI,2025,L01 LOTE BAJO DE LOMA,32.6,0,"miércoles, 28 de mayo de 2025",32.6,0,32.95,Bueno,,,,,,,,
+3564c963,WILLIAMSSALAZAR,2025,L14 LOTE LAS 60 A LOTE,30.5,0,"sábado, 5 de julio de 2025",23.5,1,22.5,Regular,,,,,,,,
+3598fa5e,SEBASTIANARMANDOBONETPLAZA,2025,L01 LOTE 5A,16.7,0,"domingo, 25 de mayo de 2025",16.7,2,14.7,Regular,,,,,,,,
+36a5a878,SEBASTIANARMANDOBONETPLAZA,2025,L02 LOTE 5B,18.1,0,"domingo, 25 de mayo de 2025",18.1,2,16.1,Regular,,,,,,,,
+3a15fbbd,MARBELLISDELPILARARIASMENDOZA,2025,L14 LOTE SANTACRUZ II-LOTE 6A,22.4,0,"martes, 13 de mayo de 2025",3,0,3,Regular,,,,,,,,
+3b271282,MARBELLISDELPILARARIASMENDOZA,2025,L09 LOTE SANTACRUZ II-LOTE 2A,18,0,"jueves, 29 de mayo de 2025",15.83,15.83,0,Malo,,,,,,,,
+3cab2320,VENTURINOCICCONETTISANLORENZO,2025,PERLA LOTE 2A,7,0,"jueves, 15 de mayo de 2025",7,0,7,Bueno,,,,,,,,
+3d02c38a,ANGELAGUEDEZ,2025,L09 LOTE-07,7.9,0,,0,0,0,,,,,,,,,
+3d104e05,ANTONIOZAMBRANO,2025,L05 CASA DE TABLA ARRIBA A,23.4,0,"sábado, 7 de junio de 2025",23.4,0,23.42,Excelente,,,,,,,,
+3f606174,WILLIAMSSALAZAR,2025,L05 LAS 50A,31,0,"viernes, 16 de mayo de 2025",31,0,31,,,,,,,,,
+41893bf9,LUIGIDONELLOTOGNETTI,2025,L04 LOTE-03 B,4.6,0,"martes, 3 de junio de 2025",4.6,0,0,,,,,,,,,
+423175cc,SEBASTIANARMANDOBONETPLAZA,2025,L06 LOTE 7C,29.1,0,"sábado, 24 de mayo de 2025",29.1,4,25.1,Regular,,,,,,,,
+42e4c874,LUISALBERTOROJASPIERETTI,2025,L12 LOTE EL MANGO B,20,0,"viernes, 16 de mayo de 2025",20,0,20,Bueno,,,,,,,,
+4774a45e,RAMONEUGENIOARRUEBARRENAGAROFALO,2025,L01 LOTE LA CASA,0,0,,0,0,0,,,,,,,,,
+479b9c1e,MARBELLISDELPILARARIASMENDOZA,2025,L05 LOTE SANTACRUZ I-LOTE 5,31.9,0,"domingo, 11 de mayo de 2025",31.9,3.58,28.32,Regular,,,,,,,,
+48466377,ANTONIOFABIOCECCARELLO,2025,L04 LOTE-03,13.8,0,,0,0,0,,,,,,,,,
+4c787e7f,VENTURINOCICCONETTISANLORENZO,2025,LOTE JUANCHO,12,0,"lunes, 16 de junio de 2025",12,1.8,10.2,Regular,,,,,,,,
+4d05d696,FRANCISCOENRIQUEGONZÁLEZROSELLI,2025,L03 LOTE LA PIEDRA,18.5,0,"martes, 27 de mayo de 2025",18.5,0,18.5,Bueno,,,,,,,,
+4f9010b4,OSCARLUISMURILLOZERPA,2025,L03 LOTE IGUANITAS,45,0,"jueves, 19 de junio de 2025",45,0,43,Muy bueno,,,,,,,,
+5132cd39,WILLIAMSSALAZAR,2025,L07 LOTE L2A,6.8,0,"sábado, 24 de mayo de 2025",6.8,0,6.8,,,,,,,,,
+518f46b9,OSCARLUISMURILLOZERPA,2025,L04 LOS BECERROS,29.1,0,"martes, 3 de junio de 2025",29.1,0,29,Muy bueno,,,,,,,,
+55bb6e1c,MARBELLISDELPILARARIASMENDOZA,2025,L10 LOTE SANTACRUZ II-LOTE 2B,19.9,0,"jueves, 19 de junio de 2025",17.79,3,14.79,Malo,,,,,,,,
+5647166d,WILLIAMSSALAZAR,2025,L04 LA NEGRA,16,0,"lunes, 9 de junio de 2025",16,1.63,14.37,Bueno,,,,,,,,
+574ca945,MARBELLISDELPILARARIASMENDOZA,2025,L08 LOTE SANTACRUZ II-LOTE 1,24.7,0,"martes, 6 de mayo de 2025",24.7,1.39,23.31,Regular,,,,,,,,
+580c0bf6,LUIGIARTUROTONDINICALA,2025,LOTE-03,39.6,0,,0,0,0,,,,,,,,,
+59459380,LUISALBERTOROJASPIERETTI,2025,L08 LOTE EL MANGO C,7,0,"viernes, 16 de mayo de 2025",7,0,7,Muy bueno,,,,,,,,
+59ae0c88,WILLIAMSSALAZAR,2025,L17 LOTE EL CUADRITO,12.1,0,"sábado, 28 de junio de 2025",12.1,0,12.1,,,,,,,,,
+5a0613f3,AGOSTINOCECCARELLOMANCIN,2025,L02 LOTE EL PALMAR 2,20.9,0,2026-05-16,20.9,0,20.95,,,,,,,,,66
+5c5b219f,EDOARDOCECCARELLO,2025,L02 LOTE 3B,30,0,"viernes, 30 de mayo de 2025",30,0,30,,,,,,,,,
+5c6af385,VENTURINOCICCONETTISANLORENZO,2025,L10 LOTE 1-A3,15,0,,0,0,0,,,,,,,,,
+5ce0800e,VENTURINOCICCONETTISANLORENZO,2025,L06 LAS SEBASTIANAS,16,0,,0,0,0,,,,,,,,,
+5ceb98ec,LUISALBERTOROJASPIERETTI,2025,L10 LOTE EL DRAGAL 3-1,10,0,"martes, 20 de mayo de 2025",10,0,10,,,,,,,,,
+5dff5965,MILKOPAGLIARELLADIBERARDIN,2025,L01 ARENERO 1 LOTE-02,20.3,0,"viernes, 6 de junio de 2025",20.3,2.8,17.5,Regular,,,,,,,,
+5f3e971a,SEBASTIANARMANDOBONETPLAZA,2025,L05 LOTE 7B,29.7,0,"sábado, 24 de mayo de 2025",29.7,0,29.7,,,,,,,,,
+617dfe48,DENNISLEONARDOALIBARDIMASCHIO,2025,L01 LOTE-01,14.1,0,"sábado, 10 de mayo de 2025",14.1,5.1,9,Regular,,,,,,,,
+6438aa26,AGROVENETAC.A.,2025,L04 LOTE VICTORIERO 1C,32.2,0,"sábado, 14 de junio de 2025",32.2,0,10,Excelente,,,,,,,,
+66687b3d,AGROVENETAC.A.,2025,L01 LOTE SAMANCITO,33.1,0,"lunes, 9 de junio de 2025",33.1,0,30,Muy bueno,,,,,,,,
+6949c46e,MARBELLISDELPILARARIASMENDOZA,2025,L07 LOTE SANTACRUZ I-LOTE 6B,11.9,0,,0,0,0,,,,,,,,,
+6aa65f5f,MILKOPAGLIARELLADIBERARDIN,2025,L04 LOTE RIO 1 LOTE-04,26.7,0,,0,0,0,Bueno,,,,,,,,
+6c6b742e,ANGELAGUEDEZ,2025,L04 LOTE 2B,13.1,0,,0,0,0,,,,,,,,,
+6cd41936,AGROVENETAC.A.,2025,L02 LOTE VICTORIERO 1A,20.6,0,"viernes, 13 de junio de 2025",20.6,0,20.7,Excelente,,,,,,,,
+6f01c10f,ANTONIOZAMBRANO,2025,L13 LOTE LOS CARO-02 B,24.6,0,"lunes, 2 de junio de 2025",24.6,0,18,Muy bueno,,,,,,,,
+6f55386e,DENNISLEONARDOALIBARDIMASCHIO,2025,L04 LOTE 25 ha A,15.9,0,"lunes, 5 de mayo de 2025",15.9,0,15.9,,,,,,,,,
+6f97b5a6,LUISALBERTOROJASPIERETTI,2025,L06 LOTE EL DRAGAL 4B,17.7,0,"jueves, 22 de mayo de 2025",17.7,0,17.6,,,,,,,,,
+6faf2e5b,FRANCISCOENRIQUEGONZÁLEZROSELLI,2025,L05 LOTE LOMA 1,14.7,0,"jueves, 29 de mayo de 2025",14.7,0,14.7,Bueno,,,,,,,,
+7372e08d,RAMONEUGENIOARRUEBARRENAGAROFALO,2025,L02 LA REPRESA LOTE A,47,0,"sábado, 31 de mayo de 2025",47,0,41,Excelente,,,,,,,,
+74a242cc,ANTONIOFABIOCECCARELLO,2025,L01 LOTE 1A,29.8,0,,0,0,0,Bueno,,,,,,,,
+753626ce,VENTURINOCICCONETTISANLORENZO,2025,L08 LOTE MERLOS,10,0,,0,0,0,,,,,,,,,
+76807478,LUISALBERTOROJASPIERETTI,2025,L07 LOTE EL DRAGAL 1-1,5.5,0,"lunes, 19 de mayo de 2025",5.5,0,5.5,,,,,,,,,
+76be228e,WILLIAMSSALAZAR,2025,L18 LOTE LA LAGUNA,17.6,0,"sábado, 28 de junio de 2025",10,0.2,9.8,Bueno,,,,,,,,
+7876a9ae,VENTURINOCICCONETTISANLORENZO,2025,L07 LOTE BOLIVAR,14,0,,0,0,0,,,,,,,,,
+7acce5f6,ANTONIOZAMBRANO,2025,L14 LOTE LOS CARO-01,3.67,0,"sábado, 31 de mayo de 2025",3.67,0,3.67,Excelente,,,,,,,,
+7b562285,RAMONEUGENIOARRUEBARRENAGAROFALO,2025,L04 LA REPRESA LOTE C,30.7,0,"lunes, 2 de junio de 2025",30.7,0,40,Excelente,,,,,,,,
+7e16cf05,LUISALBERTOROJASPIERETTI,2025,L09 LOTE EL DRAGAL 3B,10,0,"martes, 20 de mayo de 2025",10,0,10,Muy bueno,,,,,,,,
+7e40c802,ANTONIOZAMBRANO,2025,L08 EL DESQUITE B,26,0,"martes, 3 de junio de 2025",26,0,31,Muy bueno,,,,,,,,
+7ffd77e7,VENTURINOCICCONETTISANLORENZO,2025,PERLA LOTE 01,21,0,"viernes, 16 de mayo de 2025",21,0,21,Bueno,,,,,,,,
+807cd999,MARBELLISDELPILARARIASMENDOZA,2025,L02 LOTE SANTACRUZ I-LOTE 2,22.9,0,,0,0,0,,,,,,,,,
+850b58bb,ANTONIOZAMBRANO,2025,L09 LOTE LA TRINCHERA A,21.8,0,"viernes, 30 de mayo de 2025",21.8,0,12,Muy bueno,,,,,,,,
+8582bdb3,OSCARLUISMURILLOZERPA,2025,L01 LOTE EL TANQUE-A,17.4,0,"viernes, 30 de mayo de 2025",17.4,0,13,Muy bueno,,,,,,,,
+875c4673,ANTONIOZAMBRANO,2025,L01 LOTE ALFARERO A,9.3,0,"sábado, 31 de mayo de 2025",9.3,0,11.5,Muy bueno,,,,,,,,
+87c17f1a,MARBELLISDELPILARARIASMENDOZA,2025,L13 LOTE SANTACRUZ II-LOTE 5B,25.5,0,"martes, 13 de mayo de 2025",25.5,2,23.51,Regular,,,,,,,,
+885d4c37,LUIGIDONELLOTOGNETTI,2025,L02 LOTE-02,11.8,0,"sábado, 31 de mayo de 2025",11.8,3,3.5,Regular,,,,,,,,
+895a5db9,WILLIAMSSALAZAR,2025,L08 LOTE L2B,22.4,0,"jueves, 15 de mayo de 2025",22.4,0,22.4,Bueno,,,,,,,,
+8ab37397,FRANCISCOENRIQUEGONZÁLEZROSELLI,2025,L02 LOTE COCO LOMA GRANDE,15.9,0,"viernes, 30 de mayo de 2025",15.9,10,15.9,Bueno,,,,,,,,
+8c2ec1e4,LUIGIDONELLOTOGNETTI,2025,L01 LOTE-01,12,0,"sábado, 31 de mayo de 2025",12,3,20.1,Regular,,,,,,,,
+8cba9183,MANUELGARCÍAMESA,2025,L07 LOTE 3B 2,13.7,0,"jueves, 29 de mayo de 2025",5.01,0,5.01,,,,,,,,,
+90c7e31a,MARBELLISDELPILARARIASMENDOZA,2025,L06 LOTE SANTACRUZ I-LOTE 6A,27.5,0,,0,0,0,,,,,,,,,
+931b230b,LUIGIARTUROTONDINICALA,2025,L04 LOTE-04,31.4,0,,0,0,0,,,,,,,,,
+937ed9df,ANTONIOZAMBRANO,2025,L11 LOTE LA TRINCHERA C,31,0,"jueves, 29 de mayo de 2025",31,0,20.6,Muy bueno,,,,,,,,
+94e63b66,FRANCISCOENRIQUEGONZÁLEZROSELLI,2025,L08 LOTE RAMIREZ A,25.7,0,"domingo, 1 de junio de 2025",25.7,0,25.7,Regular,,,,,,,,
+95033b1e,MILKOPAGLIARELLADIBERARDIN,2025,L03 RIO 2 LOTE-03,23.5,0,,0,0,0,,,,,,,,,
+9681fb86,MARBELLISDELPILARARIASMENDOZA,2025,L16 LOTE SANTACRUZ II-LOTE 9 Y 10,31.6,0,"sábado, 7 de junio de 2025",31.6,0,31.91,Regular,,,,,,,,
+96cb6cc6,FRANCISCOENRIQUEGONZÁLEZROSELLI,2025,L06 LOTE LOMA 2,28.7,0,"domingo, 25 de mayo de 2025",28.7,0,30.2,Regular,,,,,,,,
+999cca4b,WILLIAMSSALAZAR,2025,L01 LOTE LA CASA B,27,0,,0,0,0,,,,,,,,,
+9b825546,ANGELAGUEDEZ,2025,L05 LOTE-03,23.7,0,,0,0,0,,,,,,,,,
+9bd49142,MARBELLISDELPILARARIASMENDOZA,2025,L04 LOTE SANTACRUZ I-LOTE 4,32.3,0,"sábado, 10 de mayo de 2025",32.3,3.6,28.7,Regular,,,,,,,,
+9d9a944f,ANTONIOFABIOCECCARELLO,2025,L03 LOTE-02 A1,12.3,0,,0,0,0,,,,,,,,,
+9e0fccd4,EDOARDOCECCARELLO,2025,L01 LOTE 3A,24,0,"viernes, 30 de mayo de 2025",24,0,24.9,,,,,,,,,
+9fb58c79,MANUELGARCÍAMESA,2025,L06 LOTE 4B,20.2,0,,0,0,0,,,,,,,,,
+a1552cf3,ANTONIOZAMBRANO,2025,L07 EL DESQUITE A,22.6,0,"martes, 3 de junio de 2025",22.6,0,26.8,Excelente,,,,,,,,
+acfbfc86,LUIGIARTUROTONDINICALA,2025,L02 LOTE-02,49.6,0,,0,0,0,,,,,,,,,
+ae57fe44,VENTURINOCICCONETTISANLORENZO,2025,L09 LOTE CASTELLANOS,8,0,,0,0,0,,,,,,,,,
+b0c1e3f3,RAMONEUGENIOARRUEBARRENAGAROFALO,2025,L03 LA REPRESA LOTE B,28.3,0,"domingo, 1 de junio de 2025",28.3,0,32,Excelente,,,,,,,,
+b2ffeada,MILKOPAGLIARELLADIBERARDIN,2025,L02 LOTE ARENERO 2 LOTE-01,22.6,0,"sábado, 7 de junio de 2025",17,14,3,Malo,,,,,,,,
+b33dcaa4,MANUELGARCÍAMESA,2025,L04 LOTE 3B 1,15,0,,0,0,0,,,,,,,,,
+b6358794,JOSEGREGORIOBALZAFAJARDO,2025,L01 LOTE CIRUELA ABAJO,16.7,0,"martes, 27 de mayo de 2025",16.7,0,16.7,,,,,,,,,
+b8f8ad49,DENNISLEONARDOALIBARDIMASCHIO,2025,L03 LOTE-03,16.3,0,"martes, 13 de mayo de 2025",16.3,0.5,15.79,Regular,,,,,,,,
+be7a6ed2,MARBELLISDELPILARARIASMENDOZA,2025,L03 LOTE SANTACRUZ I-LOTE 3,15.5,0,,0,0,0,,,,,,,,,
+c03c8c13,LUIGIDONELLOTOGNETTI,2025,L03 LOTE-03 A,20,0,"sábado, 31 de mayo de 2025",20,3,37.7,Regular,,,,,,,,
+c0412fb6,LUISALBERTOROJASPIERETTI,2025,L04 LOTE EL DRAGAL 2B,9.3,0,"miércoles, 21 de mayo de 2025",9.3,0,9.3,,,,,,,,,
+c1e8002d,EDOARDOCECCARELLO,2025,L03 LOTE 3C,25.9,0,"jueves, 29 de mayo de 2025",25.9,3,22.9,Regular,,,,,,,,
+c36803ed,VENTURINOCICCONETTISANLORENZO,2025,L11 LOTE PATRIX,15,0,"jueves, 29 de mayo de 2025",15,2.4,12.6,Bueno,,,,,,,,
+c6fe4d5f,FRANCISCOENRIQUEGONZÁLEZROSELLI,2025,L09 LOTE RAMIREZ B,28.7,0,"domingo, 1 de junio de 2025",28.7,15,28.7,Bueno,,,,,,,,
+cadc4a0f,OSCARLUISMURILLOZERPA,2025,L05 LA CAGADA,30,0,"martes, 8 de julio de 2025",30,7,38,Regular,,,,,,,,
+cb351fde,DENNISLEONARDOALIBARDIMASCHIO,2025,L02 LOTE-02,15.7,0,"sábado, 10 de mayo de 2025",15.7,5.4,10.3,Regular,,,,,,,,
+ccd47359,WILLIAMSSALAZAR,2025,L02 LOTE LA CASA A,10.4,0,,0,0,0,,,,,,,,,
+cd320eed,SEBASTIANARMANDOBONETPLAZA,2025,L07 LOTE-08,14.4,0,"sábado, 17 de mayo de 2025",14.4,4,14.84,Regular,,,,,,,,
+cd72d03a,ANTONIOZAMBRANO,2025,L10 LOTE LA TRINCHERA B,33.33,0,"viernes, 30 de mayo de 2025",33.33,0,6.1,Muy bueno,,,,,,,,
+cfcd0b45,ANTONIOZAMBRANO,2025,L02 LOTE ALFARERO B,26.7,0,"sábado, 31 de mayo de 2025",26.7,0,23.8,Muy bueno,,,,,,,,
+d2cb3c31,WILLIAMSSALAZAR,2025,L06 LOS CACHICAMOS,35,0,"sábado, 28 de junio de 2025",35,1,34,Bueno,,,,,,,,
+d389ace0,WILLIAMSSALAZAR,2025,L09 LOTE L2C,23,0,"martes, 10 de junio de 2025",23,0.9,22.1,Regular,,,,,,,,
+d3cae594,WILLIAMSSALAZAR,2025,L11 LOTE L2D2,29.7,0,"viernes, 20 de junio de 2025",29.7,1.5,28.2,Bueno,,,,,,,,
+d497e6c4,ANTONIOZAMBRANO,2025,L04 LOTE ARBOLOTE ARRIBA A,21,0,"miércoles, 4 de junio de 2025",21,0,21.1,Excelente,,,,,,,,
+da4537c2,WILLIAMSSALAZAR,2025,L19 LOTE L2F,6,0,"lunes, 9 de junio de 2025",6,0.13,6,Bueno,,,,,,,,
+da781c41,ANGELAGUEDEZ,2025,LOTE-05,14.6,0,,0,0,0,,,,,,,,,
+dc56389f,SEBASTIANARMANDOBONETPLAZA,2025,L03 LOTE-06,27,0,"domingo, 25 de mayo de 2025",27,4,23,Regular,,,,,,,,
+ddd4bf7b,LUIGIARTUROTONDINICALA,2025,L01 LOTE-01,30,0,,0,0,0,,,,,,,,,
+ddd8b0ac,MARBELLISDELPILARARIASMENDOZA,2025,"L17 LOTE SANTACRUZ II-LOTE 11, 12 Y 13",17.9,0,"lunes, 12 de mayo de 2025",17.9,2,15.9,Regular,,,,,,,,
+e05a6923,MANUELGARCÍAMESA,2025,L03 LOTE 3A,15.5,0,,0,0,0,,,,,,,,,
+e10d4e73,LUISALBERTOROJASPIERETTI,2025,L05 LOTE EL DRAGAL 2-1,8.8,0,"lunes, 19 de mayo de 2025",8.8,0,8.8,,,,,,,,,
+e18beaf2,SEBASTIANARMANDOBONETPLAZA,2025,L04 LOTE 7A,20.2,0,"sábado, 24 de mayo de 2025",20.2,0,20.2,,,,,,,,,
+e240f67f,ANGELAGUEDEZ,2025,L08 LOTE-06,9.2,0,,0,0,0,,,,,,,,,
+e2afd8d0,ANGELAGUEDEZ,2025,L01 LOTE 1A,28.2,0,,0,0,0,,,,,,,,,
+e2bd3367,ANTONIOZAMBRANO,2025,L06 CASA DE TABLA ARRIBA B,24.3,0,"miércoles, 4 de junio de 2025",24.3,0,23.6,Excelente,,,,,,,,
+e2f1b92a,ANGELAGUEDEZ,2025,L02 LOTE 1B,26.5,0,,0,0,0,,,,,,,,,
+e6e1e191,ANGELAGUEDEZ,2025,L06 LOTE-04,22.4,0,,0,0,0,,,,,,,,,
+e701f596,ANTONIOZAMBRANO,2025,L15 LOTE SALTO DEL MIRA A,30.9,0,"domingo, 1 de junio de 2025",30.9,0,31.5,Muy bueno,,,,,,,,
+e73c8279,ANTONIOFABIOCECCARELLO,2025,L05 LOTE-02 A2,10,0,,0,0,0,,,,,,,,,
+e986c078,MANUELGARCÍAMESA,2025,L01 LOTE-01,34.5,0,"viernes, 30 de mayo de 2025",34.5,0,34.5,Bueno,,,,,,,,
+e9ef4558,ANGELAGUEDEZ,2025,L10 LOTE-08,17.7,0,,0,0,0,,,,,,,,,
+ec4e82bf,AGROVENETAC.A.,2025,L05 LOTE VICTORIERO 1D,16.3,0,"domingo, 15 de junio de 2025",16.3,0,33,Excelente,,,,,,,,
+ee3acb7d,ANGELAGUEDEZ,2025,L11 LOTE-09,32.1,0,,0,0,0,,,,,,,,,
+f002e427,AGOSTINOCECCARELLOMANCIN,2025,L01 LOTE EL PALMAR 1,32.9,0,"miércoles, 28 de mayo de 2025",32.9,0,32.9,,,,,,,,,
+f2b992cd,FRANCISCOENRIQUEGONZÁLEZROSELLI,2025,L07 LOTE MATA PALO,23.5,0,"sábado, 31 de mayo de 2025",23.5,0,23.53,Excelente,,,,,,,,
+f3bee39d,AGOSTINOCECCARELLOMANCIN,2025,L03 LOTE 45-A,20,0,,0,0,0,,,,,,,,,
+f50dc61a,FRANCISCOENRIQUEGONZÁLEZROSELLI,2025,L04 LOTE LOCACIÓN A,13.1,0,"sábado, 24 de mayo de 2025",13.1,7,13.1,Regular,,,,,,,,
+f536bc98,MARBELLISDELPILARARIASMENDOZA,2025,L11 LOTE SANTACRUZ II-LOTE 3,35.6,0,"jueves, 19 de junio de 2025",31.8,3,28.8,Regular,,,,,,,,
+f574aa79,WILLIAMSSALAZAR,2025,L10 LOTE L2D1,19,0,"viernes, 16 de mayo de 2025",19,0.11,18.89,Regular,,,,,,,,
+f69acfd2,AGOSTINOCECCARELLOMANCIN,2025,L04 LOTE 45-B,20,0,,0,0,0,,,,,,,,,
+f87ce87c,VENTURINOCICCONETTISANLORENZO,2025,PERLA LOTE 04,26,0,"jueves, 15 de mayo de 2025",26,1,24.77,Regular,,,,,,,,
+f9381145,ANTONIOZAMBRANO,2025,L12 LOTE LOS CARO-02 A,20,0,"lunes, 2 de junio de 2025",20,0,14.7,Muy bueno,,,,,,,,
+faf993fd,OSCARLUISMURILLOZERPA,2025,L02 LOTE EL TANQUE-B,29.3,0,"jueves, 29 de mayo de 2025",29.3,0,32.4,Muy bueno,,,,,,,,
+fd27b766,ANTONIOZAMBRANO,2025,L03 LOTE ALFARERO D,19.5,0,"viernes, 30 de mayo de 2025",19.5,0,17.3,Muy bueno,,,,,,,,
+ff384dad,ANTONIOFABIOCECCARELLO,2025,L02 LOTE 1B,32.2,0,,0,0,0,,,,,,,,,
+L01-B01-742cb71b,JULIOANTONIOCOLMENAREZMENDOZA,2026,El Guasimo,28.71,0,2026-04-30,28.71,0,0,,,,,,,,,79
+L01-C02-742cb71b,MILKOPAGLIARELLADIBERARDIN,2026,L01 ARENERO 1 LOTE-02,20.29,0,2026-05-29,20.29,0,0,,,,,,,,,55
+L01-G01-742cb71b,LUISALBERTOROJASPIERETTI,2026,L01 LOTE DETRÁS DE LA CASA,12.71,0,2026-05-31,12.71,0,0,,,,,,,,,53
+L01-G02-742cb71b,OSCARMURILLOZERPA,2026,L01 LOTE EL TANQUE-A,17.36,0,2026-05-29,17.36,0,0,,,,,,,,,55
+L01-G03-742cb71b,ANTONIOLUISZAMBRANOACUNA,2026,Molino Escabezao 1,75.78,0,2026-05-29,75.78,0,0,,,,,,,,,55
+L01-G04-742cb71b,JOSEGREGORIOBALZAFAJARDO,2026,L01 LOTE CIRUELA ABAJO,17.19,0,2026-05-22,17.19,0,0,Bueno,V12,2026-07-06,Donis Palma,Se observa en pequeñas áreas fotos de escapes de malezas causados por los espacios causados por los fuertes lluvias,Realizar monitoreo constante para evitar escapes de malezas que puedan impedir que la actividad de cosecha sea eficiente,Bueno,2026-09-19,61
+L01-G05-742cb71b,FRANCISCOENRIQUEGONZALEZROSELLI,2026,L01 LOTE BAJO DE LOMA,33.61,0,2026-05-20,33.61,0,0,Muy bueno,R3,2026-07-27,Daniel Enrique Rodriguez Medina,"Cultivo con muy buen aspecto agronómico, escapes de malezas sectorizados de bejuquillo los cuales serán suprimidos con atrazina con vuelos focalizados. Mazorcas uniformes y con buen desarollo, prolificidad de 1.5, 5% de plantas horras o mazorcas no productivas. Baja incidencia de gusano cogollero el cual no ha afectado la mazorca.",Continuar con monitoreos del lote y proximamente estimacion de cosecha.,Muy bueno,2026-09-17,63
+L01-G07-742cb71b,CELSOFANTINELFURLANIS,2026,L01 LOTE SAMANCITO,32.46,0,2026-05-27,32.46,1,0,Muy bueno,V10,2026-07-09,Álex Gómez,"Cultivo cerrado, todas las aplicaciones planificadas realizadas, muy buen estado de desarrollo,  se observan daños persistentes de espodoptera , se observa la germinacion de algunas gramineas post aplicacion del gadriano.",Continuar monitoreo de afectación con espodoptera y de ser necesario realizar aplicacion aérea de insecticida,Muy bueno,2026-09-24,57
+L01-G10-742cb71b,JOSEDARIOGALLUCCIREQUENA,2026,Chaparral,76.68,0,2026-06-13,76.68,0,0,,,,,,,,,43
+L01-G11-742cb71b,JOSEROLANDOCALDERAARVELAIZ,2026,La Unión,91.9,0,2026-05-28,91.9,0,0,Muy bueno,V2,2026-06-11,Lenin Josue Morillo Diaz,"En el cultivo de maíz recién emergido se observa una buena definición en las líneas de siembra, aunque con ligeras fallas de uniformidad y un evidente agrietamiento del suelo por pérdida de humedad superficial que requiere monitoreo hídrico inmediato para evitar estrés en las plántulas. Por otro lado, el lote de cobertura o pastura consolidada presenta un excelente vigor vegetativo, alta densidad y una cobertura homogénea óptima para la protección del terreno.","Basándome en las condiciones observadas, la principal recomendación técnica es evaluar de inmediato la humedad en la zona radicular del maíz para determinar si el marcado agrietamiento del suelo está comprometiendo el desarrollo de las plántulas en etapa V3-V4. Dado que el lote de maíz se encuentra en pleno desarrollo inicial, es crucial asegurar la disponibilidad hídrica y programar un monitoreo cercano de la presión de malezas interlineales en el suelo desnudo antes de que afecten el potencial del cultivo.",Muy bueno,2026-09-25,56
+L01-G12-742cb71b,JOSEROLANDOCALDERARONDON,2026,El Porvenir,39.15,0,2026-06-01,39.15,0,0,,,,,,,,,53
+L01-G14-742cb71b,JUANVICENTERISSO,2026,julio 1,56.41,0,2026-06-06,56.41,0,0,,,,,,,,,48
+L01-G15-742cb71b,LEOSCARMACHADOSILVEIRA,2026,La Casa 1,62.05,0,2026-05-19,62.05,1.5,0,Bueno,V9,2026-07-03,Einler Raul Rojas Perez,"Debido a que la siembra se realizó en secó, y luego de tres dias de continua lluvias se produjo un tapozamiento",Considerar el momento de siembra,Bueno,2026-09-16,63
+L01-G19-742cb71b,MARIAANGELICAESPARRAGOZASALAZAR,2026,Los Reyes 1,33.95,0,2026-06-15,33.95,0,0,Muy bueno,V9,2026-07-30,Daniel Enrique Rodriguez Medina,"Cultivo con muy buen aspecto agronomico, buen desarrollo en base a su estadio fenologico, buena pigmentación de las hojas, baja incidencia de plagas (gusano cogollero) con daños en hojas viejas no se evidencian daños en hojas nuevas. Sin incidencia de patogenos.",Continuar con los monitoreos del lote por incidencia de plagas y a su vez si ameriten un vuelo de control de plagas.,Muy bueno,2026-10-13,41
+L01-G20-742cb71b,MEIZTOHMEELCHAIR,2026,Caño el Loco,58.29,0,2026-06-13,58.29,0,0,,,,,,,,,43
+L01-G22-742cb71b,PEDROVICENTEGOMEZARVELAEZ,2026,El Roble,15.43,0,2026-06-20,15.43,0,0,,,,,,,,,37
+L01-L01-742cb71b,VIRBELJOSEGRIMANALFIN,2026,El Manguito 1,23.06,0,2026-05-21,23.06,0,0,,,,,,,,,62
+L01-L03-742cb71b,WILLIAMSMANUELCANELONGONZALEZ,2026,Antonio Gaiza,7.77,0,2026-05-20,7.77,0,0,,,,,,,,,63
+L01-P02-742cb71b,ANGELAROSAGUEDEZMORALES,2026,L01 LOTE 1A,26.53,26.53,2026-04-24,26.53,0,0,Regular,V4,2026-05-25,Nicole Alessandra Ramones Parra,Se planificó la aplicación de plagas y malezas en el lote.,Realizar aplicaciones en los tiempos planificados para mantener los ubrales bajos.,Regular,2026-08-22,84
+L01-P10-742cb71b,DENNISLEONARDOALIBARDIMASCHIO,2026,LOTE-01,29.84,0,2026-05-01,29.84,0,0,,,,,,,,,78
+L01-P14-742cb71b,CESARIGORPADILLAMARTINEZ,2026,La Padillera 1,41.32,0,2026-05-24,41.32,0,0,Muy bueno,V2,2026-06-01,Gabriel Jose Campos Alvarado,"Cultivo en proceso de germinación, con un 80% de plantas establecidas. Sin daño de plagas, y control de malezas efectivo.","Esperar V4-V5 para la realización de control de malezas, plagas y 1er reabono. Además de evaluar plantabilidad a la segunda semana.",Muy bueno,2026-09-21,59
+L01-P16-742cb71b,ELISABUSTAMANTE,2026,Dugarte 1,22.31,22.31,2026-06-19,22.31,0,0,,,,,,,,,38
+L01-P17-742cb71b,EZEQUIELJOSEFONTIVEROSBRICENO,2026,Candilero,17.23,0,2026-05-22,17.23,0,0,Bueno,R1,2026-07-13,Carlos Javier Barco Betancourt,El nivel de incidencia de plagas se redujo con respecto al monitoreo anterior. Siendo menos del 20%,Mantener el monitoreo constante del lote,Bueno,2026-09-19,61
+L01-P18-742cb71b,FRANCISCOJOSEMARQUEZ,2026,Bancales Viejos,20.83,0,2026-05-20,20.83,0,0,,,,,,,,,63
+L01-P20-742cb71b,HENRYJOSECORDONESLINAREZ,2026,La Victoria 1,7.44,7.44,2026-05-05,7.44,0,0,Bueno,V4,2026-06-01,Gabriel Jose Campos Alvarado,"Misma situación que victoria 2, con precencia de paja amaricana. Se mantendra el monitoreo para evaluación del control de malezas",Continuar labores de fertilización 1er reabono,Bueno,2026-09-02,75
+L01-P21-742cb71b,LORENAJOHANAORLANDOTESTI,2026,Parcela 212,20.82,0,2026-05-05,20.82,0,0,Bueno,V13,2026-07-09,Carlos Javier Barco Betancourt,En el primer bancal las plantas se encuentran en un estadio fenologico menor que las plantas en el segundo bancal,"Realizar un control con cañon en los bordes del primer bancal, donde se observo la mayor incidencia de plagas",Bueno,2026-09-02,75
+L01-P23-742cb71b,TONYALEJANDROPESTANAPEREZ,2026,"Las 6 + 1,7 + 0,4",8.01,0,2026-05-22,8.01,0,0,,,,,,,,,61
+L01-P25-742cb71b,WOLFGANGSTEGER,2026,Parcela 64,24.27,0,2026-06-13,24.27,0,0,,,,,,,,,43
+L01-S01-742cb71b,JUANHERNANDEZDIAZ,2026,El Carito 1-1,27.28,0,2026-06-17,27.28,0,0,Muy bueno,V7,2026-07-24,Álex Gómez,Cultivo en buen estado de desarrollo a pesar de largo período de sequía comienza a presentar síntomas de estrés hidrico,Monitoreo constante,Muy bueno,2026-10-15,39
+L01-Y01-742cb71b,RICHARDJOSEAPOSTOLNUNEZ,2026,Los Generales,17.81,0,2026-06-12,17.81,0,0,,,,,,,,,43
+L01-Y02-742cb71b,VICTORRAMONOROPEZAORTIZ,2026,La Mora,15.27,0,2026-06-02,15.27,0,0,,,,,,,,,52
+L01-Y03-742cb71b,YAROELCHAER,2026,La Autopista,8.02,0,2026-05-28,8.02,2,0,Regular,V9,2026-07-11,Jesús Juárez,"Durante la evaluación se observó una alta incidencia de gusano cogollero (Spodoptera frugiperda), con presencia de larvas en diferentes instares. Las áreas referenciadas como pérdidas no corresponden totalmente a ausencia de plantas; en estos sectores el maíz se encuentra establecido, pero con un desarrollo muy atrasado respecto al resto del lote debido al déficit hídrico. En algunos puntos, principalmente en las orillas y lomas con suelos de baja retención de humedad, las plantas permanecen de tamaño reducido como consecuencia del mayor estrés hídrico sufrido durante su desarrollo.",Se recomienda realizar un control oportuno de gusano cogollero (Spodoptera frugiperda) para reducir la población de la plaga y evitar un mayor impacto sobre el desarrollo del cultivo.,Regular,2026-09-25,56
+L01-Y04-742cb71b,JOSEGREGORIOSANCHEZMENDOZA,2026,Lucas,8.85,8.85,2026-06-04,8.85,0,0,,,,,,,,,50
+L02-B01-742cb71b,JULIOANTONIOCOLMENAREZMENDOZA,2026,El Tanque,16.81,0,2026-04-29,16.81,0,0,,,,,,,,,80
+L02-G01-742cb71b,LUISALBERTOROJASPIERETTI,2026,L02 LOTE LOS MANGOS,27.1,0,2026-05-19,27.1,0,0,Bueno,R1,2026-07-17,Donis Palma,Poca incidencia de ataques de plagas y baja precensia de malezas,Seguir realizando monitoreo constante para evitar escapes de malezas y ataques de plagas,Bueno,2026-09-16,63
+L02-G02-742cb71b,OSCARMURILLOZERPA,2026,L02 LOTE EL TANQUE-B,29.27,0,2026-05-29,29.27,0,0,,,,,,,,,55
+L02-G04-742cb71b,JOSEGREGORIOBALZAFAJARDO,2026,L02 LOTE CIRUELA ARRIBA,21.09,0,2026-05-21,21.09,0,0,Bueno,V12,2026-07-06,Donis Palma,Plantas en perfecto estado pocos ataques de plagas y sin escapes de malezas,Seguir realizando monitoreo correspondiente,Bueno,2026-09-18,62
+L02-G05-742cb71b,FRANCISCOENRIQUEGONZALEZROSELLI,2026,L02 LOTE COCO LOMA GRANDE,14.48,0,2026-05-22,14.48,0,0,Muy bueno,R3,2026-07-27,Daniel Enrique Rodriguez Medina,"Cultivo con muy buen aspecto agronómico, escapes de malezas sectorizados de bejuquillo los cuales serán suprimidos con atrazina con vuelos focalizados. Mazorcas uniformes y con buen desarollo, prolificidad de 1.5, 5% de plantas horras o mazorcas no productivas. Baja incidencia de gusano cogollero el cual no ha afectado la mazorca.",Continuar con los monitoreos del lote y proximamente la evaluacion de estimacion de cosecha,Muy bueno,2026-09-19,61
+L02-G07-742cb71b,CELSOFANTINELFURLANIS,2026,Guillero 1,9.62,0,2026-06-22,9.62,0,0,Muy bueno,V4,2026-07-20,Álex Gómez,"Cultivo en buen estado, buen control fitosanitario.","Continuar y culminar lo previsto en el plan saturno,  monitoreo permanente de plagas",Muy bueno,2026-10-20,35
+L02-G11-742cb71b,JOSEROLANDOCALDERAARVELAIZ,2026,Laguna Grande,35.33,0,2026-06-10,35.33,0,0,,,,,,,,,45
+L02-G12-742cb71b,JOSEROLANDOCALDERARONDON,2026,La Palmita 1,15.23,0,2026-05-21,15.23,0,0,,,,,,,,,62
+L02-G19-742cb71b,MARIAANGELICAESPARRAGOZASALAZAR,2026,Los Reyes 2,57.46,0,2026-06-20,57.46,0,0,Muy bueno,V7,2026-07-30,Daniel Enrique Rodriguez Medina,"Cultivo con muy buen aspecto agronomico, buen desarrollo en base a su estadio fenologico, buena pigmentación de las hojas. Control de malezas y plagas post-emergente efectivo, suprimiendo en su totalidad las malezas antes presentes. Sin incidencia de plagas ni patogenos.",Continuar con los monitoreos por futuros ataques de plagas.,Muy bueno,2026-10-18,37
+L02-G22-742cb71b,PEDROVICENTEGOMEZARVELAEZ,2026,El Ron 1,22.1,0,2026-05-26,22.1,0,0,Bueno,V5,2026-06-21,Lenin Josue Morillo Diaz,"Se observa, alta Incidencia de larvas de spodoptera en estado L3-L5, y nivel de daño en grado 3 a 4 en la escala de Davis.","Se recomienda la aplicación, inmediata en horas nocturnas de insecticidas de acción de contacto, ingestión y efecto residual, para el control de larvas, con el uso de Acustic Top, (Benzoato de emectina + Lufenuron) a dosis de 70 gr/Ha.",Bueno,2026-09-23,58
+L02-L01-742cb71b,VIRBELJOSEGRIMANALFIN,2026,El Manguito 2,11.3,0,2026-05-21,11.3,0,0,,,,,,,,,62
+L02-L03-742cb71b,WILLIAMSMANUELCANELONGONZALEZ,2026,El Corral,11.74,0,2026-05-23,11.74,0,0,,,,,,,,,60
+L02-P02-742cb71b,ANGELAROSAGUEDEZMORALES,2026,L02 LOTE 1B,33.3,0,2026-04-23,33.3,0,0,,,,,,,,,85
+L02-P06-742cb71b,LUIGIDONELLOTOGNETTI,2026,Parcela 170,29.65,0,2026-05-06,29.65,0,0,Bueno,V11,2026-06-16,Carlos Javier Barco Betancourt,"Se encuentran varios puntos sin ningún daño, sin embargo, en algunos focos se observa presencia de gusanos hasta en 5/20 plantas",Realizar un control de plagas antes del cierre del cultivo,Bueno,2026-09-03,74
+L02-P16-742cb71b,ELISABUSTAMANTE,2026,Dugarte 2,23.33,23.33,2026-06-16,19.05,0,0,,,,,,,,,40
+L02-P17-742cb71b,EZEQUIELJOSEFONTIVEROSBRICENO,2026,Candirosa - Mango A,16.18,16.18,2026-05-24,16.18,0,0,Bueno,V10,2026-07-07,Carlos Javier Barco Betancourt,La mayor incidencia se concentra en los bordes,Realizar una aplicación con cañon por los bordes,Bueno,2026-09-21,59
+L02-P18-742cb71b,FRANCISCOJOSEMARQUEZ,2026,Juan,9.35,0,2026-06-10,9.35,0,0,,,,,,,,,45
+L02-P20-742cb71b,HENRYJOSECORDONESLINAREZ,2026,La Victoria 2,6.87,6.87,2026-05-05,6.87,0,0,Muy bueno,V4,2026-06-01,Gabriel Jose Campos Alvarado,Cultivo en general V4. Se observa la acción del control de malezas unido al de plagas con una alta efectividad. Ya se nota el efecti del herbicida a tan solo 3 dias despues de la aplicación.,"Continuar con las labores de fertilización 1er reabono, detenidas por precipitaciones continuas.",Muy bueno,2026-09-02,75
+L02-P21-742cb71b,LORENAJOHANAORLANDOTESTI,2026,Parcela 246,32.78,0,2026-04-30,32.78,0,0,Bueno,R1,2026-07-13,Carlos Javier Barco Betancourt,"Posterior a la aplicación del Proclaim + Boheme, se observa una incidencia de plagas menor al 15%
+
+Por lo que la aplicación se fue efectiva y la plaga se encuentra dentro de los umbrales aceptables de incidencia",Continuar con el seguimiento al lote para verificar la cobertura de malezas,Bueno,2026-08-28,79
+L02-P23-742cb71b,TONYALEJANDROPESTANAPEREZ,2026,Las 15,13.24,0,2026-05-11,13.24,0,0,,,,,,,,,70
+L02-P25-742cb71b,WOLFGANGSTEGER,2026,Parcela 62,22.24,0,2026-06-13,22.24,0,0,,,,,,,,,43
+L02-S01-742cb71b,JUANHERNANDEZDIAZ,2026,El Carito 1-2,21.44,0,2026-06-19,21.44,0,0,Excelente,V7,2026-07-24,Álex Gómez,"Cultivo en buen estado, comienza a presentar síntomas de estrés hidrico.  Preocupa altamente ausencia de precipitaciones",Monitoreo permanente,Muy bueno,2026-10-17,38
+L02-Y02-742cb71b,VICTORRAMONOROPEZAORTIZ,2026,Samán,51.7,0,2026-05-31,51.7,0,0,,,,,,,,,53
+L02-Y03-742cb71b,YAROELCHAER,2026,El Samán,27.17,0,2026-05-27,24.89,8,0,Regular,V9,2026-07-11,Jesús Juárez,"Durante la evaluación se observó una alta incidencia de gusano cogollero (Spodoptera frugiperda), con presencia de larvas en diferentes instares. Las áreas referenciadas como pérdidas no corresponden totalmente a ausencia de plantas; en estos sectores el maíz se encuentra establecido, pero con un desarrollo muy atrasado respecto al resto del lote debido al déficit hídrico. En algunos puntos, principalmente en las orillas y lomas con suelos de baja retención de humedad, las plantas permanecen de tamaño reducido como consecuencia del mayor estrés hídrico sufrido durante su desarrollo.",Se recomienda realizar un control oportuno de gusano cogollero (Spodoptera frugiperda) para reducir la población de la plaga y evitar un mayor impacto sobre el desarrollo del cultivo.,Regular,2026-09-24,57
+L02-Y04-742cb71b,JOSEGREGORIOSANCHEZMENDOZA,2026,Las Torres,12.82,0,2026-05-29,12.82,0,0,,,,,,,,,55
+L03-B01-742cb71b,JULIOANTONIOCOLMENAREZMENDOZA,2026,La Ceiba,20.6,0,2026-04-29,20.6,0,0,Bueno,V3,2026-05-18,Anthony Cedeño,Buen sello con s-metalaclor y pendimentalina,"Aplicacion post emergente 
+Elumis 
+Barre
+Btk
+Trichox 
+Con effidrop y xpandrop",Bueno,2026-08-27,80
+L03-C02-742cb71b,MILKOPAGLIARELLADIBERARDIN,2026,L03 RIO 2 LOTE-03,23.48,0,2026-05-29,23.48,0,0,,,,,,,,,55
+L03-G02-742cb71b,OSCARMURILLOZERPA,2026,L03 LOTE IGUANITAS,37.58,0,2026-05-20,37.58,0,0,,,,,,,,,63
+L03-G04-742cb71b,JOSEGREGORIOBALZAFAJARDO,2026,Casa Nueva,81.11,0,2026-05-20,81.1,0,0,Bueno,R1,2026-07-17,Donis Palma,Se observan ataques de plagas en el cultivo,Realizar un control fitosanitario para evitar daños en la mazorca,Bueno,2026-09-17,63
+L03-G05-742cb71b,FRANCISCOENRIQUEGONZALEZROSELLI,2026,L03 LOTE LA PIEDRA,18.15,0,2026-05-21,18.15,0,0,Muy bueno,R3,2026-07-27,Daniel Enrique Rodriguez Medina,"Cultivo con muy buen aspecto agronómico, escapes de malezas sectorizados de bejuquillo y paja rolito los cuales serán suprimidos con atrazina y cortes mecanicos operativos focalizados. Mazorcas uniformes y con buen desarollo, prolificidad de 1.5, 5% de plantas horras o mazorcas no productivas. Baja incidencia de gusano cogollero el cual no ha afectado la mazorca.",Continuar con las labores de control de malezas sectorizados para que no interrumpan en la labores de cosecha.,Muy bueno,2026-09-18,62
+L03-G07-742cb71b,CELSOFANTINELFURLANIS,2026,Guillero 2,54.35,0,2026-06-16,54.35,0,0,Excelente,V4,2026-07-20,Álex Gómez,"Cultivo en excelente estado, excelente estado y control fitosanitario.",Culminaron ultima etapa de control del programa saturno,Excelente,2026-10-14,40
+L03-G11-742cb71b,JOSEROLANDOCALDERAARVELAIZ,2026,Los Muertos,77.35,0,2026-05-20,77.35,0,0,Excelente,R1,2026-07-16,Lenin Josue Morillo Diaz,Buen desarrollo vegetativo,"Mantener monitoreo continua, contra plagas.",Excelente,2026-09-17,63
+L03-G12-742cb71b,JOSEROLANDOCALDERARONDON,2026,La Palmita 2,29.51,0,2026-05-22,29.51,0,0,Regular,V4,2026-06-11,Manuel Alejandro Fernandez Mezza,"El día 10-06-2026 De acuerdo con el respectivo monitoreo en el lote se pudo observar una alta presencia de maleza (paja rolito). El día 03-06-2026 se pudo aplicar un control con herbicida pos-emergente utilizando las siguientes moleculas: Nicosulfuron+ atrazina bajo las dosis recomendadas, sin embargo apesar de los síntomas de afectación que tienen las malezas como lo son: hojas enrrolladas,hojas amarillas no ha detenido su crecimiento en su totalidad y persiste el riesgo de que incremente su tamaño. En Días anteriores se ha venido monitoreando el lote siempre y cuando tengamos capacidad de campo ya que los lotes son muy arcillosos y se hace imposible el ingreso estando húmedo.cabe destacar que dicha aplicación pos-emergente se aplicó con un PH de agua ideal 6.03 . primero 40 1L/ha 
+Agrosina 2.5L/ha y con suficiente humedad en el lote. Sin dejar de mencionar que el lote la palmita 1 y 2 no  cuentan con una aplicación pre-emergente debido a las precipitaciones continúas ya que fue sembrado en seco.",Continuar con el monitoreo y aplicar un herbicida pos-emergente  cuanto antes,Regular,2026-09-19,61
+L03-G15-742cb71b,LEOSCARMACHADOSILVEIRA,2026,La Casa 2,55.11,0,2026-05-26,55.11,0,0,Bueno,V8,2026-07-02,Einler Raul Rojas Perez,Se pudo observar presencia de gusano cogollero en varias etapas larvales,Se recomienda una aplicación de insecticida para controlar la cadena del gusano y evitar daños futuros,Bueno,2026-09-23,58
+L03-G20-742cb71b,MEIZTOHMEELCHAIR,2026,Cerro Blanco,31.78,0,2026-06-26,31.78,0,0,,,,,,,,,32
+L03-G22-742cb71b,PEDROVICENTEGOMEZARVELAEZ,2026,El Ron 2,36.56,0,2026-06-09,36.56,0,0,,,,,,,,,46
+L03-L01-742cb71b,VIRBELJOSEGRIMANALFIN,2026,El Manguito 3,11.2,11.2,2026-05-20,11.2,0,0,,,,,,,,,63
+L03-L03-742cb71b,WILLIAMSMANUELCANELONGONZALEZ,2026,Pollera,7.77,0,2026-05-21,7.77,0,0,,,,,,,,,62
+L03-P02-742cb71b,ANGELAROSAGUEDEZMORALES,2026,Villa Marina 1,25.63,0,2026-04-29,25.63,10,0,Malo,V2,2026-05-19,Nicole Alessandra Ramones Parra,"Posterior al proceso de siembra se observó una emergencia irregular distribuida en parches en un área de 10 hectáreas del lote, ae sometió a evaluación en cual se midió población establecida y fenologia del cultivo, calculando se una población por debajo de las 30000 plantas por hectárea.",Evaluar las condiciones antes mencionadas para un proceso de resiembra.,Malo,2026-08-27,80
+L03-P10-742cb71b,DENNISLEONARDOALIBARDIMASCHIO,2026,LOTE-02,20.48,20.48,2026-05-01,20.48,0,0,Bueno,V3,2026-05-18,Sajida Sarali Zamora Heredia,"Se observa un cultivo sano, con buena plantación, con baja incidencia de plagas y las malezas han germinaso después de las precipitaciones, se observa incidencia de pata de gallina con baja eficacia en el control y rebrotando, paja peluda y Johnson con nuevas generaciones desarrollandose.","Cultivo en buen estado, se recomienda realizar la aplicación para el control de Spodoptera de malezas y plagas, cuando el cultivo se encuentre fenologicamemte apto (V4-V5)",Bueno,2026-08-29,78
+L03-P14-742cb71b,CESARIGORPADILLAMARTINEZ,2026,Las Coromoticos 1,6.78,6.78,2026-05-22,6.78,0,0,Bueno,V2,2026-06-01,Gabriel Jose Campos Alvarado,Cultivo en proceso de germinación.,"Evaluar plantabilidad para la segunda semana, esperar V4-V5 para realizar control de malezas, plagas y Realiar 1er reabono.",Bueno,2026-09-19,61
+L03-P16-742cb71b,ELISABUSTAMANTE,2026,Dugarte 3,24.31,24.31,2026-06-12,24.31,0,0,,,,,,,,,43
+L03-P17-742cb71b,EZEQUIELJOSEFONTIVEROSBRICENO,2026,Candirosa - Mango B,17.25,0,2026-05-23,17.25,0,0,Bueno,V8,2026-06-30,Carlos Javier Barco Betancourt,La mayor incidencia se concentra en los bordes,Realizar una aplicación con cañon en el perímetro del lote,Bueno,2026-09-20,60
+L03-P18-742cb71b,FRANCISCOJOSEMARQUEZ,2026,La Ceiba,23.03,0,2026-05-14,23.03,0,0,Muy bueno,V8,2026-06-23,Gabriel Jose Campos Alvarado,"Lote recuperado, ya se realizó control de cierre con micros y fungicida, además de control de Spodoptera. Con buen desarrollo foliar.",Realizar la aplicación de segundo reabono y mantener monitoreo de Spodoptera para cualquier incidencia.,Muy bueno,2026-09-11,68
+L03-P20-742cb71b,HENRYJOSECORDONESLINAREZ,2026,La Victoria 3,19.08,19.08,2026-05-04,19.08,0,0,Muy bueno,V4,2026-06-01,Gabriel Jose Campos Alvarado,"Cultivo general en V4 pasando a V5, con buen desarrollo, se evaluo control de malezas post emergente con aplicación de mesotrione + nicosulfuron + atrazina, siendo efectivo, planta afectadas y muertas. Se observo el cultivo ligeramente doblado consecuencia de corriente de aire sucitada el dia anterior en la madrugada con precipitaciones.","Aplicar 2 reabono para el fin de semana, con la fumigación de mambo cyp y quelatech micros,",Muy bueno,2026-09-01,76
+L03-P23-742cb71b,TONYALEJANDROPESTANAPEREZ,2026,Las 12,11.68,0,,11.68,0,0,,,,,,,,,
+L03-P25-742cb71b,WOLFGANGSTEGER,2026,Las 120 del frente 1,102.43,0,2026-05-30,102.43,0,0,Regular,V5,2026-06-17,Sajida Sarali Zamora Heredia,"Cultivo con alta incidencia de malezas, baja incidencia de daños por insectos plaga.
+Etapa fenologica del maíz V3 en transición a V4","Aplicación para el control post emergente de malezas y plagas en 47,4 Ha, debido a que son las que ya el cultivo tiene la etapa óptima de aplicación",Regular,2026-09-27,54
+L03-S01-742cb71b,JUANHERNANDEZDIAZ,2026,Eleodoro,66.14,0,2026-06-16,66.14,0,0,Excelente,V3,2026-07-04,Álex Gómez,"Excelente estado,  buen control fitosanitario aplicado para plagas",Aplicar primer control fitosanitario para malezas,Excelente,2026-10-14,40
+L03-Y01-742cb71b,RICHARDJOSEAPOSTOLNUNEZ,2026,La Galindera 1,10.37,0,2026-06-06,10.37,0,0,,,,,,,,,48
+L03-Y03-742cb71b,YAROELCHAER,2026,Bernaldino 1+2,9.07,0,2026-06-24,7.1,0.5,0,Regular,V9,2026-07-11,Jesús Juárez,"Durante la evaluación se observó una alta incidencia de gusano cogollero (Spodoptera frugiperda), con presencia de larvas en diferentes instares. Las áreas referenciadas como pérdidas no corresponden totalmente a ausencia de plantas; en estos sectores el maíz se encuentra establecido, pero con un desarrollo muy atrasado respecto al resto del lote debido al déficit hídrico. En algunos puntos, principalmente en las orillas y lomas con suelos de baja retención de humedad, las plantas permanecen de tamaño reducido como consecuencia del mayor estrés hídrico sufrido durante su desarrollo.",Se recomienda realizar un control oportuno de gusano cogollero (Spodoptera frugiperda) para reducir la población de la plaga y evitar un mayor impacto sobre el desarrollo del cultivo.,Regular,2026-10-22,33
+L03-Y04-742cb71b,JOSEGREGORIOSANCHEZMENDOZA,2026,La Entrada,2.44,0,2026-06-19,2.44,0,0,,,,,,,,,38
+L04-B01-742cb71b,JULIOANTONIOCOLMENAREZMENDOZA,2026,La Mariera,60.88,0,2026-04-28,60.88,0,0,Bueno,V4,2026-05-17,Anthony Cedeño,En el lote el sello con S-Metalaclor y pendimentalia en preemergencia ha funcionado,"Punto ideal para iniciar con aplicaciones de herbicida Elumis, y control de plagas con Barre, BtK y aplicacion de trichox",Bueno,2026-08-26,81
+L04-C02-742cb71b,MILKOPAGLIARELLADIBERARDIN,2026,L04 LOTE RIO 1 LOTE-04,26.74,0,2026-05-28,26.74,0,0,,,,,,,,,56
+L04-G01-742cb71b,LUISALBERTOROJASPIERETTI,2026,El Galpón,128.58,0,2026-05-30,128,5,0,Bueno,V8,2026-07-07,Donis Palma,Precensia de larvas adultas en pocas plantas las cuales no representan un daño tan grande en el lote,Realizar monitoreo constante para evitar daños representables en el lote.,Bueno,2026-09-27,54
+L04-G02-742cb71b,OSCARMURILLOZERPA,2026,L04 LOS BECERROS,29.11,0,2026-05-23,29.11,4.48,0,Regular,V4,2026-06-07,Manuel Alejandro Fernandez Mezza,"Continuando con los monitoreos en el lote se observo la disminución en los ataques de roedores a causa del rodenticida que se a
+Ha venido aplicando como control, aún se visualizan ataques menores diariamente ya que la población inicial de roedores es muy alta y no se ha podido erradicar completamente.","Cebos con rodenticida constantemente en el lote,labores de quema y eliminar las madrigueras con los implementos de la finca",Regular,2026-09-20,60
+L04-G03-742cb71b,ANTONIOLUISZAMBRANOACUNA,2026,Molino Escabezao 2,18.63,0,2026-05-30,18.63,0,0,,,,,,,,,54
+L04-G05-742cb71b,FRANCISCOENRIQUEGONZALEZROSELLI,2026,L04 LOTE LOCACIÓN A,12.83,0,2026-06-09,12.83,0,0,Muy bueno,V7,2026-07-13,Daniel Enrique Rodriguez Medina,"Cultivo con muy buen aspecto agronomico, estres hidrico ligero a moderado en zonas donde la textura que predomina es Arena (medanos) y se asienta mas en horas del mediodia a la tarde donde la intensidad solar es mayor, esto es debido a las faltas de precipitaciones de la zona, se evaluo monitoreo de plagas post aplicacion de cierre de cultivo siendo efectivo el mismo (se observo control de gusanos) sin embargo, presentando todavia 15% de incidencia de gusano cogollero sectorizado en partes del lote. Escapes de malezas sectorizado en una parte del lote por fallas del operador (taponamiento de boquillas).",Continuar con las evaluaciones por plagas y planificar aplicaciones post cierre de cultivo de ser necesario.,Muy bueno,2026-10-07,46
+L04-G10-742cb71b,JOSEDARIOGALLUCCIREQUENA,2026,Chaparralito 1,20,0,,0,0,0,,,,,,,,,
+L04-G11-742cb71b,JOSEROLANDOCALDERAARVELAIZ,2026,Portón Azul,24.51,0,2026-05-28,24.51,0,0,Muy bueno,V3,2026-06-13,Lenin Josue Morillo Diaz,"El cultivo de maíz se encuentra en la etapa fenológica V3, exhibiendo un desarrollo robusto, óptimo vigor vegetativo y una baja incidencia general de malezas, plagas y enfermedades. Asimismo, se constata que el lote no dispone de la humedad adecuada en el suelo en este momento, condición que se mantiene bajo monitoreo para determinar el momento idóneo en que el productor deba incorporar los tratamientos químicos y biológicos programados.","Se recomienda que, tan pronto como se disponga de la humedad adecuada en el suelo, el productor ejecute la aplicación del herbicida selectivo post-emergente junto con el insecticida de contacto y residual. Asimismo, se debe aprovechar esa misma condición de humedad para incorporar el hongo *Trichoderma* y el controlador biológico  (*Bacillus thuringiensis kurstaki*), garantizando así la viabilidad de los productos biológicos, la activación del insecticida residual y una óptima absorción foliar para el control de plagas y malezas.",Muy bueno,2026-09-25,56
+L04-G12-742cb71b,JOSEROLANDOCALDERARONDON,2026,Los Morochos,71.22,0,2026-05-27,71.22,0,0,,,,,,,,,57
+L04-G14-742cb71b,JUANVICENTERISSO,2026,Cosechadora quemada 1,23.91,19.26,2026-06-07,23.91,0,0,,,,,,,,,48
+L04-G15-742cb71b,LEOSCARMACHADOSILVEIRA,2026,La Casa 3,23.4,0,2026-05-27,23.4,0,0,Bueno,V8,2026-07-02,Einler Raul Rojas Perez,Se observo una presencia de gusano cogollero en multiples fases larvales,Aplicar insecticida para controlar en avance del daño en las plantas,Bueno,2026-09-24,57
+L04-G19-742cb71b,MARIAANGELICAESPARRAGOZASALAZAR,2026,Los Reyes 3,22.47,0,2026-06-22,22.47,0,0,Muy bueno,V5,2026-07-23,Daniel Enrique Rodriguez Medina,"Cultivo con buen aspecto agronómico, buena pigmentación, estadio fenologico V4-V5 (predominando V5). Cultivo respondio de forma eficiente a las precipitaciones (no se evidencia estrés hídrico en el cultivo, hojas completamente extendidas). Aplicación de control de malezas y plagas post-emergente exitosa en el lote (todavia se evidencia maleza que tenia un alto estadio fenologico al momento del control con efectos del herbicida y a su vez estando suprimida). Incidencia de plagas: 10% de incidencia de gusano cogollero, solo se evidencian daños viejos ocasionados en las plantas por gusano por los momentos. Sin incidencia de patogenos.","Seguir con los monitoreos por futuras incidencias de plagas, realizar la fertilización nitrogenada y posteriormente tras evaluaciones agronomicas el vuelo de cierre de cultivo.",Muy bueno,2026-10-20,35
+L04-G20-742cb71b,MEIZTOHMEELCHAIR,2026,El Ataud,51.55,0,2026-05-27,51.55,0,0,,,,,,,,,57
+L04-L01-742cb71b,VIRBELJOSEGRIMANALFIN,2026,La Rosa,14.49,14.49,2026-05-25,14.49,0,0,,,,,,,,,58
+L04-L03-742cb71b,WILLIAMSMANUELCANELONGONZALEZ,2026,El Galpón,29.72,0,2026-05-28,29.72,0,0,,,,,,,,,56
+L04-P02-742cb71b,ANGELAROSAGUEDEZMORALES,2026,Villa Marina 2,20.08,0,2026-04-30,20,4,0,Regular,V3,2026-05-25,Nicole Alessandra Ramones Parra,"Se planifica aplicación para el control de plagas, en espera de un avance fenologico del cultivo para realizar aplicación de malezas.",Se recomienda la aplicación de control de plagas.,Regular,2026-08-28,79
+L04-P06-742cb71b,LUIGIDONELLOTOGNETTI,2026,Parcela 171-172,65.39,0,2026-05-08,65.3,0,0,Bueno,V8,2026-06-09,Carlos Javier Barco Betancourt,"El cultivo se mantiene sano, poca incidencia de plagas. La cobertura de malezas es alta, se recomienda control dirigido",Aplicar control dirigido de malezas,Bueno,2026-09-05,73
+L04-P10-742cb71b,DENNISLEONARDOALIBARDIMASCHIO,2026,LOTE-03,19.9,0,2026-04-30,19.9,0,0,Regular,V3,2026-05-18,Sajida Sarali Zamora Heredia,"Lote con buena emergencia. Las plantas se encuentran con incidencia de daños viejos por Spodoptera, y a su vez tiene incidencias de daños nuevos.
+Las malezas se encuentran en porcentaje bajo, incidencia de corocillo, pata de gallina, Johnson y paja peluda.","Se recomienda la aplicación de insecticida de contacto para una mejor eficacia en las diferentes generaciones de larvas de Spodoptera.
+También esperar la fase fenologica del maíz (V4-V5) para la aplicación del control de malezas oportuno.",Regular,2026-08-28,79
+L04-P11-742cb71b,SEBASTIANARMANDOBONETPLAZA,2026,L04 LOTE 7A,20.22,0,2026-05-30,20.22,0,0,,,,,,,,,54
+L04-P14-742cb71b,CESARIGORPADILLAMARTINEZ,2026,Los Manguitos,29.86,0,2026-05-05,29.86,4,0,Excelente,V2,2026-06-01,Gabriel Jose Campos Alvarado,"Cultivo en v2 pasando a v3, sin incidencias de malezas , sin presencia de daños por plaga. Con buen desarrollo foliar.","Realizar control post emergente al pasar a fenologia V4, unido al control de plagas, y aplicación del 1er reabono con nitro potasio",Excelente,2026-09-02,75
+L04-P16-742cb71b,ELISABUSTAMANTE,2026,Dugarte 4,25.01,25.01,2026-06-10,25.01,0,0,,,,,,,,,45
+L04-P17-742cb71b,EZEQUIELJOSEFONTIVEROSBRICENO,2026,El Drago,23.65,0,2026-05-02,23.65,0,0,Bueno,V5,2026-05-28,Carlos Javier Barco Betancourt,En la parte trasera del lote se observa una mayor incidencia de plagas,Aplicar un segundo control de insectos en el lote en 3 dias,Bueno,2026-08-30,78
+L04-P18-742cb71b,FRANCISCOJOSEMARQUEZ,2026,La Platanera,16.33,0,2026-05-30,16.33,0,0,,,,,,,,,54
+L04-P20-742cb71b,HENRYJOSECORDONESLINAREZ,2026,La Victoria 4,7.75,7.75,2026-05-14,7.75,0,0,Muy bueno,V2,2026-05-26,Gabriel Jose Campos Alvarado,"Cultivo en V2, buena germinación, con presencia de algunos focos de malezas que no se lograron controlar con el primer control pre emergente. Buena plantacion establecida.",Mantener monitoreo para incidencia de plagas y realizar el control de malezas al alcanzar el estado fenologico de v3 para evitar competencia con malezas presentes.,Muy bueno,2026-09-11,68
+L04-P23-742cb71b,TONYALEJANDROPESTANAPEREZ,2026,Las 14,13.4,0,2026-05-11,13.4,0,0,,,,,,,,,70
+L04-Y01-742cb71b,RICHARDJOSEAPOSTOLNUNEZ,2026,La Galindera 4,13.18,13.18,2026-06-04,13.18,0,0,,,,,,,,,50
+L04-Y02-742cb71b,VICTORRAMONOROPEZAORTIZ,2026,La Casita,17.18,0,2026-05-30,17.18,0,0,,,,,,,,,54
+L04-Y03-742cb71b,YAROELCHAER,2026,Bernaldino 3,23.38,0,2026-05-24,11.32,1,0,Regular,V9,2026-07-11,Jesús Juárez,"Durante la evaluación se observó una alta incidencia de gusano cogollero (Spodoptera frugiperda), con presencia de larvas en diferentes instares. Las áreas referenciadas como pérdidas no corresponden totalmente a ausencia de plantas; en estos sectores el maíz se encuentra establecido, pero con un desarrollo muy atrasado respecto al resto del lote debido al déficit hídrico. En algunos puntos, principalmente en las orillas y lomas con suelos de baja retención de humedad, las plantas permanecen de tamaño reducido como consecuencia del mayor estrés hídrico sufrido durante su desarrollo.",Se recomienda realizar un control oportuno de gusano cogollero (Spodoptera frugiperda) para reducir la población de la plaga y evitar un mayor impacto sobre el desarrollo del cultivo.,Regular,2026-09-21,59
+L04-Y04-742cb71b,JOSEGREGORIOSANCHEZMENDOZA,2026,Las 3 ha,1.7,0,2026-06-20,1.7,0,0,,,,,,,,,37
+L05-C02-742cb71b,MILKOPAGLIARELLADIBERARDIN,2026,L05 LOTE ARENERO 2 LOTE-01,22.6,0,2026-05-30,22.6,0,0,,,,,,,,,54
+L05-G03-742cb71b,ANTONIOLUISZAMBRANOACUNA,2026,L03 CASA DE TABLA ARRIBA A,21.77,0,2026-05-27,21.77,0,0,,,,,,,,,57
+L05-G05-742cb71b,FRANCISCOENRIQUEGONZALEZROSELLI,2026,Ramírez,60.63,0,2026-05-30,60.63,0,0,Muy bueno,R1,2026-07-27,Daniel Enrique Rodriguez Medina,"Cultivo con buen aspecto agronomico, diferentes estadios fenologicos vinculados a diferentes fechas de siembra del lote, se observaron las primeras has del lote que se sembraron para determinar estadio de las mazorcas y su sanidad, contando con un muy buen aspecto de produccion, respondiendo eficientemente a las precipitaciones. Baja Incidencia de gusano cogollero, sin incidencia de patogenos.",Continuar con los monitoreos del lote para determinar sanidad de las mazorcas.,Muy bueno,2026-09-27,54
+L05-G07-742cb71b,CELSOFANTINELFURLANIS,2026,La Ceiba,30.46,0,2026-06-12,30.46,0,0,Excelente,V7,2026-07-23,Álex Gómez,Si comienzan a observar algunas gramineas emergidas port aplicacion. Preocupa la ausencia total de persipitaciones en la zona,Monitoreo permanente,Excelente,2026-10-10,43
+L05-G10-742cb71b,JOSEDARIOGALLUCCIREQUENA,2026,Chaparralito 2,22.72,0,,0,0,0,,,,,,,,,
+L05-G14-742cb71b,JUANVICENTERISSO,2026,Cosechadora quemada 2,34.83,0,2026-05-29,34.83,0,0,,,,,,,,,55
+L05-G15-742cb71b,LEOSCARMACHADOSILVEIRA,2026,L05 La pista 2,24.3,0,2026-05-28,24.3,0,0,Bueno,V8,2026-07-02,Einler Raul Rojas Perez,"Se observo presencia de gusano cogollero en un estado larvar tempana, y mariposas en el cogollo colocando posturas",Se recomienda aplicar incepticida para controlar de forma preventiva el avanse del gusano,Bueno,2026-09-25,56
+L05-G19-742cb71b,MARIAANGELICAESPARRAGOZASALAZAR,2026,Los Reyes 4,29.17,0,2026-06-23,29.17,0,0,Muy bueno,V3,2026-07-14,Daniel Enrique Rodriguez Medina,"Cultivo con muy buen aspecto agronómico, deficit hidrico marcado en las zonas donde predomina la textura arenosa (lote contiene mitad del lote textura arcillosa y la otra mitad arenosa), se planifico control de malezas y plagas post-emergente en el lote para esta semana en las zonas donde conserva la capacidad de campo. Incidencia de plagas: 5% de incidencia de gusano cogollero. Incidencia de malezas: 50% De diversas especies de malezas hojas anchas, 15% Paja Americana en buen estadio fenologico para realizar su control eficaz.",Realizar la aplicacion de control de malezas y plagas post-emergente y continuar con los monitoreos post aplicacion,Muy bueno,2026-10-21,34
+L05-G20-742cb71b,MEIZTOHMEELCHAIR,2026,El Diablo,40.93,0,2026-06-20,40.93,0,0,,,,,,,,,37
+L05-G22-742cb71b,PEDROVICENTEGOMEZARVELAEZ,2026,El Mamón 1,59,0,2026-05-22,59,0,0,Muy bueno,V3,2026-06-14,Lenin Josue Morillo Diaz,"Durante la evaluación de campo realizada en el lote El Mamón, se constató un registro de 7 saltos en el monitoreo de plantabilidad, manteniendo como criterio técnico de control la tasa de 3 saltos por cada 10 metros. Asimismo, se observó una alta presión de malezas de hoja fina compitiendo en las hileras del cultivo.","Se determinó que tanto la condición de humedad actual del suelo como la posterior incorporación de los controladores biológicos Trichoderma y Bacillus thuringiensis y herbicidas selectivos pos-emergentes queden programadas para aplicación estrictamente como observaciones de manejo, supeditando la aplicación de dichos insumos al momento en que el lote recupere la humedad óptima para su efectividad.",Muy bueno,2026-09-19,61
+L05-L01-742cb71b,VIRBELJOSEGRIMANALFIN,2026,Pavi 1,11.24,0,2026-05-31,11.24,0,0,,,,,,,,,53
+L05-P02-742cb71b,ANGELAROSAGUEDEZMORALES,2026,Villa Marina 3,14,0,2026-05-22,14,0,0,,,,,,,,,61
+L05-P10-742cb71b,DENNISLEONARDOALIBARDIMASCHIO,2026,LOTE-04,15.83,0,2026-04-30,15.83,0,0,Regular,V11,2026-06-19,Sajida Sarali Zamora Heredia,"Luego de la aplicación de cierre, se realizó el monitoreo para observar la eficacia de la aplicación, la cual se pudo observar que no realizó el control esperado, se encuentran larvas en instares avanzados vivas y ocasionando daños importantes en la hoja bandera.",Evaluación para una siguiente aplicación.,Regular,2026-08-28,79
+L05-P11-742cb71b,SEBASTIANARMANDOBONETPLAZA,2026,L05 LOTE 7B,29.71,0,2026-05-30,29.71,0,0,,,,,,,,,54
+L05-P14-742cb71b,CESARIGORPADILLAMARTINEZ,2026,Las Coromoticos 2,6.24,6.24,2026-05-22,6.24,0,0,Bueno,V2,2026-06-01,Gabriel Jose Campos Alvarado,"Cultivo en proceso de germinación, aproximadamente 70% de germinación, plantas emergiendo y ganos ya en proceso. Sin incidencia de plagas. Control de malezas efectivo en proceso de    muerte.","Esperar segunda semana para evaluación de establecimiento del cultivo, y la fenologia V4-V5 para control de malezas, plagas y 1er Reabono.",Bueno,2026-09-19,61
+L05-P16-742cb71b,ELISABUSTAMANTE,2026,Los Patos 1,34.83,34.83,2026-06-01,34.83,0,0,,,,,,,,,53
+L05-P17-742cb71b,EZEQUIELJOSEFONTIVEROSBRICENO,2026,El Mamon,9.38,0,2026-04-30,9.38,1,0,Regular,V5,2026-05-26,Carlos Javier Barco Betancourt,"El cultivo presenta baja cobertura de malezas y alta incidencia de plagas
+
+Además de un tapizado superficial",Mantener monitoreo constante para evaluar la efectividad del control,Regular,2026-08-28,79
+L05-P18-742cb71b,FRANCISCOJOSEMARQUEZ,2026,La Rafaeleña,20.99,0,2026-06-12,20.99,0,0,Bueno,V2,2026-06-23,Gabriel Jose Campos Alvarado,"Lote con Germinación del 70%, con zonas aguachinadas las cuales requieren charqueos manuales, ya que los drenajes secundarios no fueron limpiados.","Realizar charqueo en las zonas con aguchinamiento, en etapa V3 aplicación del 1er reabono con nitropotasium. En etapa V4 proceder con el control post emergente.",Bueno,2026-10-10,43
+L05-P20-742cb71b,HENRYJOSECORDONESLINAREZ,2026,Santa Barbara 1,20.26,0,2026-05-08,20.26,0,0,Muy bueno,V3,2026-05-27,Gabriel Jose Campos Alvarado,"Cultivo en estado V3 generalmente, com buen desarrollo, con presencia de malezas emergiendo, 5% de cobertura.",Realizar control de malezas y control preventivo de plagas. Aplicación del primer reabono,Muy bueno,2026-09-05,73
+L05-P23-742cb71b,TONYALEJANDROPESTANAPEREZ,2026,Las 10,9.76,0,2026-05-13,9.76,0,0,,,,,,,,,68
+L05-S01-742cb71b,JUANHERNANDEZDIAZ,2026,La Casa 1-1,33.98,0,2026-06-06,33.98,0,0,Excelente,V12,2026-07-24,Álex Gómez,"Cultivo comenzando etapa de floración,  aun en excelente estado,  preocupa altamente sequia prolongada",Monitoreo,Excelente,2026-10-04,48
+L05-Y01-742cb71b,RICHARDJOSEAPOSTOLNUNEZ,2026,La Galindera 2,12.57,0,2026-06-06,12.57,0,0,,,,,,,,,48
+L05-Y02-742cb71b,VICTORRAMONOROPEZAORTIZ,2026,El Manguito,22.61,0,2026-05-26,22.61,0,0,,,,,,,,,58
+L05-Y03-742cb71b,YAROELCHAER,2026,El Grande 1,24.49,0,2026-05-21,24.49,4,0,Regular,V12,2026-07-11,Jesús Juárez,"Durante la evaluación se observó una alta incidencia de gusano cogollero (Spodoptera frugiperda), con presencia de larvas en diferentes instares. Las áreas referenciadas como pérdidas no corresponden totalmente a ausencia de plantas; en estos sectores el maíz se encuentra establecido, pero con un desarrollo muy atrasado respecto al resto del lote debido al déficit hídrico. En algunos puntos, principalmente en las orillas y lomas con suelos de baja retención de humedad, las plantas permanecen de tamaño reducido como consecuencia del mayor estrés hídrico sufrido durante su desarrollo.",Se recomienda realizar un control oportuno de gusano cogollero (Spodoptera frugiperda) para reducir la población de la plaga y evitar un mayor impacto sobre el desarrollo del cultivo.,Regular,2026-09-18,62
+L05-Y04-742cb71b,JOSEGREGORIOSANCHEZMENDOZA,2026,Grande,11.2,0,2026-06-16,11.2,0,0,,,,,,,,,40
+L06-B01-742cb71b,JULIOANTONIOCOLMENAREZMENDOZA,2026,Los Pepes 1,53,0,2026-05-04,53,0,0,,,,,,,,,76
+L06-G03-742cb71b,ANTONIOLUISZAMBRANOACUNA,2026,L04 CASA DE TABLA ARRIBA B,23.57,0,2026-05-27,23.57,0,0,,,,,,,,,57
+L06-G05-742cb71b,FRANCISCOENRIQUEGONZALEZROSELLI,2026,Locación B,25.64,0,2026-06-09,25.64,0,0,Muy bueno,V7,2026-07-13,Daniel Enrique Rodriguez Medina,"Cultivo con muy buen aspecto agronomico, estres hidrico ligero a moderado en zonas donde la textura que predomina es Arena (medanos) y se asienta mas en horas del mediodia a la tarde donde la intensidad solar es mayor, esto es debido a las faltas de precipitaciones de la zona, se evaluo monitoreo de plagas post aplicacion de cierre de cultivo siendo efectivo el mismo (se observo control de gusanos) sin embargo, presentando todavia 15% de incidencia de gusano cogollero sectorizado en partes del lote.",Continuar con los monitoreos por plagas en el lote y planificar una aplicacion de control de gusano cogollero post cierre de cultivo de ser necesario,Muy bueno,2026-10-07,46
+L06-G07-742cb71b,CELSOFANTINELFURLANIS,2026,Punta gorda A,19.58,0,2026-06-09,19.58,1,0,Muy bueno,V8,2026-07-23,Álex Gómez,"Cultivo en buen estado,  comienza a presentar síntomas de estrés hidrico por sequía,  preocupante situación de ausencia de precipitaciones",Monitoreo permanente,Muy bueno,2026-10-07,46
+L06-G10-742cb71b,JOSEDARIOGALLUCCIREQUENA,2026,El Olivo 1,48.78,0,2026-06-10,18,0,0,,,,,,,,,45
+L06-G12-742cb71b,JOSEROLANDOCALDERARONDON,2026,Magallanes,35.39,0,2026-06-07,35.39,0,0,,,,,,,,,48
+L06-G14-742cb71b,JUANVICENTERISSO,2026,Cosechadora quemada 3,26.85,0,2026-05-30,26.85,0,0,,,,,,,,,54
+L06-G15-742cb71b,LEOSCARMACHADOSILVEIRA,2026,La Pista 1,24.26,0,2026-05-29,24.26,0,0,Bueno,V8,2026-07-02,Einler Raul Rojas Perez,"Se observo presencia de gusano cogollero en un estado larvar tempana, y mariposas en el cogollo colocando posturas",Se recomienda una aplicación temprana para controlar de forma temprana el avance del gusano,Bueno,2026-09-26,55
+L06-G19-742cb71b,MARIAANGELICAESPARRAGOZASALAZAR,2026,Los Vaquiros,59.63,0,2026-06-03,59.63,0,0,Muy bueno,V13,2026-07-30,Daniel Enrique Rodriguez Medina,"Cultivo con muy buen aspecto agronomico, buen desarrollo en base a su estadio fenologico, buena pigmentación de las hojas. Escapes de malezas sectorizados en las orillas de la carretera hacia el cultivo, incidencia leve de plagas (gusano cogollero) con daños en hojas viejas no se evidencian daños en hojas nuevas.",Continuar con los monitoreos del lote y realizar aplicaciones focalizadas en las orillas para reducir escapes de malezas.,Muy bueno,2026-10-01,51
+L06-P02-742cb71b,ANGELAROSAGUEDEZMORALES,2026,L06 LOTE-04,26.31,26.31,2026-04-21,26.31,0,0,Regular,V4,2026-05-17,Nicole Alessandra Ramones Parra,Se observan puntos focales de plagas.,Mantener monitoreo permanente del avance de la incidencia en el lote.,Regular,2026-08-19,87
+L06-P11-742cb71b,SEBASTIANARMANDOBONETPLAZA,2026,L06 LOTE 7C,29.72,0,2026-05-30,29.72,0,0,,,,,,,,,54
+L06-P16-742cb71b,ELISABUSTAMANTE,2026,Los Patos 2,36.24,27.6,2026-05-28,36.24,0,0,,,,,,,,,56
+L06-P17-742cb71b,EZEQUIELJOSEFONTIVEROSBRICENO,2026,Girasol,25.43,0,2026-05-04,25.43,0,0,,,,,,,,,76
+L06-P18-742cb71b,FRANCISCOJOSEMARQUEZ,2026,Rogelio Grande,22.35,0,2026-06-10,22.35,0,0,Muy bueno,V2,2026-06-23,Gabriel Jose Campos Alvarado,"Cultivo en estado V2, cobertura de malezas del 10% con presencia de bejuquillo principalmente, germinación del 80%, buen desarrollo, sin daño de Spodoptera, se observaron zonas con amarillamiento por exceso hídrico.",Realizar aplicación de 1er reabono en V3 para superar estrés por exceso hídrico de la planta. En etapa V4 realizar control post emergente para controlar el bejuquillo presente.,Muy bueno,2026-10-08,45
+L06-P20-742cb71b,HENRYJOSECORDONESLINAREZ,2026,Santa Barbara 2,15.1,0,2026-05-08,15.1,0,0,Muy bueno,V3,2026-05-27,Gabriel Jose Campos Alvarado,"Cultivo en estado v3-v4, con buen desarrollo foliar, con incidencia de malezas en germinación, con cobertura de 5% aproximadamente, baja incidencia de raspadura a nivel foliar consistente con primeros instares de plaga.","Realizar el control post emergente de malezas, control de plagas y aplicación del primer reabono, para garantizar un buen desarrollo del cultivo.",Muy bueno,2026-09-05,73
+L06-P23-742cb71b,TONYALEJANDROPESTANAPEREZ,2026,Las 40,38.49,0,2026-05-13,38,0,0,,,,,,,,,68
+L06-P25-742cb71b,WOLFGANGSTEGER,2026,Las 15,14.27,0,2026-06-10,14.27,0,0,,,,,,,,,45
+L06-S01-742cb71b,JUANHERNANDEZDIAZ,2026,La Zorra 1,22.53,0,2026-06-01,22.53,2,0,Excelente,V13,2026-07-24,Álex Gómez,"Lote en en proceso de formación y llenado de granos, aun conserva buen estado pero preocupa altamente la ausencia de precipitaciones en toda la zona",Monitoreo,Excelente,2026-09-29,53
+L06-Y01-742cb71b,RICHARDJOSEAPOSTOLNUNEZ,2026,La Galindera 3,9.43,0,2026-06-09,9.43,0,0,,,,,,,,,46
+L06-Y02-742cb71b,VICTORRAMONOROPEZAORTIZ,2026,Las Lagunas,9.01,0,2026-05-28,9.01,0,0,,,,,,,,,56
+L06-Y03-742cb71b,YAROELCHAER,2026,El Grande 2,17.87,0,2026-05-22,17.87,4,0,Malo,V10,2026-07-11,Jesús Juárez,"Durante la evaluación se observó una alta incidencia de gusano cogollero (Spodoptera frugiperda), con presencia de larvas en diferentes instares. Las áreas referenciadas como pérdidas no corresponden totalmente a ausencia de plantas; en estos sectores el maíz se encuentra establecido, pero con un desarrollo muy atrasado respecto al resto del lote debido al déficit hídrico. En algunos puntos, principalmente en las orillas y lomas con suelos de baja retención de humedad, las plantas permanecen de tamaño reducido como consecuencia del mayor estrés hídrico sufrido durante su desarrollo.",Se recomienda realizar un control oportuno de gusano cogollero (Spodoptera frugiperda) para reducir la población de la plaga y evitar un mayor impacto sobre el desarrollo del cultivo.,Malo,2026-09-19,61
+L06-Y04-742cb71b,JOSEGREGORIOSANCHEZMENDOZA,2026,Caro caro 1,11.86,0,2026-05-31,11.86,0,0,,,,,,,,,53
+L07-G01-742cb71b,LUISALBERTOROJASPIERETTI,2026,L04 LOTE EL DRAGAL 1,63.92,0,2026-05-22,63.92,0,0,Bueno,V4,2026-06-12,Donis Palma,Mediante un monitoreo se observa ataques de plagas de coco jui jao el cual tiene una incidencia fuerte en las plantas causando baja población en las hectáreas.,Se recomienda aplicar un control fitosanitario para evitar daños mayores en los cultivos afectados,Bueno,2026-09-19,61
+L07-G03-742cb71b,ANTONIOLUISZAMBRANOACUNA,2026,L05 EL DESQUITE,49.44,0,2026-05-28,49.44,0,0,,,,,,,,,56
+L07-G05-742cb71b,FRANCISCOENRIQUEGONZALEZROSELLI,2026,L07 LOTE MATA PALO,37.05,0,2026-05-28,37.05,0,0,Muy bueno,R2,2026-07-27,Daniel Enrique Rodriguez Medina,"Cultivo con buen aspecto agronomico, respondiendo eficientemente a las precipitaciones a pesar del suelo con textura predominante arenosa, incidencia de malezas sectorizados solamente en las orillas y en pequeñas zonas dentro del cultivo. Leve Incidencia de gusanos con daños viejos solamente ocasionados, hoja bandera sana. Sin incidencia de patógenos",Continuar con monitoreos en los lotes por incidencia de plagas que puedan comprometer la sanidad de las mazorcas.,Muy bueno,2026-09-25,56
+L07-G07-742cb71b,CELSOFANTINELFURLANIS,2026,Taladro,28.23,0,2026-06-09,28.23,0,0,Excelente,V7,2026-07-20,Álex Gómez,"Cultivo aun en excelente estado de desarrollo,  excelente control de Malezas, persisten algunos larvas de lepidoptera, comienza a presentar síntomas de estrés hidrico, preocupa altamente la escases de precipitaciones en la zona",Monitoreo permanente de plagas,Excelente,2026-10-07,46
+L07-G14-742cb71b,JUANVICENTERISSO,2026,Cosechadora quemada 4,25.54,24.52,2026-05-30,25.54,0,0,,,,,,,,,54
+L07-G20-742cb71b,MEIZTOHMEELCHAIR,2026,El Mamón,41.86,0,2026-06-13,41.86,0,0,,,,,,,,,43
+L07-G22-742cb71b,PEDROVICENTEGOMEZARVELAEZ,2026,El Mamón 2,18.6,0,2026-06-02,14.6,0,0,Bueno,V4,2026-06-22,Lenin Josue Morillo Diaz,"Se observa, alta Incidencia por ataque de gusano cogollero, y nivel de cobertura óptimo para el control de maleza Pos-emergente.","Se recomienda la aplicación de forma inmediata, y horas nocturnas, la aplicación de insecticidas de contacto e ingestión y efecto residual (Lambada+Bt-Biox) a dosis recomenda.",Bueno,2026-09-30,52
+L07-L01-742cb71b,VIRBELJOSEGRIMANALFIN,2026,La Silvera,23.29,0,2026-06-05,23.29,0,0,,,,,,,,,49
+L07-P02-742cb71b,ANGELAROSAGUEDEZMORALES,2026,L07 LOTE-05,14.56,0,2026-05-01,14.56,0,0,,,,,,,,,78
+L07-P10-742cb71b,DENNISLEONARDOALIBARDIMASCHIO,2026,La Laguna,62.56,62.56,2026-05-30,62.56,0,0,Regular,V6,2026-06-29,Sajida Sarali Zamora Heredia,"Plantas con buen desarrollo y establecimiento.
+Posterior al control aplicado con acoustic top, se evidenció un control con eficacia de 30%, se observan larvas con instares avanzados afectadas.
+Alta incidencia de malezas, principalmente escape de Johnson, pata de gallina y corocillo.","Se recomiendo continuar con el monitoreo, y para realizar la aplicación del control de cierre, asegurarse de utilizar un control con productos con efecto residual.
+Para las malezas, realizar un control dirigido oportuno con algún herbicida de contacto.",Regular,2026-09-27,54
+L07-P11-742cb71b,SEBASTIANARMANDOBONETPLAZA,2026,L07 LOTE-08,69.85,0,2026-05-28,69.85,0,0,,,,,,,,,56
+L07-P16-742cb71b,ELISABUSTAMANTE,2026,Los Patos 3,6.11,6.11,2026-05-29,6.11,0,0,,,,,,,,,55
+L07-P17-742cb71b,EZEQUIELJOSEFONTIVEROSBRICENO,2026,Guinea,7.33,0,2026-05-19,7.33,0,0,,,,,,,,,63
+L07-P18-742cb71b,FRANCISCOJOSEMARQUEZ,2026,Rogelio Pequeño,13.11,0,2026-06-11,13.11,0,0,Bueno,V2,2026-06-23,Gabriel Jose Campos Alvarado,"Cultivo con germinación del 80%, en estepa V2, con presencia de cobertura de malezas en un 30% predominando hojas ancha, se observaron zonas con aguchinamiento donde el cultivo presenta amarillamiento debido a estrés por exceso de agua.","Realizar charqueo con personal para eliminar los excesos de agua en zonas del cultivo, en V3 realizar el 1er reabono con nitropotasium para ayudar al cultivo a reponerse del estrés. En V4 proceder con el control de malezas post emergentes.",Bueno,2026-10-09,44
+L07-P20-742cb71b,HENRYJOSECORDONESLINAREZ,2026,Santa Barbara 3,10.6,0,2026-05-09,10.6,0,0,Muy bueno,V3,2026-05-27,Gabriel Jose Campos Alvarado,"Cultivo en estado v3-v4, se observo la presencia de algunas gramineas, hojas anchas, conmelinaceas y corocillo. Incidencia de plagas en el lote, se observaron larvas en intares de L1-L3, con daños en plantas de grado 4-5 en la escala de Deivis en un porcentaje promedio del 10%.","Realizar el control de malezas de malezas y plagas en todo el lote, ademas de realizar la aplicación del primer reabano.",Muy bueno,2026-09-06,72
+L07-P23-742cb71b,TONYALEJANDROPESTANAPEREZ,2026,Las 36,34.67,0,2026-05-14,34.67,0,0,,,,,,,,,68
+L07-P25-742cb71b,WOLFGANGSTEGER,2026,Las 80 de atrás,82.03,0,2026-06-10,82.03,0,0,,,,,,,,,45
+L07-S01-742cb71b,JUANHERNANDEZDIAZ,2026,La Zorra 2,29.78,0,2026-06-10,29.78,0,0,Excelente,V8,2026-07-24,Álex Gómez,Excelente condiciones pese al largo período en ausencia de precipitaciones.  Atención a sequia,Monitoreo permanente,Excelente,2026-10-08,45
+L07-Y01-742cb71b,RICHARDJOSEAPOSTOLNUNEZ,2026,Agua Viva,10.07,0,2026-06-10,10.07,0,0,,,,,,,,,45
+L07-Y02-742cb71b,VICTORRAMONOROPEZAORTIZ,2026,Los Robles,30.29,0,2026-05-27,30.29,0,0,,,,,,,,,57
+L07-Y03-742cb71b,YAROELCHAER,2026,El Mamón,41.63,0,2026-06-25,37.99,5,0,Regular,V9,2026-07-11,Jesús Juárez,"Durante la evaluación se observó una alta incidencia de gusano cogollero (Spodoptera frugiperda), con presencia de larvas en diferentes instares. Las áreas referenciadas como pérdidas no corresponden totalmente a ausencia de plantas; en estos sectores el maíz se encuentra establecido, pero con un desarrollo muy atrasado respecto al resto del lote debido al déficit hídrico. En algunos puntos, principalmente en las orillas y lomas con suelos de baja retención de humedad, las plantas permanecen de tamaño reducido como consecuencia del mayor estrés hídrico sufrido durante su desarrollo.",Se recomienda realizar un control oportuno de gusano cogollero (Spodoptera frugiperda) para reducir la población de la plaga y evitar un mayor impacto sobre el desarrollo del cultivo.,Regular,2026-10-23,33
+L07-Y04-742cb71b,JOSEGREGORIOSANCHEZMENDOZA,2026,Betsi,14.21,14.21,2026-06-06,14.21,0,0,,,,,,,,,48
+L08-B01-742cb71b,JULIOANTONIOCOLMENAREZMENDOZA,2026,Los Pepes 2,8.78,0,2026-05-05,8.78,0,0,,,,,,,,,75
+L08-G10-742cb71b,JOSEDARIOGALLUCCIREQUENA,2026,El Olivo 2,21.29,0,,0,0,0,,,,,,,,,
+L08-G14-742cb71b,JUANVICENTERISSO,2026,Cosechadora quemada 5,17.31,0,2026-05-29,17.31,0,0,,,,,,,,,55
+L08-G20-742cb71b,MEIZTOHMEELCHAIR,2026,El Palmarital,100.4,0,2026-06-23,100.4,0,0,,,,,,,,,34
+L08-G22-742cb71b,PEDROVICENTEGOMEZARVELAEZ,2026,Doña Mirian,25.69,0,2026-06-16,25.69,0,0,,,,,,,,,40
+L08-L01-742cb71b,VIRBELJOSEGRIMANALFIN,2026,Lote de Arriba,11.74,0,2026-05-30,11.74,0,0,,,,,,,,,54
+L08-P02-742cb71b,ANGELAROSAGUEDEZMORALES,2026,L08 LOTE-06,9.19,9.19,2026-04-22,9.19,0,0,Regular,V3,2026-05-14,Nicole Alessandra Ramones Parra,Se solicitó el producto para la aplicación de control de plagas y malezas.,"Mantener monitoreo permanente para evitar escapes de plagas, considerando que las condiciones de sequías típicas del año, pudieran generar situaciones complejas de escapes por poblaciones incrementadas.",Regular,2026-08-20,86
+L08-P10-742cb71b,DENNISLEONARDOALIBARDIMASCHIO,2026,La Mora,43.54,43.54,2026-05-29,43.54,0,0,Regular,V7,2026-06-29,Sajida Sarali Zamora Heredia,"Monitoreo en 43.54 Ha del lote la mora, se observa la eficacia de un 62% en el control de plagas realizado anteriormente con el producto acoustic top.","Continuar con el monitoreo y evaluar cuál será el próximo control, debido a que las larvas observadas están en instares larvales avanzados y algunas en sus primeros estadios (L2-L3)",Regular,2026-09-26,55
+L08-P17-742cb71b,EZEQUIELJOSEFONTIVEROSBRICENO,2026,La Batea,8.28,0,2026-05-01,8.28,0,0,Regular,V5,2026-05-26,Carlos Javier Barco Betancourt,"Se observa un nivel alto de plagas, con la aplicación de hoy se espera reducir la incidencia","El cultivo se mantendré en observación constante para evaluar el efecto de la aplicación, en 48-72 horas se realizará la próxima evaluación",Regular,2026-08-29,78
+L08-P18-742cb71b,FRANCISCOJOSEMARQUEZ,2026,La Montaña 1,22.06,0,2026-05-15,22.06,0,0,,,,,,,,,67
+L08-P23-742cb71b,TONYALEJANDROPESTANAPEREZ,2026,Las 25,25.61,0,,25.61,0,0,,,,,,,,,
+L08-S01-742cb71b,JUANHERNANDEZDIAZ,2026,Pegado a Pepe 1,18.97,0,2026-06-13,18.97,0,0,Excelente,V8,2026-07-24,Álex Gómez,"Cultivo en excelente estado de desarrollo,  buen control fitosanitario.  Preocupa largo período de sequía en la zona",Monitoreo permanente,Excelente,2026-10-11,43
+L08-Y02-742cb71b,VICTORRAMONOROPEZAORTIZ,2026,Arnaldo,11.66,0,2026-05-21,11.66,0,0,,,,,,,,,62
+L08-Y04-742cb71b,JOSEGREGORIOSANCHEZMENDOZA,2026,Lote 1,24.47,24.47,2026-06-14,24.47,0,0,,,,,,,,,42
+L09-B01-742cb71b,JULIOANTONIOCOLMENAREZMENDOZA,2026,Pelo e Mula,51.13,0,2026-04-30,51.13,0,0,,,,,,,,,79
+L09-G03-742cb71b,ANTONIOLUISZAMBRANOACUNA,2026,Tanque Gasoil,47.84,0,2026-05-26,47.84,0,0,,,,,,,,,58
+L09-G07-742cb71b,CELSOFANTINELFURLANIS,2026,Frijolero Oeste,17.19,0,2026-06-13,17.19,0,0,Excelente,V5,2026-07-23,Álex Gómez,Se comienzan a observar unas pocas gramineas en el lote. Preocupa altamente la ausencia de precipitaciones en la zona; pese a eso cultivo en excelente estado aun,Monitoreo y observación constante,Excelente,2026-10-11,43
+L09-G10-742cb71b,JOSEDARIOGALLUCCIREQUENA,2026,El Trapiche,54.23,0,2026-06-06,54.23,0,0,,,,,,,,,48
+L09-G14-742cb71b,JUANVICENTERISSO,2026,Cosechadora quemada 6,23.7,0,2026-05-29,23.7,0,0,,,,,,,,,55
+L09-G22-742cb71b,PEDROVICENTEGOMEZARVELAEZ,2026,Concha de Drago,35.52,0,2026-06-17,35.52,0,0,,,,,,,,,39
+L09-L01-742cb71b,VIRBELJOSEGRIMANALFIN,2026,Pavi 02,11.39,0,2026-06-02,11.39,0,0,,,,,,,,,52
+L09-P02-742cb71b,ANGELAROSAGUEDEZMORALES,2026,L09 LOTE-07,7.89,7.89,2026-04-21,7.89,0,0,Regular,V5,2026-05-27,Nicole Alessandra Ramones Parra,"Se evidencia un progreso importante en el control de plagas, con una baja en la incidencia y severidad evaluada en el lote.",Sostener el monitoreo constante en el lote ya que existe un foco en el lote adyacente.,Regular,2026-08-19,87
+L09-P17-742cb71b,EZEQUIELJOSEFONTIVEROSBRICENO,2026,La Ceiba,24.6,0,2026-05-05,24.6,0,0,,,,,,,,,75
+L09-P18-742cb71b,FRANCISCOJOSEMARQUEZ,2026,La Montaña 2,23.37,0,2026-05-17,23.37,0,0,,,,,,,,,65
+L09-P23-742cb71b,TONYALEJANDROPESTANAPEREZ,2026,Las 30,28.1,0,2026-05-11,28.1,0,0,,,,,,,,,70
+L09-S01-742cb71b,JUANHERNANDEZDIAZ,2026,Pegado a Pepe 2,19.24,0,2026-06-05,19.24,0,0,Excelente,V8,2026-07-24,Álex Gómez,Cultivo en excelente estado de desarrollo y control fitosanitario pese al largo período de ausencia de precipitaciones.  Atento a largo período de sequía,Monitoreo permanente,Excelente,2026-10-03,49
+L09-Y01-742cb71b,RICHARDJOSEAPOSTOLNUNEZ,2026,El Jobo,7.02,0,2026-06-01,7.02,0,0,,,,,,,,,53
+L09-Y02-742cb71b,VICTORRAMONOROPEZAORTIZ,2026,Las 17,17.11,0,2026-05-20,17.11,0,0,,,,,,,,,63
+L10-G07-742cb71b,CELSOFANTINELFURLANIS,2026,Victoriero 1,95.49,0,2026-05-28,95.49,2,0,Excelente,V8,2026-07-09,Álex Gómez,"Excelente desarrollo y control de Malezas,  algunos pequeños daños por espodoptera.  Cultivo cerrado, plan cumplido.",Monitoreo permanente de plagas,Excelente,2026-09-25,56
+L10-G14-742cb71b,JUANVICENTERISSO,2026,Detrás del galpón 1,48.23,0,2026-05-27,48.23,0,0,,,,,,,,,57
+L10-G22-742cb71b,PEDROVICENTEGOMEZARVELAEZ,2026,El Marbellero,12.44,0,2026-06-15,12.44,0,0,,,,,,,,,41
+L10-P02-742cb71b,ANGELAROSAGUEDEZMORALES,2026,L10 LOTE-08,17.74,0,2026-04-25,17.74,0,0,Regular,V5,2026-05-27,Nicole Alessandra Ramones Parra,"Se mantiene el monitoreo constante del lote, para evaluar las condiciones de incidencia y severidad, con el fin de hacer la selección del próximo protocolo de control según lo considere mesa técnica",Realizar la selección del protocolo de co trol con prontitud para una aplicación oportuna.,Regular,2026-08-23,83
+L10-P10-742cb71b,DENNISLEONARDOALIBARDIMASCHIO,2026,LAS 35,33.08,0,2026-04-28,33.08,0,0,Bueno,V9,2026-06-16,Sajida Sarali Zamora Heredia,"Cultivo avanzado, plantas en su mayoría sin daño ocasionado por gusanos, buen desarrollo y tamaño",Seguimiento y monitoreo para observar l incidencia de plagas,Bueno,2026-08-26,81
+L10-S01-742cb71b,JUANHERNANDEZDIAZ,2026,Tomate 1,47.43,0,2026-06-21,47.43,0,0,Excelente,V6,2026-07-24,Álex Gómez,"Cultivo en excelente estado,  recién aplicado segundo control por emergente.  Preocupa ausencia de precipitaciones en la zona",Monitoreo y seguimiento,Excelente,2026-10-19,36
+L10-Y01-742cb71b,RICHARDJOSEAPOSTOLNUNEZ,2026,El Galpón,3.4,0,2026-06-01,3.4,0,0,,,,,,,,,53
+L10-Y02-742cb71b,VICTORRAMONOROPEZAORTIZ,2026,Las 15,14.54,0,2026-05-20,14.54,0,0,,,,,,,,,63
+L11-B01-742cb71b,JULIOANTONIOCOLMENAREZMENDOZA,2026,Revilla 1,55.82,0,2026-05-02,55.82,0,0,,,,,,,,,78
+L11-G01-742cb71b,LUISALBERTOROJASPIERETTI,2026,L05 LOTE EL DRAGAL 4,35.49,15,2026-05-27,35.49,0,0,,,,,,,,,57
+L11-G07-742cb71b,CELSOFANTINELFURLANIS,2026,Victoriero 2,83.05,0,2026-06-01,83.05,2,0,Bueno,V7,2026-07-23,Álex Gómez,El  lote que se sembró de primero esta comenzando el proceso de floración pero de una manera muy dispersa debido a la ausencia casi total de precipitaciones en el sector. Situación muy preocupante,Monitoreo permanente,Bueno,2026-09-29,53
+L11-G10-742cb71b,JOSEDARIOGALLUCCIREQUENA,2026,La Aguadita,65.82,0,2026-06-22,65.82,0,0,,,,,,,,,35
+L11-P02-742cb71b,ANGELAROSAGUEDEZMORALES,2026,L11 LOTE-09,32.09,32.09,2026-04-22,32.09,0,0,Regular,V5,2026-05-25,Nicole Alessandra Ramones Parra,Se planificó el control de malezas con prontitud para bajar la presión de malezas.,"Posterior a 5-6 días de aplicación del elumis realizar aplicación para control de plagas, evitando toxicidad por efecto de productos en el cultivo.",Regular,2026-08-20,86
+L11-P17-742cb71b,EZEQUIELJOSEFONTIVEROSBRICENO,2026,Los Viejos,31.08,0,2026-05-18,31.08,0,0,Bueno,V9,2026-06-26,Carlos Javier Barco Betancourt,El control de malezas no fue eficiente para paja peluda,"Cañonear los bordes, debido a que es donde se observa mayor incidencia de plagas",Bueno,2026-09-15,64
+L11-Y01-742cb71b,RICHARDJOSEAPOSTOLNUNEZ,2026,Las Carmelitas 1,28.82,0,2026-05-28,28.82,0,0,,,,,,,,,56
+L11-Y02-742cb71b,VICTORRAMONOROPEZAORTIZ,2026,Las 29,27.19,0,2026-05-22,27.19,0,0,,,,,,,,,61
+L12-G01-742cb71b,LUISALBERTOROJASPIERETTI,2026,L06 LOTE EL MANGO B,39.05,0,2026-05-20,39.05,2,0,Bueno,V8,2026-06-23,Donis Palma,Se observo bajo un monitoreo en el lote los espacios afectados por fuertes lluvias lo cual no dejo desarrollar las plantas.,Realizar drenajes internos par no tener aguachinamiento en los lotes así no se vea afectado el cultivo,Bueno,2026-09-17,63
+L12-G07-742cb71b,CELSOFANTINELFURLANIS,2026,Costaneros,15.61,0,2026-06-11,15.61,0,0,Excelente,V6,2026-07-20,Álex Gómez,"Cultivo en buen estado de desarrollo,  excelente control de Malezas, aun se observan algunas orugas en L1. Preocupa altamente la baja cantidad de precipitaciones en la zona",Monitoreo constante de plagas,Excelente,2026-10-09,44
+L12-G14-742cb71b,JUANVICENTERISSO,2026,Detrás del galpón 2,25.28,0,2026-05-28,25.28,0,0,,,,,,,,,56
+L12-G20-742cb71b,MEIZTOHMEELCHAIR,2026,El Roble,48.62,0,2026-05-30,48.62,0,0,,,,,,,,,54
+L12-S01-742cb71b,JUANHERNANDEZDIAZ,2026,Tomate 2-1,22.75,0,2026-06-23,22.75,0,0,Excelente,V4,2026-07-24,Álex Gómez,"Cultivo en buen  estado, se acaba de aplicar segundo control fitosanitario post emergente.  Problemas  de sequía en la zona",Monitoreo,Excelente,2026-10-21,34
+L12-Y01-742cb71b,RICHARDJOSEAPOSTOLNUNEZ,2026,Las Carmelitas 2,14.7,0,2026-05-29,14.7,0,0,,,,,,,,,55
+L12-Y04-742cb71b,JOSEGREGORIOSANCHEZMENDOZA,2026,Willi,5.46,0,2026-06-10,5.46,0,0,,,,,,,,,45
+L13-G01-742cb71b,LUISALBERTOROJASPIERETTI,2026,El Muerto,32.81,0,2026-06-02,32.81,0,0,Bueno,V8,2026-07-07,Donis Palma,"Precensia de larvas en el cogollo el cual los productos no pudieron controlar ,",Realizar monitoreo correspondiente para evaluar la situación y evitar daños en el cultivo,Bueno,2026-09-30,52
+L13-G14-742cb71b,JUANVICENTERISSO,2026,El Trailer 1,32.15,0,2026-06-02,32.15,0,0,,,,,,,,,52
+L13-P17-742cb71b,EZEQUIELJOSEFONTIVEROSBRICENO,2026,Tamarindo,12.55,0,2026-05-04,12.55,0,0,Bueno,V5,2026-05-28,Carlos Javier Barco Betancourt,Se observa un control efectivo del cogollero. El cultivo no se ve afectado por el Elumis,Realizar aplicación de micros para 4 dias despues de la aplicación de los post emergente,Bueno,2026-09-01,76
+L13-S01-742cb71b,JUANHERNANDEZDIAZ,2026,Tomate 2-2,24.36,0,2026-06-23,24.36,0,0,Excelente,V4,2026-07-24,Álex Gómez,Cultivo en muy buen estado.  Recién aplicado segundo control fitosanitario post emergente.  Problemas de sequía en la zona.,Monitoreo constante,Excelente,2026-10-21,34
+L13-Y01-742cb71b,RICHARDJOSEAPOSTOLNUNEZ,2026,Las Carmelitas 3,7.55,0,2026-05-31,7.55,0,0,,,,,,,,,53
+L13-Y04-742cb71b,JOSEGREGORIOSANCHEZMENDOZA,2026,Los Aguacates,2.77,0,2026-06-05,2.77,0,0,,,,,,,,,49
+L14-B01-742cb71b,JULIOANTONIOCOLMENAREZMENDOZA,2026,Revilla 2,65.81,0,2026-05-04,65.81,0,0,,,,,,,,,76
+L14-G10-742cb71b,JOSEDARIOGALLUCCIREQUENA,2026,Loma de Piedra,45.65,0,,0,0,0,,,,,,,,,
+L14-G14-742cb71b,JUANVICENTERISSO,2026,El Trailer 2,27.71,0,2026-06-02,27.71,0,0,,,,,,,,,52
+L14-G20-742cb71b,MEIZTOHMEELCHAIR,2026,La Carretera,42.42,0,2026-06-10,42.42,0,0,,,,,,,,,45
+L14-S01-742cb71b,JUANHERNANDEZDIAZ,2026,Trinchera de Llano Adentro,31.63,0,2026-06-17,31.63,0,0,Excelente,V10,2026-07-24,Álex Gómez,"Excelente estado, cercano a floración,  preocupa sequia prolongada.  Indicios de estrés hidrico",Monitoreo constante,Excelente,2026-10-15,39
+L14-Y04-742cb71b,JOSEGREGORIOSANCHEZMENDOZA,2026,Neco,6.1,0,2026-06-10,6.1,0,0,,,,,,,,,45
+L15-G14-742cb71b,JUANVICENTERISSO,2026,El Trailer 3,31.99,0,2026-06-03,31.99,0,0,,,,,,,,,51
+L15-S01-742cb71b,JUANHERNANDEZDIAZ,2026,Trinchera de Corcovado A,71.22,0,2026-06-20,71.22,0,0,Excelente,V2,2026-07-02,Álex Gómez,"Cultivo en buen estado de desarrollo,  excelente control de Malezas, en la parte del Lote donde se uso Dekalb 410 hay importantes daños por espodoptera.","Monitoreo permanente, se recomienda adelantar primer control fitosanitario para control de espodoptera,  no asi el de Malezas.",Excelente,2026-10-18,37
+L16-G10-742cb71b,JOSEDARIOGALLUCCIREQUENA,2026,Los Toros 1,20.7,0,,0,0,0,,,,,,,,,
+L16-G14-742cb71b,JUANVICENTERISSO,2026,El Trailer 4,18.03,0,2026-06-03,18.03,0,0,,,,,,,,,51
+L16-G20-742cb71b,MEIZTOHMEELCHAIR,2026,La Cuca,42.07,0,2026-06-09,42.07,0,0,,,,,,,,,46
+L17-G10-742cb71b,JOSEDARIOGALLUCCIREQUENA,2026,Los Toros 2,29.14,0,2026-06-23,29.14,0,0,,,,,,,,,34
+L17-G14-742cb71b,JUANVICENTERISSO,2026,El Trailer 5,12.1,0,2026-06-04,12.1,0,0,,,,,,,,,50
+L17-S01-742cb71b,JUANHERNANDEZDIAZ,2026,Trinchera de Corcovado B,76.09,0,2026-06-20,76.08,0,0,Excelente,V2,2026-07-04,Álex Gómez,"Buen estado general,  problema de plantabilidad.",Esperar ventana de aplicación para realizar labores,Excelente,2026-10-18,37
+L18-G14-742cb71b,JUANVICENTERISSO,2026,Leo,102.47,0,2026-06-12,92.47,0,0,,,,,,,,,43
+L18-G20-742cb71b,MEIZTOHMEELCHAIR,2026,La Nueva,77.56,0,2026-06-01,77.56,0,0,,,,,,,,,53
+L19-G14-742cb71b,JUANVICENTERISSO,2026,Julio 2,24.75,0,2026-06-06,24.75,0,0,,,,,,,,,48
+L21-G20-742cb71b,MEIZTOHMEELCHAIR,2026,La Sociedad,25.97,0,2026-05-29,25.97,0,0,,,,,,,,,55
+L22-G14-742cb71b,JUANVICENTERISSO,2026,Ciruelo,118.67,0,2026-06-10,118.67,0,0,,,,,,,,,45
+L22-G20-742cb71b,MEIZTOHMEELCHAIR,2026,Laguna Negra,23.46,0,2026-05-29,23.46,0,0,,,,,,,,,55
+L23-G20-742cb71b,MEIZTOHMEELCHAIR,2026,Las Novillas,29.44,0,2026-06-03,29.44,0,0,,,,,,,,,51
+L24-G20-742cb71b,MEIZTOHMEELCHAIR,2026,Las Torres,23.78,0,2026-06-08,23.78,0,0,,,,,,,,,47
+L25-G20-742cb71b,MEIZTOHMEELCHAIR,2026,Las Yeguas,33.24,0,2026-06-18,33.24,0,0,,,,,,,,,38
+L26-G20-742cb71b,MEIZTOHMEELCHAIR,2026,Los Caribes,23.5,0,2026-05-28,23.5,0,0,,,,,,,,,56
+L27-G20-742cb71b,MEIZTOHMEELCHAIR,2026,Los Palos,49.81,0,2026-06-09,49.81,0,0,,,,,,,,,46

@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { Download, Loader2 } from 'lucide-react'
-import { createBrowserClient } from '@supabase/ssr'
+import { createClient } from '@/lib/supabase/client'
 
 interface Props {
   storagePath: string
@@ -21,10 +21,7 @@ export default function DocumentoDownloadBtn({ storagePath, filename, size = 'md
     if (loading) return
     setLoading(true)
     try {
-      const supabase = createBrowserClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      )
+      const supabase = createClient()
       const { data, error } = await supabase.storage
         .from('analisis-suelo')
         .createSignedUrl(storagePath, 60)

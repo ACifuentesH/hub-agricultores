@@ -4,6 +4,29 @@ import { NextResponse, type NextRequest } from 'next/server'
 const PUBLIC_ROUTES = ['/login']
 
 export async function middleware(request: NextRequest) {
+  // Modo demo: la cuenta de Supabase está suspendida, así que ni siquiera se
+  // intenta hablar con Supabase Auth acá — se valida solo la cookie que pone
+  // la pantalla de clave (ver components/DemoLoginGate.tsx). El usuario demo
+  // es master, así que también pasa el check de /master de más abajo.
+  if (process.env.DEMO_MODE === 'true') {
+    const { pathname } = request.nextUrl
+    const hasDemoSession = request.cookies.get('demo_session')?.value === '1'
+
+    if (!hasDemoSession && !PUBLIC_ROUTES.includes(pathname)) {
+      if (pathname.startsWith('/api/')) {
+        return NextResponse.json(
+          { ok: false, error: 'Sesión demo expirada. Vuelve a ingresar la clave.' },
+          { status: 401 },
+        )
+      }
+      return NextResponse.redirect(new URL('/login', request.url))
+    }
+    if (hasDemoSession && pathname === '/login') {
+      return NextResponse.redirect(new URL('/master', request.url))
+    }
+    return NextResponse.next({ request })
+  }
+
   let supabaseResponse = NextResponse.next({ request })
 
   const supabase = createServerClient(

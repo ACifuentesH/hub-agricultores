@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { createBrowserClient } from '@supabase/ssr'
+import { createClient } from '@/lib/supabase/client'
 import { X, Loader2, AlertCircle, FileText } from 'lucide-react'
 
 interface Props {
@@ -9,9 +9,6 @@ interface Props {
   filename: string
   onClose: () => void
 }
-
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
 const EXT_IMAGEN = /\.(png|jpe?g|webp)$/i
 const EXT_PDF = /\.pdf$/i
@@ -33,7 +30,7 @@ export default function DocumentoPreviewModal({ storagePath, filename, onClose }
     // url:null ya son los valores iniciales de cada useState de arriba.
     let cancelled = false
 
-    const supabase = createBrowserClient(SUPABASE_URL, SUPABASE_KEY)
+    const supabase = createClient()
     supabase.storage
       .from('analisis-suelo')
       .createSignedUrl(storagePath, 120)

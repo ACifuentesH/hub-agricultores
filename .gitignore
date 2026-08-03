@@ -52,3 +52,7 @@ next-env.d.ts
 # nombres/keys reales de agricultores, no van al repo)
 scripts/bulk-import-report.csv
 scripts/bulk-import-result.csv
+
+# modo demo temporal: CSVs con data real de agricultores/negocio exportada de
+# Supabase mientras la cuenta estaba suspendida por facturación. No va al repo.
+/demo-data/

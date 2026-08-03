@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { createBrowserClient } from '@supabase/ssr'
+import { createClient } from '@/lib/supabase/client'
 import { User, LogOut, KeyRound, X, Eye, EyeOff, Loader2, Check, AlertCircle } from 'lucide-react'
 
 interface Props {
@@ -10,9 +10,6 @@ interface Props {
   displayName: string
   role: 'master' | 'farmer'
 }
-
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
 /**
  * Menú de usuario en el header. Dropdown con:
@@ -25,7 +22,7 @@ const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
  */
 export default function UserMenu({ email, displayName, role }: Props) {
   const router = useRouter()
-  const supabase = createBrowserClient(SUPABASE_URL, SUPABASE_KEY)
+  const supabase = createClient()
 
   const [open, setOpen] = useState(false)
   const [showPwdModal, setShowPwdModal] = useState(false)
@@ -112,7 +109,7 @@ export default function UserMenu({ email, displayName, role }: Props) {
  * ==========================================================================*/
 
 function CambiarPasswordModal({ email, onClose }: { email: string; onClose: () => void }) {
-  const supabase = createBrowserClient(SUPABASE_URL, SUPABASE_KEY)
+  const supabase = createClient()
 
   const [current, setCurrent] = useState('')
   const [next, setNext] = useState('')

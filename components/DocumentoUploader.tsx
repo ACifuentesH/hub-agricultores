@@ -2,7 +2,7 @@
 
 import { useState, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { createBrowserClient } from '@supabase/ssr'
+import { createClient } from '@/lib/supabase/client'
 import { Upload, Loader2, Check, X, FileText, AlertCircle } from 'lucide-react'
 import { CATEGORIAS, CATEGORIA_DEFAULT, ACEPTADOS_MIME, MAX_BYTES, type CategoriaId } from '@/lib/documentos'
 
@@ -35,9 +35,6 @@ interface PendingFile {
   syncWarning?: string
 }
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-
 /**
  * Drag & drop multi-file uploader para documentos del módulo (rol master).
  * Por cada archivo dropeado:
@@ -53,7 +50,7 @@ export default function DocumentoUploader({ agricultores }: { agricultores: Agri
   const [uploadingAll, setUploadingAll] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const supabase = createBrowserClient(SUPABASE_URL, SUPABASE_KEY)
+  const supabase = createClient()
 
   // Lotes por agricultor, cargados bajo demanda para el selector opcional
   // de lote (un PDF puede cubrir toda la finca o un lote específico).

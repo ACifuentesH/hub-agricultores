@@ -1,0 +1,2 @@
+id,agricultor_key,lote_id,lote_nombre,ciclo,tipo,valor_anterior,valor_nuevo,usuario_id,created_at
+81b675ad-a482-488c-a026-f03d574e7ecd,AGOSTINOCECCARELLOMANCIN,5a0613f3,L02 LOTE EL PALMAR 2,2025,fecha_siembra,"miércoles, 21 de mayo de 2025",2026-05-16,174857ab-75d7-4062-9b81-8ef46fe876dd,2026-07-23 03:03:51.013467+00

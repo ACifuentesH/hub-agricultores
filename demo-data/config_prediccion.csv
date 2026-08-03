@@ -1,0 +1,4 @@
+clave,valor,descripcion
+umbral_dias_min,15,Días mínimos con lectura en un mes para considerarlo confiable
+umbral_meses_robusto,4,Meses confiables mínimos para activar el método robusto (mediana) en vez de YTD simple
+umbral_km_cercania,20,Distancia máxima (km) para usar el histórico de una estación vecina en vez del promedio de zona

@@ -8,6 +8,18 @@ qué hacer cuando algo no fluye.
 > con la sesión administrativa. No están expuestas al frontend a propósito —
 > son metadata operativa, no UX.
 
+Este documento es el **runbook**: qué correr y en qué orden. Para entender *por qué* el
+pipeline está diseñado así —la API de WeatherLink, las dos generaciones de sensores, el
+rate limiting y los incidentes que motivaron cada decisión— ver
+[INTEGRACION_WEATHERLINK.md](INTEGRACION_WEATHERLINK.md).
+
+> **Nota de vigencia:** varias secciones de abajo describen la **triangulación IDW** como
+> comportamiento activo. Se retiró el 30-jul-2026 en el `CASE` de `v_clima_efectivo`
+> (migración `clima_sin_triangulacion`): hoy quien no tiene estación Davis ve el módulo
+> vacío, no una estimación. La RPC `triangulate_clima()` y las coordenadas siguen ahí, así
+> que los procedimientos conservan valor si se decide revertir.
+> Ver [ARQUITECTURA.md](ARQUITECTURA.md#el-clima-sin-estación-se-muestra-vacío-no-estimado).
+
 ---
 
 ## Arquitectura en una pantalla

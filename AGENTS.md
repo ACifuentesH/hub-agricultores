@@ -46,7 +46,12 @@ secas es la empresa — no confundir ni renombrar.
 - **`producto_registro` tiene columna `ciclo`**: filtrar por ella además de por
   nombre de lote, o los insumos de un año se cuelan en el otro.
 - El clima es el único dato que la app captura por sí misma (WeatherLink, cron
-  horario). Ver [`docs/OPERACION_PIPELINE_CLIMA.md`](docs/OPERACION_PIPELINE_CLIMA.md).
+  horario). Para operarlo, ver
+  [`docs/OPERACION_PIPELINE_CLIMA.md`](docs/OPERACION_PIPELINE_CLIMA.md); **antes de
+  tocar el pipeline**, leer
+  [`docs/INTEGRACION_WEATHERLINK.md`](docs/INTEGRACION_WEATHERLINK.md) — la API devuelve
+  nombres de campo distintos según la generación de hardware, y no hay auto-discovery de
+  estaciones.
 - **Sin triangulación** (30-jul-2026). Con las estaciones Davis ya asignadas,
   quien no tiene estación propia ve el módulo vacío en vez de una estimación por
   IDW desde estaciones a decenas de kilómetros, que en pantalla se leía igual que

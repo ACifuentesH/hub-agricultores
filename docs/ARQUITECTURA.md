@@ -72,7 +72,9 @@ El único dato que la app captura por sí misma. Estaciones Davis → `weather_r
 mediante varias edge functions (`weatherlink-sync`, `wl-load-historic`,
 `wl-sync-bulk`) coordinadas por cron.
 
-Detalle en [OPERACION_PIPELINE_CLIMA.md](OPERACION_PIPELINE_CLIMA.md).
+- Cómo funciona la API y por qué el pipeline está diseñado así (generaciones de sensores,
+  rate limiting, incidentes reales): [INTEGRACION_WEATHERLINK.md](INTEGRACION_WEATHERLINK.md).
+- Cómo operarlo día a día: [OPERACION_PIPELINE_CLIMA.md](OPERACION_PIPELINE_CLIMA.md).
 
 ### 2.3 seguimiento-lluvia-saturno — lluvia por lote
 

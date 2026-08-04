@@ -1,5 +1,5 @@
 import { Leaf } from 'lucide-react'
-import { FASE_EXPLICACION } from '@/lib/agro-glosario'
+import { FASE_EXPLICACION, describirFaseDetallada } from '@/lib/agro-glosario'
 import type { Stage } from '@/lib/corn-stages'
 
 /**
@@ -43,6 +43,7 @@ export default function FaseActualCard({
 }) {
   const stage = faseAStage(fase)
   const tipo = fase?.trim().toUpperCase().charAt(0) ?? ''
+  const descripcion = describirFaseDetallada(fase) ?? (stage !== null ? FASE_EXPLICACION[stage] : null)
 
   return (
     <div className="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900">
@@ -68,9 +69,9 @@ export default function FaseActualCard({
             </span>
           </div>
 
-          {stage !== null && (
+          {descripcion && (
             <p className="mt-2.5 text-xs leading-relaxed text-gray-600 dark:text-gray-400">
-              {FASE_EXPLICACION[stage]}
+              {descripcion}
             </p>
           )}
 

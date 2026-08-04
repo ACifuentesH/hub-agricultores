@@ -76,10 +76,9 @@ export const MODULOS: {
     resumen: 'El detalle lote por lote: en qué etapa va, cuándo se sembró y qué dijo el técnico en su visita.',
     contiene: [
       'Línea de tiempo de cada lote, de siembra a cosecha',
-      'Días desde la siembra y etapa del maíz',
+      'Días desde la siembra y qué significa la fase fenológica en la que está, con la valoración del técnico',
       'La última visita del técnico con sus observaciones y acuerdos',
       'Condición del suelo e insumos aplicados por lote',
-      'Reportes descargables en PDF y Excel',
     ],
     palabras: ['cultivo', 'lote', 'lotes', 'siembra', 'etapa', 'fase', 'visita', 'tecnico', 'insumo', 'suelo'],
   },
@@ -90,6 +89,7 @@ export const MODULOS: {
     resumen: 'Todos tus documentos, ordenados por tipo, para consultarlos o descargarlos.',
     contiene: [
       'Análisis de suelo del laboratorio',
+      'Diagnóstico de plagas y certificados de los operadores que aplican',
       'Mapas y planos de la finca',
       'Caso de negocio con costos y rentabilidad',
       'Convenios y contratos firmados',
@@ -124,6 +124,48 @@ export const FASE_EXPLICACION: Record<Stage, string> = {
   5: 'En madurez (R6) el grano llegó a su peso máximo y aparece la capa negra en su base. Ya no gana peso: a partir de aquí lo que importa es la humedad del grano para decidir la fecha de cosecha.',
 }
 
+/**
+ * Descripción específica por fase MEDIDA EN CAMPO (`saturno.seguimiento`,
+ * V1..V12, R1..R6 — ver AGENTS.md), no por el bucket de 6 etapas estimado a
+ * partir de días desde siembra. `FASE_EXPLICACION`/`FASE_CORTA` agrupan varias
+ * fases reales en una sola descripción genérica (p.ej. V3–V6 comparten
+ * texto); acá cada fase medida tiene la suya, con la referencia agronómica
+ * estándar (hojas con cuello visible para las vegetativas, hitos del grano
+ * para las reproductivas — escala Ritchie/Hanway de maíz).
+ */
+export const FASE_DETALLE: Record<string, string> = {
+  V1: 'V1 — primera hoja con el cuello visible. La planta todavía depende de las reservas de la semilla; el sistema radicular apenas arranca.',
+  V2: 'V2 — dos hojas con cuello visible. Empiezan a salir las raíces nodales, que de a poco reemplazan a la raíz de la semilla.',
+  V3: 'V3 — tres hojas visibles, planta de unos 15–20 cm. Se define el número potencial de hileras de granos de la mazorca.',
+  V4: 'V4 — cuatro hojas, 20–25 cm. El punto de crecimiento sigue bajo tierra, protegido de heladas tardías y golpes de frío.',
+  V5: 'V5 — cinco hojas verdaderas, 20–30 cm. Comienza la diferenciación floral: se define el número potencial de granos y de hileras por mazorca.',
+  V6: 'V6 — seis hojas. El punto de crecimiento y la base del tallo quedan sobre el nivel del suelo — a partir de acá un golpe fuerte ya puede dañar la planta. Se fija el número final de hileras de granos.',
+  V7: 'V7 — siete hojas. Arranca el crecimiento acelerado: la planta puede sacar una hoja nueva cada 2–3 días.',
+  V8: 'V8 — ocho hojas. Se define el diámetro del tallo y el número potencial de óvulos (futuros granos) de la mazorca.',
+  V9: 'V9 — nueve hojas. Sube fuerte la demanda de agua y nitrógeno; sigue definiéndose el tamaño potencial de la mazorca.',
+  V10: 'V10 — diez hojas. Falta cerca de un mes para la floración. La planta se acerca a su altura máxima.',
+  V11: 'V11 — once hojas. La panoja (la flor macho) ya se formó dentro del tallo y empieza a alargarse hacia arriba.',
+  V12: 'V12 — doce hojas. Arranca el período crítico: en pocos días sale la panoja y luego la seda. El estrés hídrico o de nutrientes de acá en adelante ya afecta directamente el número de granos.',
+  R1: 'R1 — floración/seda. Salen los estigmas (la "seda") de la mazorca y ocurre la polinización. Es la etapa MÁS crítica del ciclo: un golpe de calor o falta de agua en estos días reduce directamente el número de granos, y eso ya no se recupera.',
+  R2: 'R2 — ampolla (blister). El grano recién fecundado es translúcido y está lleno de líquido. Arranca la acumulación de peso seco.',
+  R3: 'R3 — lechoso (milk). El grano toma color amarillo y, al presionarlo, suelta un líquido lechoso. Es el momento de mayor demanda de agua y nutrientes de todo el ciclo.',
+  R4: 'R4 — masoso (dough). El contenido del grano espesa hasta consistencia de masa. Se define buena parte del peso final; sigue siendo clave el agua disponible.',
+  R5: 'R5 — dentado (dent). La mayoría de los granos forma la muesca característica en la corona, y la línea de leche empieza a bajar hacia la base del grano.',
+  R6: 'R6 — madurez fisiológica. Aparece la capa negra en la base del grano, que deja de ganar peso. De acá en adelante lo que importa es la humedad del grano para decidir la fecha de cosecha.',
+}
+
+/**
+ * Normaliza y busca la descripción específica de una fase medida en campo
+ * ("v5", " R3 ", etc.). `null` si no viene en formato reconocible o no está
+ * en el rango V1–V12/R1–R6 — el caller cae de nuevo a la explicación por
+ * bucket (`FASE_EXPLICACION`) en ese caso.
+ */
+export function describirFaseDetallada(fase: string | null | undefined): string | null {
+  if (!fase) return null
+  const key = fase.trim().toUpperCase()
+  return FASE_DETALLE[key] ?? null
+}
+
 /** Sinónimos que el usuario puede escribir para referirse a cada etapa. */
 export const ETAPA_ALIAS: { stage: Stage; palabras: string[] }[] = [
   { stage: 0, palabras: ['germinacion', 'emergencia', 'v0'] },
@@ -137,6 +179,7 @@ export const ETAPA_ALIAS: { stage: Stage; palabras: string[] }[] = [
 /** Qué significa cada sección del módulo Documentación. */
 export const DOC_EXPLICACION: Record<string, string> = {
   analisis_suelo: 'Los análisis de suelo y agua son los resultados del laboratorio: pH, materia orgánica, fósforo, potasio, textura y calidad de agua. Sirven para decidir el encalado y la fórmula de fertilización.',
+  plagas: 'Acá van los resultados de diagnóstico de plagas del lote y los certificados de los operadores que hicieron la aplicación.',
   convenios: 'Los convenios son los contratos y acuerdos firmados dentro del programa de agricultura por contrato.',
   pnl: 'El P&L reúne las proyecciones de costos, rendimiento esperado y rentabilidad del ciclo.',
 }

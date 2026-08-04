@@ -94,7 +94,6 @@ Módulo reescrito por **Alejandro Cifuentes** (jul-2026), integrando el proyecto
 |---|---|
 | `CultivoTimeline` | Línea de tiempo anual del ciclo: marcador "Hoy", 6 etapas de crecimiento (`CornStage`) y barra de 12 meses |
 | `CornStage` | SVG de la planta de maíz en una etapa dada |
-| `IrrigationRing` | Anillo de estado de riego |
 | `UltimaVisitaCard` | Última visita técnica, tal como la registró el técnico en Saturno |
 | `FechaSiembraEditor` | Corrección manual de la fecha de siembra (**solo master**), con confirmación y registro en novedades |
 

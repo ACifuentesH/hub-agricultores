@@ -8,13 +8,12 @@ import { resolveAgricultorScope, listAgricultores } from '@/lib/access'
 import UltimaVisitaCard from '@/components/UltimaVisitaCard'
 import MasterAgricultorSelector from '@/components/MasterAgricultorSelector'
 import MasterEmptyState from '@/components/MasterEmptyState'
-import IrrigationRing from '@/components/IrrigationRing'
 import ClimateSparkline from '@/components/ClimateSparkline'
 import DataSourceBadge from '@/components/DataSourceBadge'
 import { CloudSun, CloudRain, Sun, Cloud, Sprout, AlertCircle, CalendarOff, FlaskConical } from 'lucide-react'
 import { freshnessLevel, freshnessTextClass, formatDateShort } from '@/lib/freshness'
 import { resolveCiclo } from '@/lib/ciclo'
-import { FASE_CORTA } from '@/lib/agro-glosario'
+import { FASE_CORTA, describirFaseDetallada } from '@/lib/agro-glosario'
 import FechaSiembraEditor from '@/components/FechaSiembraEditor'
 
 // Datos vivos: nunca cachear (lotes/clima/condiciones cambian frecuentemente)
@@ -179,13 +178,12 @@ export default async function CultivoPage({
 
       {/* Per-lote panels — solo lotes con fecha de siembra real */}
       <div className="space-y-6">
-        {lotesConFecha.map((l, idx) => {
+        {lotesConFecha.map((l) => {
           const fechaReal = l.fecha_inicio_siembra_real
           const stageInfo = getCurrentStageInfo(fechaReal)
           const diasDesde = stageInfo?.dias ?? 0
-
-          // Mock irrigation: derived from days-since-planting (placeholder until DB has it)
-          const irrigation = Math.max(50, Math.min(98, 95 - (idx * 3)))
+          const visita = visitaDe(l.lote_id)
+          const faseDetalle = describirFaseDetallada(visita?.fase)
 
           return (
             <div key={l.lote_id} id={`lote-${l.lote_id}`} className="space-y-4 scroll-mt-20">
@@ -215,7 +213,7 @@ export default async function CultivoPage({
               <CultivoTimeline fechaSiembra={fechaReal} diasCiclo={DIAS_CICLO} />
 
               {/* Fila de indicadores del lote (incluye la última visita técnica) */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <StatCard title="Días desde siembra">
                   <div className="flex items-baseline gap-2">
                     <span className="text-5xl font-bold text-gray-900 dark:text-gray-100 tabular-nums">
@@ -225,46 +223,43 @@ export default async function CultivoPage({
                   </div>
                 </StatCard>
 
-                <StatCard title="Estado de riego">
-                  {/* El anillo medía 96 px y las etiquetas no partían línea:
-                      en una columna estrecha "Población establecida" se salía
-                      de la tarjeta. Anillo más chico, etiquetas que envuelven
-                      y min-w-0 para que el flex pueda encogerlas. */}
-                  <div className="flex items-center gap-3">
-                    <IrrigationRing percent={irrigation} label="Óptimo" size={76} />
-                    <div className="flex min-w-0 flex-1 flex-wrap gap-1.5">
-                      <Chip>Población establecida</Chip>
-                      <Chip>Plantabilidad</Chip>
-                    </div>
-                  </div>
-                </StatCard>
-
                 <StatCard title="Clima del lote">
                   {series.tempSeries.length > 0 ? (
                     <>
+                      <div className="mb-1.5">
+                        <DataSourceBadge source={conditions.source} fecha={conditions.fecha} size="sm" />
+                      </div>
                       <ClimateSparkline series1={series.tempSeries} series2={series.humSeries} label1="Temp" label2="Humedad" />
                       <p className="text-[10px] text-gray-400 mt-1">
                         Rango: {series.tempMin.toFixed(1)}° → {series.tempMax.toFixed(1)}° (14d)
                       </p>
                     </>
                   ) : (
-                    <p className="text-xs text-gray-400 dark:text-gray-500 py-6 text-center">Sin datos de clima.</p>
+                    <>
+                      <DataSourceBadge source={conditions.source} fecha={conditions.fecha} size="sm" />
+                      <p className="text-xs text-gray-400 dark:text-gray-500 py-6 text-center">Sin datos de clima.</p>
+                    </>
                   )}
                 </StatCard>
 
                 <StatCard title="Resumen de fase">
                   <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
-                    {visitaDe(l.lote_id)?.fase
-                      ? `Fase ${visitaDe(l.lote_id)!.fase} medida en campo. ${
-                          stageInfo ? getPhaseDescription(stageInfo.stage) : ''
+                    {visita?.fase
+                      ? `Fase ${visita.fase} medida en campo. ${
+                          faseDetalle ?? (stageInfo ? getPhaseDescription(stageInfo.stage) : '')
                         }`
                       : stageInfo
                         ? `Etapa ${stageInfo.meta.label} — ${stageInfo.meta.phase}. ${getPhaseDescription(stageInfo.stage)}`
                         : 'Lote sin fecha de siembra real registrada.'}
                   </p>
+                  {visita?.estado_experto && (
+                    <p className="mt-2.5 border-t border-gray-100 pt-2 text-xs text-gray-500 dark:border-gray-800 dark:text-gray-400">
+                      Valoración del técnico: <span className="font-medium text-gray-700 dark:text-gray-200">{visita.estado_experto}</span>
+                    </p>
+                  )}
                 </StatCard>
 
-                <UltimaVisitaCard v={visitaDe(l.lote_id) ?? null} />
+                <UltimaVisitaCard v={visita ?? null} />
               </div>
 
             </div>
@@ -419,16 +414,6 @@ function StatCard({ title, children }: { title: string; children: React.ReactNod
       </p>
       {children}
     </div>
-  )
-}
-
-function Chip({ children }: { children: React.ReactNode }) {
-  // Sin whitespace-nowrap: en tarjetas estrechas la etiqueta debe poder
-  // partirse en dos líneas antes que desbordar el borde.
-  return (
-    <span className="inline-flex items-center rounded-full border border-gray-200 bg-gray-50 px-2.5 py-1 text-[11px] leading-snug text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300">
-      {children}
-    </span>
   )
 }
 

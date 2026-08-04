@@ -48,12 +48,6 @@ export default function UltimaVisitaCard({ v }: { v: Visita | null }) {
             </p>
           )}
 
-          {v.estado_experto && (
-            <p className="text-xs text-gray-600 dark:text-gray-300">
-              Valoración: <span className="font-medium">{v.estado_experto}</span>
-            </p>
-          )}
-
           {v.observaciones && (
             <div className="border-t border-gray-100 pt-2 dark:border-gray-800">
               <p className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-gray-500">Observaciones</p>

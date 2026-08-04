@@ -36,18 +36,31 @@ export interface PrediccionMes {
 
 /**
  * Clasifica un mes usando la realidad medida cuando existe, en vez de
- * confiar ciegamente en es_pronostico: un mes que ya pasó (o está en curso)
- * se grafica con su valor_real si lo tiene, así sea de pocos días — nunca se
- * sustituye por el pronóstico. La línea punteada queda reservada solo para
- * meses que todavía no empiezan.
+ * confiar ciegamente en es_pronostico — EXCEPTO en el mes en curso mientras
+ * todavía no acumula suficientes días de dato (`UMBRAL_DIAS_MINIMO`, mismo
+ * umbral que ya usa la vista para decidir `es_pronostico`): recién empezado
+ * el mes, `valor_real` es casi siempre 0 o casi 0 porque apenas pasaron uno o
+ * dos días, y mostrar eso como "dato real" se lee como "no llovió nada este
+ * mes" en vez de "todavía no hay mes que mostrar". Ahí se usa el pronóstico
+ * (histórico × factor) que la vista ya calculó, igual que para meses
+ * genuinamente futuros — y a medida que se acumulan días reales (la vista
+ * pasa `es_pronostico` a false) vuelve a graficarse el dato medido.
+ *
+ * Para meses ya cerrados, en cambio, si sigue prefiriendo el valor_real así
+ * sea de pocos días (nunca sustituido por el pronóstico) — ahí sí es un dato
+ * real, aunque incompleto, y se marca esExcluidoPorCalidad en vez de ocultarlo.
  */
 function clasificarMes(
   mes: number,
   valorReal: number | null,
   valorPronostico: number,
   diasConDato: number | null,
+  esPronosticoVista: boolean,
 ): { valor: number | null; esPronostico: boolean; esExcluidoPorCalidad: boolean } {
   if (mes > MES_ACTUAL_NUMERO) {
+    return { valor: valorPronostico, esPronostico: true, esExcluidoPorCalidad: false }
+  }
+  if (mes === MES_ACTUAL_NUMERO && esPronosticoVista) {
     return { valor: valorPronostico, esPronostico: true, esExcluidoPorCalidad: false }
   }
   if (valorReal !== null) {
@@ -92,7 +105,7 @@ export function agregarPrediccionLotesPorMes(rows: PrediccionLluviaLoteRow[]): P
     const clasificados = group.map(g => {
       const valorReal = g.valor_real === null || g.valor_real === undefined ? null : Number(g.valor_real)
       const diasConDato = g.dias_con_dato === null || g.dias_con_dato === undefined ? null : Number(g.dias_con_dato)
-      const clasificado = clasificarMes(mes, valorReal, Number(g.valor), diasConDato)
+      const clasificado = clasificarMes(mes, valorReal, Number(g.valor), diasConDato, g.es_pronostico === true)
       const esPrimerMesDelLote = primerMesConDatoPorLote.get(g.lote_id) === mes
       return esPrimerMesDelLote ? { ...clasificado, esExcluidoPorCalidad: false } : clasificado
     })

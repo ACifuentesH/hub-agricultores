@@ -1,265 +1,265 @@
-lote,lote_id,latitude,longitude,station_id,codigo_estacion,unidad_produccion
-Dugarte 3,628029e0-f3d7-4151-850e-680a3e0266b9,9.57732,-69.27581,236176,P19,Agropecuaria Dos Caminos
-Dugarte 4,f39aa274-4a2b-4cfc-a09a-3435bf844bf1,9.57732,-69.27581,236176,P19,Agropecuaria Dos Caminos
-Los Patos 1,f2d834fc-d53c-44f3-8591-be5a26ab4ef7,9.57732,-69.27581,236176,P19,Agropecuaria Dos Caminos
-Los Patos 2,1ade474a-369e-4704-ae55-4953ba5db0de,9.57732,-69.27581,236176,P19,Agropecuaria Dos Caminos
-Los Patos 3,70279d75-a867-48ca-b666-9a4a9d2ee3db,9.57732,-69.27581,236176,P19,Agropecuaria Dos Caminos
-Bancales Viejos,0f3add10-cf21-480c-a677-31104cc89563,8.7266,-69.6746,235418,P18,Agropecuaria Juan Francisco C.A
-Juan,4f0a29df-eb58-443e-a724-eb3553c69402,8.7266,-69.6746,235418,P18,Agropecuaria Juan Francisco C.A
-La Ceiba,96fb3c6e-d2e2-42ea-a9d8-77917005073b,8.7266,-69.6746,235418,P18,Agropecuaria Juan Francisco C.A
-La Montaña 1,39f1c564-a330-4e3b-b89e-4eb5cbe4a2dc,8.7266,-69.6746,235418,P18,Agropecuaria Juan Francisco C.A
-La Montaña 2,2ebae9b8-0570-4b02-8177-93f406842bb9,8.7266,-69.6746,235418,P18,Agropecuaria Juan Francisco C.A
-La Platanera,a5f04bce-193a-4bf6-bfde-ccc241dfa8a5,8.7266,-69.6746,235418,P18,Agropecuaria Juan Francisco C.A
-La Rafaeleña,4cad224e-34fa-4ffe-9e88-17d8bbe2e614,8.7266,-69.6746,235418,P18,Agropecuaria Juan Francisco C.A
-Rogelio Grande,3796c344-a2c1-4daa-8b68-da5fbea33fa9,8.7266,-69.6746,235418,P18,Agropecuaria Juan Francisco C.A
-Rogelio Pequeño,05962cb2-bcd6-4100-8b01-03ea0cf5fd37,8.7266,-69.6746,235418,P18,Agropecuaria Juan Francisco C.A
-Concha de Drago,18a8c969-22ce-4d01-aa82-465cb837f403,9.28491,-65.7433,238308,G09,Agropecuaria Mochuelo
-Doña Mirian,69d96246-a21f-4c3e-975c-341d5882280f,9.28491,-65.7433,238308,G09,Agropecuaria Mochuelo
-El Mamón 1,78f5eb8f-f2d3-41b8-9ca4-2afd8a00fc4d,9.28491,-65.7433,238308,G09,Agropecuaria Mochuelo
-El Mamón 2,c68b9353-e9d8-44a9-a3d9-60daaa063bbf,9.28491,-65.7433,238308,G09,Agropecuaria Mochuelo
-El Marbellero,1276e7c4-8ed6-4978-926b-4db023ae127b,9.28491,-65.7433,238308,G09,Agropecuaria Mochuelo
-El Roble,32e47f93-3a7c-4883-8ebd-9f44a593bc3f,9.28491,-65.7433,238308,G09,Agropecuaria Mochuelo
-El Ron 1,07be278b-cb82-4152-b073-c763876d4b0f,9.28491,-65.7433,238308,G09,Agropecuaria Mochuelo
-El Ron 2,51c48845-8ff4-45e2-9b1a-bad17990078c,9.28491,-65.7433,238308,G09,Agropecuaria Mochuelo
-El Carito 1-1,f3b99946-6983-471f-8b45-3023527b6a0d,9.52187,-66.6813,241484,G14,Agropecuaria Vilereña
-El Carito 1-2,f8511ddb-70d0-4214-ab6e-d6b9f20fb6fd,9.52187,-66.6813,241484,G14,Agropecuaria Vilereña
-Eleodoro,891b1c8f-11e3-4464-8868-364a5737a2b0,9.52187,-66.6813,241484,G14,Agropecuaria Vilereña
-La Casa 1-1,ce77e86a-30f2-4959-a867-6df03e3bedf0,9.52187,-66.6813,241484,G14,Agropecuaria Vilereña
-La Zorra 1,fb269fe9-fa8b-4447-b852-21bf1eb8bcb3,9.52187,-66.6813,241484,G14,Agropecuaria Vilereña
-La Zorra 2,4d621ff4-0fa4-4100-8047-941f2dea0c65,9.52187,-66.6813,241484,G14,Agropecuaria Vilereña
-Pegado a Pepe 1,2d2adff8-329a-4b41-b8fd-cde821b1932c,9.52187,-66.6813,241484,G14,Agropecuaria Vilereña
-Pegado a Pepe 2,d86526dd-2c27-4746-8730-30138f6ec098,9.52187,-66.6813,241484,G14,Agropecuaria Vilereña
-Tomate 1,062cc7bc-40eb-4812-87fb-56c3858112db,9.52187,-66.6813,241484,G14,Agropecuaria Vilereña
-Tomate 2-1,4c2f9936-95f4-41cd-8339-ed6a912af863,9.52187,-66.6813,241484,G14,Agropecuaria Vilereña
-Tomate 2-2,2fd15d4e-d73a-45d7-8e71-9da3a1ad6526,9.52187,-66.6813,241484,G14,Agropecuaria Vilereña
-Trinchera de Corcovado A,093717a1-7bbb-44c7-a9e2-4e6f49b96f2d,9.52187,-66.6813,241484,G14,Agropecuaria Vilereña
-Trinchera de Corcovado B,a70cd7aa-b6eb-4f66-bbc9-6a21312eccd4,9.52187,-66.6813,241484,G14,Agropecuaria Vilereña
-Trinchera de Llano Adentro,c488c8ed-8752-4db3-aa7d-1c69aee40646,9.52187,-66.6813,241484,G14,Agropecuaria Vilereña
-Caño el Loco,6b0e1dfa-26df-4039-b057-49f25e9fa6e2,9.15103,-65.81198,238383,G12,Buenavista
-Cerro Blanco,613a6850-aeb1-42da-86c1-03495f79b458,9.15103,-65.81198,238383,G12,Buenavista
-El Ataud,8b80fa42-b321-4eb9-a3d7-dc2ddaf59308,9.15103,-65.81198,238383,G12,Buenavista
-El Diablo,689789a3-8513-47ca-a79c-db1d288e5685,9.15103,-65.81198,238383,G12,Buenavista
-El Mamón,16cb47a7-e235-49ee-bcaa-855ef93d198b,9.15103,-65.81198,238383,G12,Buenavista
-El Palmarital,5f1c512a-f77f-4716-a84d-66c9da25460c,9.15103,-65.81198,238383,G12,Buenavista
-El Roble,872b0297-325d-4b23-b20b-5c35f72cf94f,9.15103,-65.81198,238383,G12,Buenavista
-La Carretera,8c17ba37-ced0-4c71-aef6-02530d359b42,9.15103,-65.81198,238383,G12,Buenavista
-La Cuca,39193ffd-bb11-4346-984f-698c985abeaa,9.15103,-65.81198,238383,G12,Buenavista
-La Nueva,62b8cadb-5ca6-4cfd-b886-4f5cdc106fbf,9.15103,-65.81198,238383,G12,Buenavista
-La Sociedad,391a0ee5-292a-4134-a411-e242f1320e1c,9.15103,-65.81198,238383,G12,Buenavista
-Laguna Negra,612be9e2-1e2d-40ea-aee2-0ce73ed4d5d8,9.15103,-65.81198,238383,G12,Buenavista
-Las Novillas,69a93f87-536e-4c68-8b65-61eeff547262,9.15103,-65.81198,238383,G12,Buenavista
-Las Torres,a905953e-5b03-4234-804f-96473cf6f9de,9.15103,-65.81198,238383,G12,Buenavista
-Las Yeguas,29327543-b2f5-4624-a4e6-e7e8fd1f594a,9.15103,-65.81198,238383,G12,Buenavista
-Los Caribes,17eee026-d99d-4408-803d-04e5544d12b6,9.15103,-65.81198,238383,G12,Buenavista
-Los Palos,4a5fcdda-5003-4f94-827e-6ad1ff5b1280,9.15103,-65.81198,238383,G12,Buenavista
-L03 CASA DE TABLA ARRIBA A,31577c1d-53ac-4645-8b69-849bf3561130,9.28141,-66.45505,186730,G04,Camaripano
-L04 CASA DE TABLA ARRIBA B,3130337f-3ab2-406b-a5c1-347f402702ca,9.28141,-66.45505,186730,G04,Camaripano
-L05 EL DESQUITE,42b4b7f7-70f6-4291-b973-81920fd0cf62,9.28141,-66.45505,186730,G04,Camaripano
-Molino Escabezao 1,09164758-10e5-4d2a-9155-7bd7dd174e5f,9.28141,-66.45505,186730,G04,Camaripano
-Molino Escabezao 2,8b37ab97-2ecf-4455-add9-6ebe228e8087,9.28141,-66.45505,186730,G04,Camaripano
-Tanque Gasoil,cb182c2d-4309-49f9-87ae-3629575d45c6,9.28141,-66.45505,186730,G04,Camaripano
-Chaparral,c7ef1944-fd1e-4241-8b17-ed65092b5108,8.97136,-65.58844,238407,G13,Chaguaramitas
-Chaparralito 1,70e131ba-d8f9-4ba0-9a6b-c0de3b159543,8.97136,-65.58844,238407,G13,Chaguaramitas
-Chaparralito 2,db649d01-b26c-426c-949c-42778505618c,8.97136,-65.58844,238407,G13,Chaguaramitas
-El Olivo 1,d8629f36-aa18-4262-8b44-624c1b361f33,8.97136,-65.58844,238407,G13,Chaguaramitas
-El Olivo 2,9533c594-4333-4857-8060-48711fde7804,8.97136,-65.58844,238407,G13,Chaguaramitas
-El Trapiche,4b0c8bea-4423-4c64-a18a-9d78860bc3be,8.97136,-65.58844,238407,G13,Chaguaramitas
-La Aguadita,3b128bd0-8987-4816-8213-88e62b0963e1,8.97136,-65.58844,238407,G13,Chaguaramitas
-Loma de Piedra,474e4c6f-8da2-44c7-8e46-d8a66321907a,8.97136,-65.58844,238407,G13,Chaguaramitas
-Los Toros 1,d44de1dc-7867-4f9e-a1e7-788f92376293,8.97136,-65.58844,238407,G13,Chaguaramitas
-Los Toros 2,db1ee136-0f1d-4ae8-b3e3-e1710c5f7ef4,8.97136,-65.58844,238407,G13,Chaguaramitas
-Candilero,b95a4ded-83d5-40b3-87bd-fbbbbb95664f,9.50405,-69.224655,235225,P15,Don Fonti
-Candirosa - Mango A,29a2511b-4eb0-4216-ab97-01001579fb64,9.50405,-69.224655,235225,P15,Don Fonti
-Candirosa - Mango B,a6a74564-bac7-467d-95f7-46ae0fffb356,9.50405,-69.224655,235225,P15,Don Fonti
-El Drago,c0492162-4a3b-40ec-8575-35e20b79e20c,9.50405,-69.224655,235225,P15,Don Fonti
-El Mamon,a8fb7aa0-51ab-4677-a1b4-4719108c8790,9.50405,-69.224655,235225,P15,Don Fonti
-Girasol,c4fc1d9d-79b2-4320-a2ad-9be161d2e25e,9.50405,-69.224655,235225,P15,Don Fonti
-Guinea,e0061526-8cd5-400f-b0fd-fee43354643b,9.50405,-69.224655,235225,P15,Don Fonti
-La Batea,b30d085c-b1a6-4fd6-a04b-471b553ec606,9.50405,-69.224655,235225,P15,Don Fonti
-La Ceiba,6633b552-869b-409e-8223-d9515437cdd4,9.50405,-69.224655,235225,P15,Don Fonti
-Los Viejos,cc72a029-f9d1-4175-8eb2-39e605c57f02,9.50405,-69.224655,235225,P15,Don Fonti
-Tamarindo,5aba2d4e-e4e8-4b06-a86b-bb3a675c551e,9.50405,-69.224655,235225,P15,Don Fonti
-Los Reyes 1,889ce451-b97e-4bda-ba18-a8ea5cd9facb,,,,,El Almirante CA
-Los Reyes 2,8e844b11-ed19-47e1-bfe1-98ffb670fa7c,,,,,El Almirante CA
-Los Reyes 3,781a3436-b3e7-4e39-ab83-42ed9e1e1b46,,,,,El Almirante CA
-Los Reyes 4,add0559a-6479-45f4-b765-ce8f52082daa,,,,,El Almirante CA
-Los Vaquiros,9dcdbf55-7e2e-4f7e-9aae-16df50844f58,,,,,El Almirante CA
-L01 LOTE BAJO DE LOMA,8eed2344-d136-42ee-b3f7-f49bed8402c8,9.28141,-66.45505,186730,G04,El Apamate
-L02 LOTE COCO LOMA GRANDE,a4efd631-0c89-4a3d-ac26-f6f5180564f6,9.28141,-66.45505,186730,G04,El Apamate
-L03 LOTE LA PIEDRA,099a640e-6c28-4acf-b6d9-305d7cd4bf86,9.28141,-66.45505,186730,G04,El Apamate
-L04 LOTE LOCACIÓN A,5f0c51c1-923e-4d29-9a83-eb8850265570,9.28141,-66.45505,186730,G04,El Apamate
-L07 LOTE MATA PALO,15c6d03f-2a02-4b12-8a54-81ae17176103,9.28141,-66.45505,186730,G04,El Apamate
-Locación B,957c0283-c955-4e84-996c-c7c7929e7af8,9.28141,-66.45505,186730,G04,El Apamate
-Ramírez,6c03962d-afab-4407-94c0-084220b91463,9.28141,-66.45505,186730,G04,El Apamate
-Las 120 del frente 1,58f30f5d-38dc-4562-ae0a-cc210ea79c3a,,,,,El Encanto
-Las 15,a645f030-f241-4d61-8ab5-c8bb42531601,,,,,El Encanto
-Las 80 de atrás,171a4e48-1661-46b7-a246-940bced04fb3,,,,,El Encanto
-Parcela 62,2e959a4a-0a26-4e40-a96d-2b9345057402,,,,,El Encanto
-Parcela 64,9ea1d550-ffd7-45a7-96dd-c65b606f627a,,,,,El Encanto
-Costaneros,f55dc471-b9ad-4800-ac8f-676ba61e362d,9.6420355,-66.654366,213735,G05,El Loro
-Frijolero Oeste,d359733d-cffe-4298-843e-98528015531d,9.6420355,-66.654366,213735,G05,El Loro
-Guillero 1,78f5f315-7fe6-449c-b591-aaaf96a3d4d5,9.6420355,-66.654366,213735,G05,El Loro
-Guillero 2,0c5f247f-14a9-456b-9c08-ad395b544af5,9.6420355,-66.654366,213735,G05,El Loro
-L01 LOTE SAMANCITO,b281e4c5-89c9-4bd5-8830-bc5614b4b703,9.6420355,-66.654366,213735,G05,El Loro
-La Ceiba,ea74468f-e74f-458e-a748-e6975bc9e03f,9.6420355,-66.654366,213735,G05,El Loro
-Punta gorda A,da0e68eb-4568-4ad4-85f6-2b89e8a7de22,9.6420355,-66.654366,213735,G05,El Loro
-Taladro,54273189-deea-459e-9539-a9a66e106f45,9.6420355,-66.654366,213735,G05,El Loro
-Victoriero 1,4fcc3c97-d554-4a32-af2f-df4166ed9d5a,9.6420355,-66.654366,213735,G05,El Loro
-Victoriero 2,98469e64-a201-4a2f-b101-35c7011545df,9.6420355,-66.654366,213735,G05,El Loro
-El Manguito 1,009d4842-e980-4115-9f83-ef14114be556,9.97843,-69.04178,235420,Y03,El manguito
-El Manguito 2,e75f8a42-d927-4ac2-a2a5-12ea3cec8adb,9.97843,-69.04178,235420,Y03,El manguito
-El Manguito 3,891969f3-6d3b-40fe-a207-f50eda837f92,9.97843,-69.04178,235420,Y03,El manguito
-La Rosa,00ea0e05-0a77-4fbd-995c-7402959cf5ea,9.97843,-69.04178,235420,Y03,El manguito
-La Silvera,b84f3a77-03ab-458f-893c-3de6a9de2743,9.97843,-69.04178,235420,Y03,El manguito
-Lote de Arriba,98f7bbe0-9db8-4e7c-b850-098bf801aa23,9.97843,-69.04178,235420,Y03,El manguito
-Pavi 02,22c4ba7c-f484-4705-b781-2a8cd37a6a64,9.97843,-69.04178,235420,Y03,El manguito
-Pavi 1,99bab506-cf69-40e5-8a10-4e3bc9fc62a6,9.97843,-69.04178,235420,Y03,El manguito
-L05 La pista 2,82f54117-c200-4a36-b536-557e7b83ec3e,,,,,Finca Camilero
-La Casa 1,a436780e-d919-41bb-89fa-d78093d62ed1,,,,,Finca Camilero
-La Casa 2,280adb87-ec68-41f8-8e9e-d694f7787e79,,,,,Finca Camilero
-La Casa 3,f02afbc7-2fa3-4f46-92f8-5a88a95e0803,,,,,Finca Camilero
-La Pista 1,6caaa418-203f-4587-9677-9d1e31ede8da,,,,,Finca Camilero
-El Guasimo,0f3e9126-a65d-414f-a4c4-64a768721216,8.66616,-69.994255,235263,B01,Finca La Campesina
-El Tanque,0e41533b-87d2-4276-b2dc-cb6d443bdf0b,8.66616,-69.994255,235263,B01,Finca La Campesina
-La Ceiba,68de25e0-970c-4e7b-a320-a698b4f6d605,8.66616,-69.994255,235263,B01,Finca La Campesina
-La Mariera,dcfd1499-20dd-4342-8a05-e49be9ccc997,8.66616,-69.994255,235263,B01,Finca La Campesina
-Los Pepes 1,bd732e00-9929-4122-bda9-d9d6a4320535,8.66616,-69.994255,235263,B01,Finca La Campesina
-Los Pepes 2,9ec86aae-f6a9-42e9-b14c-6506fcc30c1b,8.66616,-69.994255,235263,B01,Finca La Campesina
-Pelo e Mula,f129db6e-1770-468c-8647-b18c5ecba6a5,8.66616,-69.994255,235263,B01,Finca La Campesina
-Revilla 1,b042dd6d-4f09-4db4-a202-7c741ba70aae,8.66616,-69.994255,235263,B01,Finca La Campesina
-Revilla 2,96c2be98-1632-46dc-8418-87bc935cc125,8.66616,-69.994255,235263,B01,Finca La Campesina
-La Padillera 1,3b144731-86cd-4856-9137-d00b9e69a670,9.495216,-69.24176,235240,P16,Finca La Padillera
-Las Coromoticos 1,414243e8-fc22-4d60-86c6-64d2ddeb53d3,9.495216,-69.24176,235240,P16,Finca La Padillera
-Las Coromoticos 2,aedead7d-1c51-4a37-956c-22a030327cb8,9.495216,-69.24176,235240,P16,Finca La Padillera
-Los Manguitos,51de8ec9-612f-48f0-b790-78414fc4abfa,9.495216,-69.24176,235240,P16,Finca La Padillera
-Las 10,32749415-204e-4346-8a37-9fe827d34530,9.22112,-68.87558,235347,P17,Finca Montes de Luna
-Las 12,a860e380-8a66-4c52-b476-489917e58aba,9.22112,-68.87558,235347,P17,Finca Montes de Luna
-Las 14,d8bd190b-2604-48eb-9832-8065ac8d035e,9.22112,-68.87558,235347,P17,Finca Montes de Luna
-Las 15,e0a1c69a-82ba-4d8c-bfe1-15666ef4e38c,9.22112,-68.87558,235347,P17,Finca Montes de Luna
-Las 25,2ca4def8-00f3-4a0c-bf50-953e20a60b71,9.22112,-68.87558,235347,P17,Finca Montes de Luna
-Las 30,7adbd076-899f-43fa-bb17-d46e4444925b,9.22112,-68.87558,235347,P17,Finca Montes de Luna
-Las 36,fddc878d-13d5-4524-b4cc-3fec7d33398f,9.22112,-68.87558,235347,P17,Finca Montes de Luna
-Las 40,7201515b-46bd-4f92-b888-5bcd0e6eea91,9.22112,-68.87558,235347,P17,Finca Montes de Luna
-"Las 6 + 1,7 + 0,4",12d1cd50-6e79-41b0-bdbe-670820f5c241,9.22112,-68.87558,235347,P17,Finca Montes de Luna
-Ciruelo,7eee6a3c-5642-4f54-aa3e-ce0fe307fee8,,,,,Juan Hilario
-Cosechadora quemada 1,a3230c98-9e23-4ba9-89a9-bba443c610f1,,,,,Juan Hilario
-Cosechadora quemada 2,ad994139-9590-4367-a18b-7f89c983ae89,,,,,Juan Hilario
-Cosechadora quemada 3,e772acfa-f1f8-46c3-99d1-7bed9eec4312,,,,,Juan Hilario
-Cosechadora quemada 4,9b2dc289-d884-47ab-a882-08ab0eaf989d,,,,,Juan Hilario
-Cosechadora quemada 5,0b525207-3849-4ea6-ace9-8a444eaa8b13,,,,,Juan Hilario
-Cosechadora quemada 6,348db4e8-93d4-44e0-ab17-6bd08e3d2102,,,,,Juan Hilario
-Detrás del galpón 1,b7510e44-eadb-44a2-b383-ea6c995ec47b,,,,,Juan Hilario
-Detrás del galpón 2,9cb8168e-5ff8-43c0-9cae-a1664a764017,,,,,Juan Hilario
-El Trailer 1,733658b7-c234-4dcd-8f3c-ed0d067b4d42,,,,,Juan Hilario
-El Trailer 2,152d51d3-ee0d-48a2-a5d5-acbcd3e9b2ce,,,,,Juan Hilario
-El Trailer 3,0eb1a874-179e-4b36-9469-92e98d62c938,,,,,Juan Hilario
-El Trailer 4,9d625ed5-2e81-4cbd-9d40-31b051b4ea8e,,,,,Juan Hilario
-El Trailer 5,b7721501-84a8-492d-a86c-22d9bf27d7c8,,,,,Juan Hilario
-Leo,1553c417-54a1-416e-8d3f-49084f66c5ac,,,,,Juan Hilario
-Antonio Gaiza,62786119-617b-4983-bc9f-28b669b1a665,9.96753,-69.05368,235411,Y02,La Ceiba
-El Corral,84d788ab-4dac-49fe-900e-899f423d3c29,9.96753,-69.05368,235411,Y02,La Ceiba
-El Galpón,83794207-c5d3-45f7-8dea-7975f0b174ea,9.96753,-69.05368,235411,Y02,La Ceiba
-Pollera,ea9bdd86-30a3-428e-8378-657edee59cbf,9.96753,-69.05368,235411,Y02,La Ceiba
-Parcela 170,25c60eee-d69f-4d8d-acbf-e24d232566b8,9.31064,-69.10249,212609,P08,La Colina
-Parcela 171-172,d26a8175-7918-484f-afe4-bcfa19a83185,9.31064,-69.10249,212609,P08,La Colina
-El Porvenir,4a9d0b47-8b81-4bac-bfee-5fca325aac50,9.270751,-65.58421,238350,G11,La Graciosa
-La Palmita 1,20157979-7a4b-48d9-a7c6-f4a75e602c7f,9.270751,-65.58421,238350,G11,La Graciosa
-La Palmita 2,b140e14c-43ec-43f2-b852-fd22dcff80e9,9.270751,-65.58421,238350,G11,La Graciosa
-Los Morochos,32201316-debd-4eaf-a3d6-98444a4900e2,9.270751,-65.58421,238350,G11,La Graciosa
-Magallanes,be11b6b9-01c3-410c-95e0-9d11df353efc,9.270751,-65.58421,238350,G11,La Graciosa
-Betsi,332a5b09-6066-4793-b8e7-cbfa23857372,10.18139,-68.95663,235597,Y04,La vaquera
-Caro caro 1,8dd3e28d-2029-463e-8b79-8620b90e4ba9,10.18139,-68.95663,235597,Y04,La vaquera
-Grande,60a98156-36f8-4ff5-b423-c486a6febc05,10.18139,-68.95663,235597,Y04,La vaquera
-La Entrada,b9e2e7ea-6831-46ad-801b-9c8960afc0dd,10.18139,-68.95663,235597,Y04,La vaquera
-Las 3 ha,39434e2e-460f-4a9a-bde7-5fc68435994a,10.18139,-68.95663,235597,Y04,La vaquera
-Las Torres,d214f04d-8808-4eda-9f30-acbf4fcb274f,10.18139,-68.95663,235597,Y04,La vaquera
-Los Aguacates,9dcf22c2-05bc-4245-8208-debe4a2d6105,10.18139,-68.95663,235597,Y04,La vaquera
-Lote 1,58930a46-28d1-4153-a425-5041d3e0694d,10.18139,-68.95663,235597,Y04,La vaquera
-Lucas,40497e37-11a5-40c2-bd1f-00ad544d6607,10.18139,-68.95663,235597,Y04,La vaquera
-Neco,9c3b9f56-6143-4420-a685-fbee350cc01f,10.18139,-68.95663,235597,Y04,La vaquera
-Willi,a1e2db0a-7600-488e-8dc1-856cff5cb84d,10.18139,-68.95663,235597,Y04,La vaquera
-L01 LOTE 1A,21354b7b-4e5e-4d94-a76d-303882311642,9.27254,-69.15076,212695,P10,Las Cupulas
-L02 LOTE 1B,a9ba524c-81d9-404f-8d5f-067aa10988f6,9.27254,-69.15076,212695,P10,Las Cupulas
-L06 LOTE-04,ffbf2b7b-cfb6-4a97-a959-b31cc0a04dd7,9.27254,-69.15076,212695,P10,Las Cupulas
-L07 LOTE-05,8982bf78-f197-4170-9026-e58f752a51ee,9.27254,-69.15076,212695,P10,Las Cupulas
-L08 LOTE-06,46a27a1e-dff3-4415-bdc0-fbfb18d94d22,9.27254,-69.15076,212695,P10,Las Cupulas
-L09 LOTE-07,22b7966f-1f56-4d15-bfdc-3dfa6dbbc8bb,9.27254,-69.15076,212695,P10,Las Cupulas
-L10 LOTE-08,24bd0cbb-0814-4774-bb5a-6e9c2f9fc955,9.27254,-69.15076,212695,P10,Las Cupulas
-L11 LOTE-09,f8302450-521e-4ecf-bcf9-80849b89390f,9.27254,-69.15076,212695,P10,Las Cupulas
-Villa Marina 2,d3084104-dc18-4db9-bed3-34856f70877a,9.27254,-69.15076,212695,P10,Las Cupulas
-Villa Marina 3,19fb02c0-9102-4a92-832e-68cc39dad695,9.27254,-69.15076,212695,P10,Las Cupulas
-El Galpón,41c9f08f-79c8-43e3-a36f-4391e3f3bd62,8.99576,-65.51944,186669,G02,Los Espinitos
-El Muerto,fa74d088-e208-4b65-9f03-d3469b9e19b8,8.99576,-65.51944,186669,G02,Los Espinitos
-Agua Viva,d0ca6fc1-2dda-4c51-ace9-6e7b37d1cc04,10.0489,-69.07636,238060,Y06,Acentamiento campesino El rodeo
-El Galpón,04c3a825-6653-4fa9-a1e3-3eba110cb9e7,10.0489,-69.07636,238060,Y06,Acentamiento campesino El rodeo
-El Jobo,1e0c953d-1d97-4f25-aded-cbb504372949,10.0489,-69.07636,238060,Y06,Acentamiento campesino El rodeo
-La Galindera 1,c694a685-5690-4081-ba89-4f4babbf7bec,10.0489,-69.07636,238060,Y06,Acentamiento campesino El rodeo
-La Galindera 2,7826e623-d598-4bdc-a007-1e059b10aab7,10.0489,-69.07636,238060,Y06,Acentamiento campesino El rodeo
-La Galindera 3,2a3b32fa-662b-4f06-86f5-36ac43b96d33,10.0489,-69.07636,238060,Y06,Acentamiento campesino El rodeo
-La Galindera 4,d18cdedd-1533-4bb7-9970-a90dcd631787,10.0489,-69.07636,238060,Y06,Acentamiento campesino El rodeo
-Las Carmelitas 1,802ed6c6-d11b-42a7-8c10-f02df070cd3d,10.0489,-69.07636,238060,Y06,Acentamiento campesino El rodeo
-Las Carmelitas 2,7fcc70cf-2db8-40d6-9469-3f6416527f13,10.0489,-69.07636,238060,Y06,Acentamiento campesino El rodeo
-Las Carmelitas 3,49e4abc9-6ccd-4584-89cf-e9aa5ec963f3,10.0489,-69.07636,238060,Y06,Acentamiento campesino El rodeo
-Los Generales,647f85f2-795a-41e3-83d1-d8524482c807,10.0489,-69.07636,238060,Y06,Acentamiento campesino El rodeo
-La Laguna,ac26d637-1354-4f4e-bc5f-213f47e00755,9.31064,-69.10249,212609,P08,Agropecuaria Alma
-La Mora,8543a640-bab6-490e-95e5-d51977616414,9.31064,-69.10249,212609,P08,Agropecuaria Alma
-LAS 35,6dd3c518-edab-4522-aa03-9e0f94bbbfe1,9.31064,-69.10249,212609,P08,Agropecuaria Alma
-LOTE-01,61f84380-ee6e-4215-be7f-4dcf2999f3e2,9.31064,-69.10249,212609,P08,Agropecuaria Alma
-LOTE-02,88a4cd40-a342-4261-a568-02d2da16730e,9.31064,-69.10249,212609,P08,Agropecuaria Alma
-LOTE-03,50d591bf-7d43-4cf1-8d33-45f5b4cbc9f4,9.31064,-69.10249,212609,P08,Agropecuaria Alma
-LOTE-04,43e91c42-7bb0-4c8b-b5af-a1adf3e96410,9.31064,-69.10249,212609,P08,Agropecuaria Alma
-Dugarte 1,4f1bf8d9-082f-4d7d-83a6-d20796e2925d,9.57732,-69.27581,236176,P19,Agropecuaria Dos Caminos
-Dugarte 2,7b61a69f-69e5-4f88-8447-1a414c3b0fc2,9.57732,-69.27581,236176,P19,Agropecuaria Dos Caminos
-Villa Marina 1,c4ec995d-fbf4-4f15-8f34-63724d7a16fa,9.27254,-69.15076,212695,P10,Las Cupulas
-julio 1,48b044df-eedb-4c67-87d1-97804decfdef,,,,,Juan Hilario
-Julio 2,7acc3ec9-eeef-47a0-881e-36a8353eb302,,,,,Juan Hilario
-L01 LOTE DETRÁS DE LA CASA,ef8fb276-16c8-47ab-b122-1798c47f2660,8.99576,-65.51944,186669,G02,Los Espinitos
-L02 LOTE LOS MANGOS,21739ad5-631b-472d-b168-d22372b1c1bc,8.99576,-65.51944,186669,G02,Los Espinitos
-L04 LOTE EL DRAGAL 1,fff64211-9182-4b93-8cfd-714037e78315,8.99576,-65.51944,186669,G02,Los Espinitos
-L05 LOTE EL DRAGAL 4,a4f14b29-f9f4-486c-8202-ae7f5d35cae1,8.99576,-65.51944,186669,G02,Los Espinitos
-L06 LOTE EL MANGO B,436c3d94-d3bf-4c44-bd90-ac53e625d0f3,8.99576,-65.51944,186669,G02,Los Espinitos
-Bernaldino 1+2,9b5d4495-8402-453a-b937-5b2ea11f0d08,10.196259,-68.868286,238570,Y07,Los Galo
-Bernaldino 3,b9dce86b-7791-49fd-938f-f2f60c240621,10.196259,-68.868286,238570,Y07,Los Galo
-El Grande 1,88bf6daa-e00f-4c66-b034-6962315377db,10.196259,-68.868286,238570,Y07,Los Galo
-El Grande 2,af76ad46-bc27-4f6f-a81c-a9e64230245d,10.196259,-68.868286,238570,Y07,Los Galo
-El Mamón,5761d0ff-61b1-45de-b4ab-24a1ec89bd4d,10.196259,-68.868286,238570,Y07,Los Galo
-El Samán,62c59f2f-0277-4f65-bbce-b4c9eb443417,10.196259,-68.868286,238570,Y07,Los Galo
-La Autopista,0af30eaf-3848-4a2b-b3f1-a229206ffc25,10.196259,-68.868286,238570,Y07,Los Galo
-Casa Nueva,31d09810-1abe-4f2e-8893-aeea6b7d205a,9.05184,-65.47527,213617,G06,Los Nivillos Mahomar
-L01 LOTE CIRUELA ABAJO,52e348b0-4918-4158-a5d7-3472e0b0854d,9.05184,-65.47527,213617,G06,Los Nivillos Mahomar
-L02 LOTE CIRUELA ARRIBA,6c7f9251-0153-4ab2-9c81-5077ced0d92e,9.05184,-65.47527,213617,G06,Los Nivillos Mahomar
-Arnaldo,2b2b02bd-aef4-4d63-982d-42e24d54ccf0,10.08871,-69.04026,237976,Y05,Mayurupi
-El Manguito,c7cf8cdc-95de-441b-926c-2410117fb265,10.08871,-69.04026,237976,Y05,Mayurupi
-La Casita,8acf1792-df92-41a3-8060-0a3dfe16e28a,10.08871,-69.04026,237976,Y05,Mayurupi
-La Mora,1a0b7e34-2e7b-4ee9-832b-7a2cd8d76e7d,10.08871,-69.04026,237976,Y05,Mayurupi
-Las 15,aa1742cf-036c-41be-8631-02a6168a5363,10.08871,-69.04026,237976,Y05,Mayurupi
-Las 17,30ad530e-c1a9-4984-9844-58f7139826cf,10.08871,-69.04026,237976,Y05,Mayurupi
-Las 29,d5f248c5-c04e-48a3-a179-85415b1f188c,10.08871,-69.04026,237976,Y05,Mayurupi
-Las Lagunas,c1b5faa9-4a63-41f4-a7d8-a3b22ce96e9d,10.08871,-69.04026,237976,Y05,Mayurupi
-Los Robles,c7f3004f-6112-4fa3-9c5d-fbbd0dc80174,10.08871,-69.04026,237976,Y05,Mayurupi
-Samán,890bea72-8a7e-45f7-a085-3467d37061d4,10.08871,-69.04026,237976,Y05,Mayurupi
-Parcela 212,6bf28240-2a25-48d7-9ca7-26b755502f09,,,,,Parcela 246
-Parcela 246,ea96d140-5bfa-4d8f-a854-8a4e4758eaa0,,,,,Parcela 246
-L04 LOTE 7A,712b7d50-5779-4c51-8dc0-18a4da53df5e,9.12093,-68.84783,212516,P06,San Antonio
-L05 LOTE 7B,47bbce29-2afc-4207-84f3-fe3414fb1253,9.12093,-68.84783,212516,P06,San Antonio
-L06 LOTE 7C,b0ed6fbc-abb3-4cd6-b013-0b789a12a22a,9.12093,-68.84783,212516,P06,San Antonio
-L07 LOTE-08,e672ab6a-c8a5-43ff-9776-80f87b779fce,9.12093,-68.84783,212516,P06,San Antonio
-La Unión,227fc949-f570-4301-9b0e-f976857c35a4,9.243261,-65.660194,238339,G10,San Pedro
-Laguna Grande,2ee2d7da-5f06-483e-bf03-77350defcfd0,9.243261,-65.660194,238339,G10,San Pedro
-Los Muertos,3038661b-9d83-428f-9775-7df45290ef9d,9.243261,-65.660194,238339,G10,San Pedro
-Portón Azul,31034093-3088-41a9-9948-bbb427097e9e,9.243261,-65.660194,238339,G10,San Pedro
-L01 LOTE EL TANQUE-A,9ecbb6b7-df6e-41fa-82f1-33c41c1ce385,9.16992,-65.75194,185450,G01,San Ramon
-L02 LOTE EL TANQUE-B,39be1485-960a-4125-9713-2e2bd8d33f7b,9.16992,-65.75194,185450,G01,San Ramon
-L03 LOTE IGUANITAS,ace057d6-8a5d-4546-8bc4-2ed4f62abe2d,9.16992,-65.75194,185450,G01,San Ramon
-L04 LOS BECERROS,bb56be08-8160-45dd-83e5-218a67e81667,9.16992,-65.75194,185450,G01,San Ramon
-La Victoria 1,faf0be94-659e-4daa-84d8-ee6f885a7d00,,,,P20,Santa Barbara
-La Victoria 2,1103e049-e324-423a-8e71-672ffdd945bf,,,,P20,Santa Barbara
-La Victoria 3,0d20a4b1-19d2-4fe1-a737-91ab00057888,,,,P20,Santa Barbara
-La Victoria 4,dec08db8-4f38-4fbe-b300-b57b9b475a46,,,,P20,Santa Barbara
-Santa Barbara 1,33b65c11-1af9-48b7-a091-a2bcbd90a283,,,,P20,Santa Barbara
-Santa Barbara 2,29c131eb-54d5-4bc2-8fe1-a08c5bbf3caf,,,,P20,Santa Barbara
-Santa Barbara 3,87ab0cdc-b271-45ec-b6ca-2fa8eec7e97c,,,,P20,Santa Barbara
-L01 ARENERO 1 LOTE-02,636e6781-bf99-4d9d-b330-d0e5afaa63f0,9.53432,-68.88757,184921,P01,Santa Elena
-L03 RIO 2 LOTE-03,f4157ba3-dde7-4f06-af33-b6b5be35d752,9.53432,-68.88757,184921,P01,Santa Elena
-L04 LOTE RIO 1 LOTE-04,497b62b2-4883-4b3e-9ca6-965561518187,9.53432,-68.88757,184921,P01,Santa Elena
-L05 LOTE ARENERO 2 LOTE-01,be68c78e-8331-4291-af6d-e25f2a82ea22,9.53432,-68.88757,184921,P01,Santa Elena
+lote_id,unidad_produccion,lote,station_id,codigo_estacion,latitude,longitude
+ad994139-9590-4367-a18b-7f89c983ae89,Juan Hilario,Cosechadora quemada 2,,,,
+e772acfa-f1f8-46c3-99d1-7bed9eec4312,Juan Hilario,Cosechadora quemada 3,,,,
+9b2dc289-d884-47ab-a882-08ab0eaf989d,Juan Hilario,Cosechadora quemada 4,,,,
+628029e0-f3d7-4151-850e-680a3e0266b9,Agropecuaria Dos Caminos,Dugarte 3,236176,P19,9.57732,-69.27581
+f39aa274-4a2b-4cfc-a09a-3435bf844bf1,Agropecuaria Dos Caminos,Dugarte 4,236176,P19,9.57732,-69.27581
+f2d834fc-d53c-44f3-8591-be5a26ab4ef7,Agropecuaria Dos Caminos,Los Patos 1,236176,P19,9.57732,-69.27581
+1ade474a-369e-4704-ae55-4953ba5db0de,Agropecuaria Dos Caminos,Los Patos 2,236176,P19,9.57732,-69.27581
+70279d75-a867-48ca-b666-9a4a9d2ee3db,Agropecuaria Dos Caminos,Los Patos 3,236176,P19,9.57732,-69.27581
+0f3add10-cf21-480c-a677-31104cc89563,Agropecuaria Juan Francisco C.A,Bancales Viejos,235418,P18,8.7266,-69.6746
+4f0a29df-eb58-443e-a724-eb3553c69402,Agropecuaria Juan Francisco C.A,Juan,235418,P18,8.7266,-69.6746
+96fb3c6e-d2e2-42ea-a9d8-77917005073b,Agropecuaria Juan Francisco C.A,La Ceiba,235418,P18,8.7266,-69.6746
+39f1c564-a330-4e3b-b89e-4eb5cbe4a2dc,Agropecuaria Juan Francisco C.A,La Montaña 1,235418,P18,8.7266,-69.6746
+2ebae9b8-0570-4b02-8177-93f406842bb9,Agropecuaria Juan Francisco C.A,La Montaña 2,235418,P18,8.7266,-69.6746
+a5f04bce-193a-4bf6-bfde-ccc241dfa8a5,Agropecuaria Juan Francisco C.A,La Platanera,235418,P18,8.7266,-69.6746
+4cad224e-34fa-4ffe-9e88-17d8bbe2e614,Agropecuaria Juan Francisco C.A,La Rafaeleña,235418,P18,8.7266,-69.6746
+3796c344-a2c1-4daa-8b68-da5fbea33fa9,Agropecuaria Juan Francisco C.A,Rogelio Grande,235418,P18,8.7266,-69.6746
+05962cb2-bcd6-4100-8b01-03ea0cf5fd37,Agropecuaria Juan Francisco C.A,Rogelio Pequeño,235418,P18,8.7266,-69.6746
+18a8c969-22ce-4d01-aa82-465cb837f403,Agropecuaria Mochuelo,Concha de Drago,238308,G09,9.28491,-65.7433
+69d96246-a21f-4c3e-975c-341d5882280f,Agropecuaria Mochuelo,Doña Mirian,238308,G09,9.28491,-65.7433
+78f5eb8f-f2d3-41b8-9ca4-2afd8a00fc4d,Agropecuaria Mochuelo,El Mamón 1,238308,G09,9.28491,-65.7433
+c68b9353-e9d8-44a9-a3d9-60daaa063bbf,Agropecuaria Mochuelo,El Mamón 2,238308,G09,9.28491,-65.7433
+1276e7c4-8ed6-4978-926b-4db023ae127b,Agropecuaria Mochuelo,El Marbellero,238308,G09,9.28491,-65.7433
+32e47f93-3a7c-4883-8ebd-9f44a593bc3f,Agropecuaria Mochuelo,El Roble,238308,G09,9.28491,-65.7433
+07be278b-cb82-4152-b073-c763876d4b0f,Agropecuaria Mochuelo,El Ron 1,238308,G09,9.28491,-65.7433
+51c48845-8ff4-45e2-9b1a-bad17990078c,Agropecuaria Mochuelo,El Ron 2,238308,G09,9.28491,-65.7433
+f3b99946-6983-471f-8b45-3023527b6a0d,Agropecuaria Vilereña,El Carito 1-1,241484,G14,9.52187,-66.6813
+f8511ddb-70d0-4214-ab6e-d6b9f20fb6fd,Agropecuaria Vilereña,El Carito 1-2,241484,G14,9.52187,-66.6813
+891b1c8f-11e3-4464-8868-364a5737a2b0,Agropecuaria Vilereña,Eleodoro,241484,G14,9.52187,-66.6813
+ce77e86a-30f2-4959-a867-6df03e3bedf0,Agropecuaria Vilereña,La Casa 1-1,241484,G14,9.52187,-66.6813
+fb269fe9-fa8b-4447-b852-21bf1eb8bcb3,Agropecuaria Vilereña,La Zorra 1,241484,G14,9.52187,-66.6813
+4d621ff4-0fa4-4100-8047-941f2dea0c65,Agropecuaria Vilereña,La Zorra 2,241484,G14,9.52187,-66.6813
+2d2adff8-329a-4b41-b8fd-cde821b1932c,Agropecuaria Vilereña,Pegado a Pepe 1,241484,G14,9.52187,-66.6813
+d86526dd-2c27-4746-8730-30138f6ec098,Agropecuaria Vilereña,Pegado a Pepe 2,241484,G14,9.52187,-66.6813
+062cc7bc-40eb-4812-87fb-56c3858112db,Agropecuaria Vilereña,Tomate 1,241484,G14,9.52187,-66.6813
+4c2f9936-95f4-41cd-8339-ed6a912af863,Agropecuaria Vilereña,Tomate 2-1,241484,G14,9.52187,-66.6813
+2fd15d4e-d73a-45d7-8e71-9da3a1ad6526,Agropecuaria Vilereña,Tomate 2-2,241484,G14,9.52187,-66.6813
+093717a1-7bbb-44c7-a9e2-4e6f49b96f2d,Agropecuaria Vilereña,Trinchera de Corcovado A,241484,G14,9.52187,-66.6813
+a70cd7aa-b6eb-4f66-bbc9-6a21312eccd4,Agropecuaria Vilereña,Trinchera de Corcovado B,241484,G14,9.52187,-66.6813
+c488c8ed-8752-4db3-aa7d-1c69aee40646,Agropecuaria Vilereña,Trinchera de Llano Adentro,241484,G14,9.52187,-66.6813
+6b0e1dfa-26df-4039-b057-49f25e9fa6e2,Buenavista,Caño el Loco,238383,G12,9.15103,-65.81198
+613a6850-aeb1-42da-86c1-03495f79b458,Buenavista,Cerro Blanco,238383,G12,9.15103,-65.81198
+8b80fa42-b321-4eb9-a3d7-dc2ddaf59308,Buenavista,El Ataud,238383,G12,9.15103,-65.81198
+689789a3-8513-47ca-a79c-db1d288e5685,Buenavista,El Diablo,238383,G12,9.15103,-65.81198
+16cb47a7-e235-49ee-bcaa-855ef93d198b,Buenavista,El Mamón,238383,G12,9.15103,-65.81198
+5f1c512a-f77f-4716-a84d-66c9da25460c,Buenavista,El Palmarital,238383,G12,9.15103,-65.81198
+872b0297-325d-4b23-b20b-5c35f72cf94f,Buenavista,El Roble,238383,G12,9.15103,-65.81198
+8c17ba37-ced0-4c71-aef6-02530d359b42,Buenavista,La Carretera,238383,G12,9.15103,-65.81198
+39193ffd-bb11-4346-984f-698c985abeaa,Buenavista,La Cuca,238383,G12,9.15103,-65.81198
+62b8cadb-5ca6-4cfd-b886-4f5cdc106fbf,Buenavista,La Nueva,238383,G12,9.15103,-65.81198
+391a0ee5-292a-4134-a411-e242f1320e1c,Buenavista,La Sociedad,238383,G12,9.15103,-65.81198
+612be9e2-1e2d-40ea-aee2-0ce73ed4d5d8,Buenavista,Laguna Negra,238383,G12,9.15103,-65.81198
+69a93f87-536e-4c68-8b65-61eeff547262,Buenavista,Las Novillas,238383,G12,9.15103,-65.81198
+a905953e-5b03-4234-804f-96473cf6f9de,Buenavista,Las Torres,238383,G12,9.15103,-65.81198
+29327543-b2f5-4624-a4e6-e7e8fd1f594a,Buenavista,Las Yeguas,238383,G12,9.15103,-65.81198
+17eee026-d99d-4408-803d-04e5544d12b6,Buenavista,Los Caribes,238383,G12,9.15103,-65.81198
+4a5fcdda-5003-4f94-827e-6ad1ff5b1280,Buenavista,Los Palos,238383,G12,9.15103,-65.81198
+31577c1d-53ac-4645-8b69-849bf3561130,Camaripano,L03 CASA DE TABLA ARRIBA A,186730,G04,9.28141,-66.45505
+3130337f-3ab2-406b-a5c1-347f402702ca,Camaripano,L04 CASA DE TABLA ARRIBA B,186730,G04,9.28141,-66.45505
+42b4b7f7-70f6-4291-b973-81920fd0cf62,Camaripano,L05 EL DESQUITE,186730,G04,9.28141,-66.45505
+09164758-10e5-4d2a-9155-7bd7dd174e5f,Camaripano,Molino Escabezao 1,186730,G04,9.28141,-66.45505
+8b37ab97-2ecf-4455-add9-6ebe228e8087,Camaripano,Molino Escabezao 2,186730,G04,9.28141,-66.45505
+cb182c2d-4309-49f9-87ae-3629575d45c6,Camaripano,Tanque Gasoil,186730,G04,9.28141,-66.45505
+c7ef1944-fd1e-4241-8b17-ed65092b5108,Chaguaramitas,Chaparral,238407,G13,8.97136,-65.58844
+70e131ba-d8f9-4ba0-9a6b-c0de3b159543,Chaguaramitas,Chaparralito 1,238407,G13,8.97136,-65.58844
+db649d01-b26c-426c-949c-42778505618c,Chaguaramitas,Chaparralito 2,238407,G13,8.97136,-65.58844
+d8629f36-aa18-4262-8b44-624c1b361f33,Chaguaramitas,El Olivo 1,238407,G13,8.97136,-65.58844
+9533c594-4333-4857-8060-48711fde7804,Chaguaramitas,El Olivo 2,238407,G13,8.97136,-65.58844
+4b0c8bea-4423-4c64-a18a-9d78860bc3be,Chaguaramitas,El Trapiche,238407,G13,8.97136,-65.58844
+3b128bd0-8987-4816-8213-88e62b0963e1,Chaguaramitas,La Aguadita,238407,G13,8.97136,-65.58844
+474e4c6f-8da2-44c7-8e46-d8a66321907a,Chaguaramitas,Loma de Piedra,238407,G13,8.97136,-65.58844
+d44de1dc-7867-4f9e-a1e7-788f92376293,Chaguaramitas,Los Toros 1,238407,G13,8.97136,-65.58844
+db1ee136-0f1d-4ae8-b3e3-e1710c5f7ef4,Chaguaramitas,Los Toros 2,238407,G13,8.97136,-65.58844
+b95a4ded-83d5-40b3-87bd-fbbbbb95664f,Don Fonti,Candilero,235225,P15,9.50405,-69.224655
+29a2511b-4eb0-4216-ab97-01001579fb64,Don Fonti,Candirosa - Mango A,235225,P15,9.50405,-69.224655
+a6a74564-bac7-467d-95f7-46ae0fffb356,Don Fonti,Candirosa - Mango B,235225,P15,9.50405,-69.224655
+c0492162-4a3b-40ec-8575-35e20b79e20c,Don Fonti,El Drago,235225,P15,9.50405,-69.224655
+a8fb7aa0-51ab-4677-a1b4-4719108c8790,Don Fonti,El Mamon,235225,P15,9.50405,-69.224655
+c4fc1d9d-79b2-4320-a2ad-9be161d2e25e,Don Fonti,Girasol,235225,P15,9.50405,-69.224655
+e0061526-8cd5-400f-b0fd-fee43354643b,Don Fonti,Guinea,235225,P15,9.50405,-69.224655
+b30d085c-b1a6-4fd6-a04b-471b553ec606,Don Fonti,La Batea,235225,P15,9.50405,-69.224655
+6633b552-869b-409e-8223-d9515437cdd4,Don Fonti,La Ceiba,235225,P15,9.50405,-69.224655
+cc72a029-f9d1-4175-8eb2-39e605c57f02,Don Fonti,Los Viejos,235225,P15,9.50405,-69.224655
+5aba2d4e-e4e8-4b06-a86b-bb3a675c551e,Don Fonti,Tamarindo,235225,P15,9.50405,-69.224655
+889ce451-b97e-4bda-ba18-a8ea5cd9facb,El Almirante CA,Los Reyes 1,,,,
+8e844b11-ed19-47e1-bfe1-98ffb670fa7c,El Almirante CA,Los Reyes 2,,,,
+781a3436-b3e7-4e39-ab83-42ed9e1e1b46,El Almirante CA,Los Reyes 3,,,,
+add0559a-6479-45f4-b765-ce8f52082daa,El Almirante CA,Los Reyes 4,,,,
+9dcdbf55-7e2e-4f7e-9aae-16df50844f58,El Almirante CA,Los Vaquiros,,,,
+8eed2344-d136-42ee-b3f7-f49bed8402c8,El Apamate,L01 LOTE BAJO DE LOMA,186730,G04,9.28141,-66.45505
+a4efd631-0c89-4a3d-ac26-f6f5180564f6,El Apamate,L02 LOTE COCO LOMA GRANDE,186730,G04,9.28141,-66.45505
+099a640e-6c28-4acf-b6d9-305d7cd4bf86,El Apamate,L03 LOTE LA PIEDRA,186730,G04,9.28141,-66.45505
+5f0c51c1-923e-4d29-9a83-eb8850265570,El Apamate,L04 LOTE LOCACIÓN A,186730,G04,9.28141,-66.45505
+15c6d03f-2a02-4b12-8a54-81ae17176103,El Apamate,L07 LOTE MATA PALO,186730,G04,9.28141,-66.45505
+957c0283-c955-4e84-996c-c7c7929e7af8,El Apamate,Locación B,186730,G04,9.28141,-66.45505
+6c03962d-afab-4407-94c0-084220b91463,El Apamate,Ramírez,186730,G04,9.28141,-66.45505
+58f30f5d-38dc-4562-ae0a-cc210ea79c3a,El Encanto,Las 120 del frente 1,,,,
+a645f030-f241-4d61-8ab5-c8bb42531601,El Encanto,Las 15,,,,
+171a4e48-1661-46b7-a246-940bced04fb3,El Encanto,Las 80 de atrás,,,,
+2e959a4a-0a26-4e40-a96d-2b9345057402,El Encanto,Parcela 62,,,,
+9ea1d550-ffd7-45a7-96dd-c65b606f627a,El Encanto,Parcela 64,,,,
+f55dc471-b9ad-4800-ac8f-676ba61e362d,El Loro,Costaneros,213735,G05,9.6420355,-66.654366
+d359733d-cffe-4298-843e-98528015531d,El Loro,Frijolero Oeste,213735,G05,9.6420355,-66.654366
+78f5f315-7fe6-449c-b591-aaaf96a3d4d5,El Loro,Guillero 1,213735,G05,9.6420355,-66.654366
+0c5f247f-14a9-456b-9c08-ad395b544af5,El Loro,Guillero 2,213735,G05,9.6420355,-66.654366
+b281e4c5-89c9-4bd5-8830-bc5614b4b703,El Loro,L01 LOTE SAMANCITO,213735,G05,9.6420355,-66.654366
+ea74468f-e74f-458e-a748-e6975bc9e03f,El Loro,La Ceiba,213735,G05,9.6420355,-66.654366
+da0e68eb-4568-4ad4-85f6-2b89e8a7de22,El Loro,Punta gorda A,213735,G05,9.6420355,-66.654366
+54273189-deea-459e-9539-a9a66e106f45,El Loro,Taladro,213735,G05,9.6420355,-66.654366
+4fcc3c97-d554-4a32-af2f-df4166ed9d5a,El Loro,Victoriero 1,213735,G05,9.6420355,-66.654366
+98469e64-a201-4a2f-b101-35c7011545df,El Loro,Victoriero 2,213735,G05,9.6420355,-66.654366
+009d4842-e980-4115-9f83-ef14114be556,El manguito,El Manguito 1,235420,Y03,9.97843,-69.04178
+e75f8a42-d927-4ac2-a2a5-12ea3cec8adb,El manguito,El Manguito 2,235420,Y03,9.97843,-69.04178
+891969f3-6d3b-40fe-a207-f50eda837f92,El manguito,El Manguito 3,235420,Y03,9.97843,-69.04178
+00ea0e05-0a77-4fbd-995c-7402959cf5ea,El manguito,La Rosa,235420,Y03,9.97843,-69.04178
+b84f3a77-03ab-458f-893c-3de6a9de2743,El manguito,La Silvera,235420,Y03,9.97843,-69.04178
+98f7bbe0-9db8-4e7c-b850-098bf801aa23,El manguito,Lote de Arriba,235420,Y03,9.97843,-69.04178
+22c4ba7c-f484-4705-b781-2a8cd37a6a64,El manguito,Pavi 02,235420,Y03,9.97843,-69.04178
+99bab506-cf69-40e5-8a10-4e3bc9fc62a6,El manguito,Pavi 1,235420,Y03,9.97843,-69.04178
+82f54117-c200-4a36-b536-557e7b83ec3e,Finca Camilero,L05 La pista 2,,,,
+a436780e-d919-41bb-89fa-d78093d62ed1,Finca Camilero,La Casa 1,,,,
+280adb87-ec68-41f8-8e9e-d694f7787e79,Finca Camilero,La Casa 2,,,,
+f02afbc7-2fa3-4f46-92f8-5a88a95e0803,Finca Camilero,La Casa 3,,,,
+6caaa418-203f-4587-9677-9d1e31ede8da,Finca Camilero,La Pista 1,,,,
+0f3e9126-a65d-414f-a4c4-64a768721216,Finca La Campesina,El Guasimo,235263,B01,8.66616,-69.994255
+0e41533b-87d2-4276-b2dc-cb6d443bdf0b,Finca La Campesina,El Tanque,235263,B01,8.66616,-69.994255
+68de25e0-970c-4e7b-a320-a698b4f6d605,Finca La Campesina,La Ceiba,235263,B01,8.66616,-69.994255
+dcfd1499-20dd-4342-8a05-e49be9ccc997,Finca La Campesina,La Mariera,235263,B01,8.66616,-69.994255
+bd732e00-9929-4122-bda9-d9d6a4320535,Finca La Campesina,Los Pepes 1,235263,B01,8.66616,-69.994255
+9ec86aae-f6a9-42e9-b14c-6506fcc30c1b,Finca La Campesina,Los Pepes 2,235263,B01,8.66616,-69.994255
+f129db6e-1770-468c-8647-b18c5ecba6a5,Finca La Campesina,Pelo e Mula,235263,B01,8.66616,-69.994255
+b042dd6d-4f09-4db4-a202-7c741ba70aae,Finca La Campesina,Revilla 1,235263,B01,8.66616,-69.994255
+96c2be98-1632-46dc-8418-87bc935cc125,Finca La Campesina,Revilla 2,235263,B01,8.66616,-69.994255
+3b144731-86cd-4856-9137-d00b9e69a670,Finca La Padillera,La Padillera 1,235240,P16,9.495216,-69.24176
+414243e8-fc22-4d60-86c6-64d2ddeb53d3,Finca La Padillera,Las Coromoticos 1,235240,P16,9.495216,-69.24176
+aedead7d-1c51-4a37-956c-22a030327cb8,Finca La Padillera,Las Coromoticos 2,235240,P16,9.495216,-69.24176
+51de8ec9-612f-48f0-b790-78414fc4abfa,Finca La Padillera,Los Manguitos,235240,P16,9.495216,-69.24176
+32749415-204e-4346-8a37-9fe827d34530,Finca Montes de Luna,Las 10,235347,P17,9.22112,-68.87558
+a860e380-8a66-4c52-b476-489917e58aba,Finca Montes de Luna,Las 12,235347,P17,9.22112,-68.87558
+d8bd190b-2604-48eb-9832-8065ac8d035e,Finca Montes de Luna,Las 14,235347,P17,9.22112,-68.87558
+e0a1c69a-82ba-4d8c-bfe1-15666ef4e38c,Finca Montes de Luna,Las 15,235347,P17,9.22112,-68.87558
+2ca4def8-00f3-4a0c-bf50-953e20a60b71,Finca Montes de Luna,Las 25,235347,P17,9.22112,-68.87558
+7adbd076-899f-43fa-bb17-d46e4444925b,Finca Montes de Luna,Las 30,235347,P17,9.22112,-68.87558
+fddc878d-13d5-4524-b4cc-3fec7d33398f,Finca Montes de Luna,Las 36,235347,P17,9.22112,-68.87558
+7201515b-46bd-4f92-b888-5bcd0e6eea91,Finca Montes de Luna,Las 40,235347,P17,9.22112,-68.87558
+12d1cd50-6e79-41b0-bdbe-670820f5c241,Finca Montes de Luna,"Las 6 + 1,7 + 0,4",235347,P17,9.22112,-68.87558
+7eee6a3c-5642-4f54-aa3e-ce0fe307fee8,Juan Hilario,Ciruelo,,,,
+a3230c98-9e23-4ba9-89a9-bba443c610f1,Juan Hilario,Cosechadora quemada 1,,,,
+0b525207-3849-4ea6-ace9-8a444eaa8b13,Juan Hilario,Cosechadora quemada 5,,,,
+348db4e8-93d4-44e0-ab17-6bd08e3d2102,Juan Hilario,Cosechadora quemada 6,,,,
+b7510e44-eadb-44a2-b383-ea6c995ec47b,Juan Hilario,Detrás del galpón 1,,,,
+9cb8168e-5ff8-43c0-9cae-a1664a764017,Juan Hilario,Detrás del galpón 2,,,,
+733658b7-c234-4dcd-8f3c-ed0d067b4d42,Juan Hilario,El Trailer 1,,,,
+152d51d3-ee0d-48a2-a5d5-acbcd3e9b2ce,Juan Hilario,El Trailer 2,,,,
+0eb1a874-179e-4b36-9469-92e98d62c938,Juan Hilario,El Trailer 3,,,,
+9d625ed5-2e81-4cbd-9d40-31b051b4ea8e,Juan Hilario,El Trailer 4,,,,
+b7721501-84a8-492d-a86c-22d9bf27d7c8,Juan Hilario,El Trailer 5,,,,
+1553c417-54a1-416e-8d3f-49084f66c5ac,Juan Hilario,Leo,,,,
+62786119-617b-4983-bc9f-28b669b1a665,La Ceiba,Antonio Gaiza,235411,Y02,9.96753,-69.05368
+84d788ab-4dac-49fe-900e-899f423d3c29,La Ceiba,El Corral,235411,Y02,9.96753,-69.05368
+83794207-c5d3-45f7-8dea-7975f0b174ea,La Ceiba,El Galpón,235411,Y02,9.96753,-69.05368
+ea9bdd86-30a3-428e-8378-657edee59cbf,La Ceiba,Pollera,235411,Y02,9.96753,-69.05368
+25c60eee-d69f-4d8d-acbf-e24d232566b8,La Colina,Parcela 170,212609,P08,9.31064,-69.10249
+d26a8175-7918-484f-afe4-bcfa19a83185,La Colina,Parcela 171-172,212609,P08,9.31064,-69.10249
+4a9d0b47-8b81-4bac-bfee-5fca325aac50,La Graciosa,El Porvenir,238350,G11,9.270751,-65.58421
+20157979-7a4b-48d9-a7c6-f4a75e602c7f,La Graciosa,La Palmita 1,238350,G11,9.270751,-65.58421
+b140e14c-43ec-43f2-b852-fd22dcff80e9,La Graciosa,La Palmita 2,238350,G11,9.270751,-65.58421
+32201316-debd-4eaf-a3d6-98444a4900e2,La Graciosa,Los Morochos,238350,G11,9.270751,-65.58421
+be11b6b9-01c3-410c-95e0-9d11df353efc,La Graciosa,Magallanes,238350,G11,9.270751,-65.58421
+332a5b09-6066-4793-b8e7-cbfa23857372,La vaquera,Betsi,235597,Y04,10.18139,-68.95663
+8dd3e28d-2029-463e-8b79-8620b90e4ba9,La vaquera,Caro caro 1,235597,Y04,10.18139,-68.95663
+60a98156-36f8-4ff5-b423-c486a6febc05,La vaquera,Grande,235597,Y04,10.18139,-68.95663
+b9e2e7ea-6831-46ad-801b-9c8960afc0dd,La vaquera,La Entrada,235597,Y04,10.18139,-68.95663
+39434e2e-460f-4a9a-bde7-5fc68435994a,La vaquera,Las 3 ha,235597,Y04,10.18139,-68.95663
+d214f04d-8808-4eda-9f30-acbf4fcb274f,La vaquera,Las Torres,235597,Y04,10.18139,-68.95663
+9dcf22c2-05bc-4245-8208-debe4a2d6105,La vaquera,Los Aguacates,235597,Y04,10.18139,-68.95663
+58930a46-28d1-4153-a425-5041d3e0694d,La vaquera,Lote 1,235597,Y04,10.18139,-68.95663
+40497e37-11a5-40c2-bd1f-00ad544d6607,La vaquera,Lucas,235597,Y04,10.18139,-68.95663
+9c3b9f56-6143-4420-a685-fbee350cc01f,La vaquera,Neco,235597,Y04,10.18139,-68.95663
+a1e2db0a-7600-488e-8dc1-856cff5cb84d,La vaquera,Willi,235597,Y04,10.18139,-68.95663
+21354b7b-4e5e-4d94-a76d-303882311642,Las Cupulas,L01 LOTE 1A,212695,P10,9.27254,-69.15076
+a9ba524c-81d9-404f-8d5f-067aa10988f6,Las Cupulas,L02 LOTE 1B,212695,P10,9.27254,-69.15076
+ffbf2b7b-cfb6-4a97-a959-b31cc0a04dd7,Las Cupulas,L06 LOTE-04,212695,P10,9.27254,-69.15076
+8982bf78-f197-4170-9026-e58f752a51ee,Las Cupulas,L07 LOTE-05,212695,P10,9.27254,-69.15076
+46a27a1e-dff3-4415-bdc0-fbfb18d94d22,Las Cupulas,L08 LOTE-06,212695,P10,9.27254,-69.15076
+22b7966f-1f56-4d15-bfdc-3dfa6dbbc8bb,Las Cupulas,L09 LOTE-07,212695,P10,9.27254,-69.15076
+24bd0cbb-0814-4774-bb5a-6e9c2f9fc955,Las Cupulas,L10 LOTE-08,212695,P10,9.27254,-69.15076
+f8302450-521e-4ecf-bcf9-80849b89390f,Las Cupulas,L11 LOTE-09,212695,P10,9.27254,-69.15076
+d3084104-dc18-4db9-bed3-34856f70877a,Las Cupulas,Villa Marina 2,212695,P10,9.27254,-69.15076
+19fb02c0-9102-4a92-832e-68cc39dad695,Las Cupulas,Villa Marina 3,212695,P10,9.27254,-69.15076
+41c9f08f-79c8-43e3-a36f-4391e3f3bd62,Los Espinitos,El Galpón,186669,G02,8.99576,-65.51944
+fa74d088-e208-4b65-9f03-d3469b9e19b8,Los Espinitos,El Muerto,186669,G02,8.99576,-65.51944
+d0ca6fc1-2dda-4c51-ace9-6e7b37d1cc04,Acentamiento campesino El rodeo,Agua Viva,238060,Y06,10.0489,-69.07636
+04c3a825-6653-4fa9-a1e3-3eba110cb9e7,Acentamiento campesino El rodeo,El Galpón,238060,Y06,10.0489,-69.07636
+1e0c953d-1d97-4f25-aded-cbb504372949,Acentamiento campesino El rodeo,El Jobo,238060,Y06,10.0489,-69.07636
+c694a685-5690-4081-ba89-4f4babbf7bec,Acentamiento campesino El rodeo,La Galindera 1,238060,Y06,10.0489,-69.07636
+7826e623-d598-4bdc-a007-1e059b10aab7,Acentamiento campesino El rodeo,La Galindera 2,238060,Y06,10.0489,-69.07636
+2a3b32fa-662b-4f06-86f5-36ac43b96d33,Acentamiento campesino El rodeo,La Galindera 3,238060,Y06,10.0489,-69.07636
+d18cdedd-1533-4bb7-9970-a90dcd631787,Acentamiento campesino El rodeo,La Galindera 4,238060,Y06,10.0489,-69.07636
+802ed6c6-d11b-42a7-8c10-f02df070cd3d,Acentamiento campesino El rodeo,Las Carmelitas 1,238060,Y06,10.0489,-69.07636
+7fcc70cf-2db8-40d6-9469-3f6416527f13,Acentamiento campesino El rodeo,Las Carmelitas 2,238060,Y06,10.0489,-69.07636
+49e4abc9-6ccd-4584-89cf-e9aa5ec963f3,Acentamiento campesino El rodeo,Las Carmelitas 3,238060,Y06,10.0489,-69.07636
+647f85f2-795a-41e3-83d1-d8524482c807,Acentamiento campesino El rodeo,Los Generales,238060,Y06,10.0489,-69.07636
+ac26d637-1354-4f4e-bc5f-213f47e00755,Agropecuaria Alma,La Laguna,212609,P08,9.31064,-69.10249
+8543a640-bab6-490e-95e5-d51977616414,Agropecuaria Alma,La Mora,212609,P08,9.31064,-69.10249
+6dd3c518-edab-4522-aa03-9e0f94bbbfe1,Agropecuaria Alma,LAS 35,212609,P08,9.31064,-69.10249
+61f84380-ee6e-4215-be7f-4dcf2999f3e2,Agropecuaria Alma,LOTE-01,212609,P08,9.31064,-69.10249
+88a4cd40-a342-4261-a568-02d2da16730e,Agropecuaria Alma,LOTE-02,212609,P08,9.31064,-69.10249
+50d591bf-7d43-4cf1-8d33-45f5b4cbc9f4,Agropecuaria Alma,LOTE-03,212609,P08,9.31064,-69.10249
+43e91c42-7bb0-4c8b-b5af-a1adf3e96410,Agropecuaria Alma,LOTE-04,212609,P08,9.31064,-69.10249
+4f1bf8d9-082f-4d7d-83a6-d20796e2925d,Agropecuaria Dos Caminos,Dugarte 1,236176,P19,9.57732,-69.27581
+7b61a69f-69e5-4f88-8447-1a414c3b0fc2,Agropecuaria Dos Caminos,Dugarte 2,236176,P19,9.57732,-69.27581
+c4ec995d-fbf4-4f15-8f34-63724d7a16fa,Las Cupulas,Villa Marina 1,212695,P10,9.27254,-69.15076
+48b044df-eedb-4c67-87d1-97804decfdef,Juan Hilario,julio 1,,,,
+7acc3ec9-eeef-47a0-881e-36a8353eb302,Juan Hilario,Julio 2,,,,
+b0ed6fbc-abb3-4cd6-b013-0b789a12a22a,San Antonio,L06 LOTE 7C,212516,P06,9.12093,-68.84783
+e672ab6a-c8a5-43ff-9776-80f87b779fce,San Antonio,L07 LOTE-08,212516,P06,9.12093,-68.84783
+227fc949-f570-4301-9b0e-f976857c35a4,San Pedro,La Unión,238339,G10,9.243261,-65.660194
+2ee2d7da-5f06-483e-bf03-77350defcfd0,San Pedro,Laguna Grande,238339,G10,9.243261,-65.660194
+3038661b-9d83-428f-9775-7df45290ef9d,San Pedro,Los Muertos,238339,G10,9.243261,-65.660194
+31034093-3088-41a9-9948-bbb427097e9e,San Pedro,Portón Azul,238339,G10,9.243261,-65.660194
+ef8fb276-16c8-47ab-b122-1798c47f2660,Los Espinitos,L01 LOTE DETRÁS DE LA CASA,186669,G02,8.99576,-65.51944
+21739ad5-631b-472d-b168-d22372b1c1bc,Los Espinitos,L02 LOTE LOS MANGOS,186669,G02,8.99576,-65.51944
+fff64211-9182-4b93-8cfd-714037e78315,Los Espinitos,L04 LOTE EL DRAGAL 1,186669,G02,8.99576,-65.51944
+a4f14b29-f9f4-486c-8202-ae7f5d35cae1,Los Espinitos,L05 LOTE EL DRAGAL 4,186669,G02,8.99576,-65.51944
+436c3d94-d3bf-4c44-bd90-ac53e625d0f3,Los Espinitos,L06 LOTE EL MANGO B,186669,G02,8.99576,-65.51944
+9b5d4495-8402-453a-b937-5b2ea11f0d08,Los Galo,Bernaldino 1+2,238570,Y07,10.196259,-68.868286
+b9dce86b-7791-49fd-938f-f2f60c240621,Los Galo,Bernaldino 3,238570,Y07,10.196259,-68.868286
+88bf6daa-e00f-4c66-b034-6962315377db,Los Galo,El Grande 1,238570,Y07,10.196259,-68.868286
+af76ad46-bc27-4f6f-a81c-a9e64230245d,Los Galo,El Grande 2,238570,Y07,10.196259,-68.868286
+5761d0ff-61b1-45de-b4ab-24a1ec89bd4d,Los Galo,El Mamón,238570,Y07,10.196259,-68.868286
+62c59f2f-0277-4f65-bbce-b4c9eb443417,Los Galo,El Samán,238570,Y07,10.196259,-68.868286
+0af30eaf-3848-4a2b-b3f1-a229206ffc25,Los Galo,La Autopista,238570,Y07,10.196259,-68.868286
+31d09810-1abe-4f2e-8893-aeea6b7d205a,Los Nivillos Mahomar,Casa Nueva,213617,G06,9.05184,-65.47527
+52e348b0-4918-4158-a5d7-3472e0b0854d,Los Nivillos Mahomar,L01 LOTE CIRUELA ABAJO,213617,G06,9.05184,-65.47527
+6c7f9251-0153-4ab2-9c81-5077ced0d92e,Los Nivillos Mahomar,L02 LOTE CIRUELA ARRIBA,213617,G06,9.05184,-65.47527
+9ecbb6b7-df6e-41fa-82f1-33c41c1ce385,San Ramon,L01 LOTE EL TANQUE-A,185450,G01,9.16992,-65.75194
+39be1485-960a-4125-9713-2e2bd8d33f7b,San Ramon,L02 LOTE EL TANQUE-B,185450,G01,9.16992,-65.75194
+ace057d6-8a5d-4546-8bc4-2ed4f62abe2d,San Ramon,L03 LOTE IGUANITAS,185450,G01,9.16992,-65.75194
+bb56be08-8160-45dd-83e5-218a67e81667,San Ramon,L04 LOS BECERROS,185450,G01,9.16992,-65.75194
+faf0be94-659e-4daa-84d8-ee6f885a7d00,Santa Barbara,La Victoria 1,,P20,,
+1103e049-e324-423a-8e71-672ffdd945bf,Santa Barbara,La Victoria 2,,P20,,
+0d20a4b1-19d2-4fe1-a737-91ab00057888,Santa Barbara,La Victoria 3,,P20,,
+dec08db8-4f38-4fbe-b300-b57b9b475a46,Santa Barbara,La Victoria 4,,P20,,
+33b65c11-1af9-48b7-a091-a2bcbd90a283,Santa Barbara,Santa Barbara 1,,P20,,
+29c131eb-54d5-4bc2-8fe1-a08c5bbf3caf,Santa Barbara,Santa Barbara 2,,P20,,
+87ab0cdc-b271-45ec-b6ca-2fa8eec7e97c,Santa Barbara,Santa Barbara 3,,P20,,
+636e6781-bf99-4d9d-b330-d0e5afaa63f0,Santa Elena,L01 ARENERO 1 LOTE-02,184921,P01,9.53432,-68.88757
+f4157ba3-dde7-4f06-af33-b6b5be35d752,Santa Elena,L03 RIO 2 LOTE-03,184921,P01,9.53432,-68.88757
+497b62b2-4883-4b3e-9ca6-965561518187,Santa Elena,L04 LOTE RIO 1 LOTE-04,184921,P01,9.53432,-68.88757
+be68c78e-8331-4291-af6d-e25f2a82ea22,Santa Elena,L05 LOTE ARENERO 2 LOTE-01,184921,P01,9.53432,-68.88757
+2b2b02bd-aef4-4d63-982d-42e24d54ccf0,Mayurupi,Arnaldo,237976,Y05,10.08871,-69.04026
+c7cf8cdc-95de-441b-926c-2410117fb265,Mayurupi,El Manguito,237976,Y05,10.08871,-69.04026
+8acf1792-df92-41a3-8060-0a3dfe16e28a,Mayurupi,La Casita,237976,Y05,10.08871,-69.04026
+1a0b7e34-2e7b-4ee9-832b-7a2cd8d76e7d,Mayurupi,La Mora,237976,Y05,10.08871,-69.04026
+aa1742cf-036c-41be-8631-02a6168a5363,Mayurupi,Las 15,237976,Y05,10.08871,-69.04026
+30ad530e-c1a9-4984-9844-58f7139826cf,Mayurupi,Las 17,237976,Y05,10.08871,-69.04026
+d5f248c5-c04e-48a3-a179-85415b1f188c,Mayurupi,Las 29,237976,Y05,10.08871,-69.04026
+c1b5faa9-4a63-41f4-a7d8-a3b22ce96e9d,Mayurupi,Las Lagunas,237976,Y05,10.08871,-69.04026
+c7f3004f-6112-4fa3-9c5d-fbbd0dc80174,Mayurupi,Los Robles,237976,Y05,10.08871,-69.04026
+890bea72-8a7e-45f7-a085-3467d37061d4,Mayurupi,Samán,237976,Y05,10.08871,-69.04026
+6bf28240-2a25-48d7-9ca7-26b755502f09,Parcela 246,Parcela 212,,,,
+ea96d140-5bfa-4d8f-a854-8a4e4758eaa0,Parcela 246,Parcela 246,,,,
+712b7d50-5779-4c51-8dc0-18a4da53df5e,San Antonio,L04 LOTE 7A,212516,P06,9.12093,-68.84783
+47bbce29-2afc-4207-84f3-fe3414fb1253,San Antonio,L05 LOTE 7B,212516,P06,9.12093,-68.84783

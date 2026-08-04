@@ -1,7 +1,7 @@
 'use client'
 
 /**
- * Piloto HeroUI v3 — tarjeta "Lectura más reciente" de /clima.
+ * Piloto HeroUI v3 — tarjeta "Datos de hoy" de /clima.
  *
  * Es el primer componente de la app migrado a HeroUI v3 (Card + Chip). El resto
  * de la pantalla sigue con los componentes propios de Tailwind; si el piloto
@@ -47,7 +47,7 @@ export default function CurrentConditionsCard({
   return (
     <Card variant="default" className="w-full">
       <Card.Header className="flex flex-row flex-wrap items-center justify-between gap-3">
-        <Card.Title className="text-sm font-semibold">Lectura más reciente</Card.Title>
+        <Card.Title className="text-sm font-semibold">Datos de hoy</Card.Title>
         {conditions.fecha && (
           <Chip size="sm" variant="soft" color={FRESHNESS_CHIP_COLOR[level]}>
             {level === 'fresh'

@@ -70,7 +70,7 @@ Módulo reescrito por **Alejandro Cifuentes** (jul-2026), integrando el proyecto
 | `AgricultorRainMonthlyChart` | Lluvia mensual del agricultor, un año por serie |
 | `RainProgressBar` | Lluvia acumulada contra la meta en mm |
 | `DryStreakBadge` | Racha de días secos consecutivos, con color escalado a partir de 3 |
-| `CurrentConditionsCard` | Lectura más reciente. **Único punto donde se usa HeroUI v3** (piloto) |
+| `CurrentConditionsCard` | Datos de hoy. **Único punto donde se usa HeroUI v3** (piloto) |
 
 **Vista master** (`components/clima/master/`)
 

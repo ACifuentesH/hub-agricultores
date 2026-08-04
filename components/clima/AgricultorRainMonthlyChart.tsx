@@ -9,22 +9,24 @@
  */
 
 import { ComposedChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
-import type { LluviaMensualLoteRow, PrediccionLluviaLoteRow } from '@/lib/seguimiento-lluvia'
+import type { LluviaMensualLoteRow, PrediccionLluviaLoteRow, LluviaDiariaEstacionRow } from '@/lib/seguimiento-lluvia'
 import { fmtNum } from '@/lib/seguimiento-lluvia-calc'
 import { colorForYear } from './chartTheme'
 import {
   ANIO_ACTUAL,
   agregarPrediccionLotesPorMes,
-  buildPrediccionOverlay,
+  buildPrediccionOverlaySemanal,
   esBajaConfianza,
 } from './prediccionMensual'
 
 interface Props {
   mensual: LluviaMensualLoteRow[]
   prediccion: PrediccionLluviaLoteRow[]
+  /** Lluvia diaria de las estaciones del agricultor — desglosa cada mes en 4 puntos semanales. */
+  diaria: LluviaDiariaEstacionRow[]
 }
 
-export default function AgricultorRainMonthlyChart({ mensual, prediccion }: Props) {
+export default function AgricultorRainMonthlyChart({ mensual, prediccion, diaria }: Props) {
   const prediccionActual = agregarPrediccionLotesPorMes(prediccion)
 
   // Los lotes de un mismo agricultor reciben básicamente la misma lluvia,
@@ -41,7 +43,7 @@ export default function AgricultorRainMonthlyChart({ mensual, prediccion }: Prop
     value: v.count > 0 ? v.sum / v.count : 0,
   }))
 
-  const overlay = buildPrediccionOverlay(monthlyAvgPoints, prediccionActual)
+  const overlay = buildPrediccionOverlaySemanal(monthlyAvgPoints, prediccionActual, diaria)
   const historicalYears = overlay.years.filter(y => y !== ANIO_ACTUAL)
   const tieneAnioActual = overlay.years.includes(ANIO_ACTUAL)
 
@@ -77,10 +79,14 @@ export default function AgricultorRainMonthlyChart({ mensual, prediccion }: Prop
               <ComposedChart data={overlay.data} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                 <XAxis
-                  dataKey="month"
+                  dataKey="label"
                   tick={{ fontSize: 10 }}
                   interval={0}
-                  tickFormatter={(value: string) => value.slice(0, 3)}
+                  // Un punto cada semana (48 en total) para poder pararse en
+                  // cualquiera, pero solo se rotula la primera semana de cada
+                  // mes — mismo aspecto de 12 etiquetas que tenía el gráfico
+                  // mensual.
+                  tickFormatter={(value: string) => (value.endsWith('S1') ? value.slice(0, 3) : '')}
                 />
                 <YAxis
                   tick={{ fontSize: 11 }}

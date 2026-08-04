@@ -32,6 +32,11 @@ export const CATEGORIAS = [
     label: 'P&L',
     descripcion: 'Proyecciones de costos, rendimiento y rentabilidad del ciclo.',
   },
+  {
+    id: 'analisis_datos',
+    label: 'Análisis de datos',
+    descripcion: 'Reportes y análisis generados a partir de los datos del ciclo.',
+  },
 ] as const
 
 export type CategoriaId = (typeof CATEGORIAS)[number]['id']

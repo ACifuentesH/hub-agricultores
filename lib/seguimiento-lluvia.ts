@@ -243,6 +243,23 @@ export async function getLluviaDiariaEstacionPorZona(zona: string): Promise<Lluv
   return (data ?? []) as LluviaDiariaEstacionRow[]
 }
 
+/**
+ * Lluvia diaria de las estaciones de un conjunto de lotes (multi-año, a
+ * diferencia de `getLluviaDiariaPorLotes` que acota al periodo crítico de
+ * cada lote). Usada para desglosar por semana el gráfico de lluvia mensual
+ * del agricultor (ver `components/clima/prediccionMensual.ts`).
+ */
+export async function getLluviaDiariaEstacionPorStations(stationIds: string[]): Promise<LluviaDiariaEstacionRow[]> {
+  if (stationIds.length === 0) return []
+  const supabase = await createClient()
+  const { data } = await supabase
+    .from('vista_lluvia_diaria_estacion')
+    .select('*')
+    .in('station_id', stationIds)
+    .order('dia')
+  return (data ?? []) as LluviaDiariaEstacionRow[]
+}
+
 // ---------------------------------------------------------------------------
 // Solo master — sin scope por agricultor. Nombres separados a propósito.
 // ---------------------------------------------------------------------------

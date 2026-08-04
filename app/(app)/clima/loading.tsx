@@ -9,7 +9,7 @@ export default function Loading() {
         <SkeletonTabs cantidad={5} />
       </div>
 
-      {/* Tarjeta "Lectura más reciente" */}
+      {/* Tarjeta "Datos de hoy" */}
       <div className="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900">
         <div className="mb-4 flex items-center justify-between">
           <SkeletonBox className="h-4 w-40" />

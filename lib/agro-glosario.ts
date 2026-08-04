@@ -91,6 +91,7 @@ export const MODULOS: {
       'Análisis de suelo del laboratorio',
       'Diagnóstico de plagas y certificados de los operadores que aplican',
       'Mapas y planos de la finca',
+      'Análisis de datos del ciclo',
       'Caso de negocio con costos y rentabilidad',
       'Convenios y contratos firmados',
     ],
@@ -182,6 +183,7 @@ export const DOC_EXPLICACION: Record<string, string> = {
   plagas: 'Acá van los resultados de diagnóstico de plagas del lote y los certificados de los operadores que hicieron la aplicación.',
   convenios: 'Los convenios son los contratos y acuerdos firmados dentro del programa de agricultura por contrato.',
   pnl: 'El P&L reúne las proyecciones de costos, rendimiento esperado y rentabilidad del ciclo.',
+  analisis_datos: 'Acá van reportes y análisis generados a partir de los datos del ciclo — el estado de resultados y otros análisis del agricultor.',
 }
 
 /** Cómo se obtuvo el dato de clima, explicado sin jerga. */

@@ -3,9 +3,10 @@
 /**
  * Chart de lluvia acumulada de UN lote durante su periodo crítico, portado
  * de `LoteBreakdownCard` en `seguimiento-lluvia-saturno/src/routes/index.tsx`
- * (líneas ~1640-1722). Cada lote se alinea por "día del periodo" (día 0 =
- * inicio del rango de seguimiento), no por fecha calendario, para poder
- * comparar avance entre lotes sin importar la fecha real de siembra.
+ * (líneas ~1640-1722). El eje X usa la fecha calendario real de cada lectura
+ * (no "día 0, día 1…") para que se pueda ubicar cada punto en el tiempo; el
+ * subtítulo sigue mostrando el avance en días del periodo (0 a `dur`) para
+ * comparar entre lotes sin importar la fecha real de siembra.
  */
 
 import { ComposedChart, Line, ReferenceLine, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
@@ -18,6 +19,13 @@ interface Props {
   dailyRows: LluviaDiariaLoteRow[]
 }
 
+/** "3 ago" — sin año: el periodo de un lote nunca cruza fin de año. */
+function formatDiaCorto(iso: string): string {
+  const d = new Date(`${iso}T00:00:00`)
+  if (!Number.isFinite(d.getTime())) return iso
+  return d.toLocaleDateString('es-VE', { day: 'numeric', month: 'short' })
+}
+
 export default function LoteRainChart({ lote, dailyRows }: Props) {
   const dur = lote.duracion_dias ?? 30
   const meta =
@@ -25,7 +33,7 @@ export default function LoteRainChart({ lote, dailyRows }: Props) {
   const pct = effectiveRainPct(lote)
 
   const data = dailyRows.map(r => ({
-    dia_del_periodo: r.dia_del_periodo ?? 0,
+    fecha: r.dia,
     lluvia_acumulada_mm:
       r.lluvia_acumulada_mm === null || r.lluvia_acumulada_mm === undefined ? null : Number(r.lluvia_acumulada_mm),
   }))
@@ -61,9 +69,10 @@ export default function LoteRainChart({ lote, dailyRows }: Props) {
               <ComposedChart data={data} margin={{ top: 6, right: 8, left: 0, bottom: 14 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                 <XAxis
-                  dataKey="dia_del_periodo"
+                  dataKey="fecha"
                   tick={{ fontSize: 10 }}
-                  label={{ value: 'Día de llenado', position: 'insideBottom', offset: -4, fontSize: 9 }}
+                  tickFormatter={formatDiaCorto}
+                  label={{ value: 'Fecha', position: 'insideBottom', offset: -4, fontSize: 9 }}
                 />
                 <YAxis tick={{ fontSize: 10 }} width={34} />
                 <Tooltip content={<LoteDiariaTooltip />} />
@@ -115,7 +124,9 @@ function LoteDiariaTooltip({
   if (items.length === 0) return null
   return (
     <div className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs shadow-lg dark:border-gray-700 dark:bg-gray-900">
-      <div className="mb-1 font-semibold text-gray-800 dark:text-gray-100">Día {label}</div>
+      <div className="mb-1 font-semibold text-gray-800 dark:text-gray-100">
+        {typeof label === 'string' ? formatDiaCorto(label) : label}
+      </div>
       <div className="space-y-1">
         {items.map(p => (
           <div key={String(p.dataKey ?? p.name)} className="flex items-center gap-2">

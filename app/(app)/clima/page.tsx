@@ -14,12 +14,14 @@ import {
   getLluviaMensualZona,
   getPrediccionZona,
   getLluviaDiariaEstacionPorZona,
+  getLluviaDiariaEstacionPorStations,
   getTodosLosLotesGlobal,
   getDistribucionNormalLluvia,
   type LluviaDiariaLoteRow,
 } from '@/lib/seguimiento-lluvia'
 import StatCardRow from '@/components/clima/StatCardRow'
 import LotesRainGrid from '@/components/clima/LotesRainGrid'
+import DocumentosClimaSection from '@/components/clima/DocumentosClimaSection'
 import TemperatureChart from '@/components/clima/TemperatureChart'
 import AgricultorRainMonthlyChart from '@/components/clima/AgricultorRainMonthlyChart'
 import ClimaVistaTabs from '@/components/clima/master/ClimaVistaTabs'
@@ -116,11 +118,13 @@ async function MiAgricultorContent({ agricultorKey, isMaster }: { agricultorKey:
 
   const lotes = agricultorLluviaId ? await getLotesDeAgricultor(agricultorLluviaId) : []
   const loteIds = lotes.map(l => l.id)
+  const stationIds = Array.from(new Set(lotes.map(l => l.station_id).filter((s): s is string => !!s)))
 
-  const [dailyRows, mensualRows, prediccionRows] = await Promise.all([
+  const [dailyRows, mensualRows, prediccionRows, diariaEstacionRows] = await Promise.all([
     getLluviaDiariaPorLotes(loteIds),
     getLluviaMensualPorLotes(loteIds),
     getPrediccionPorLotes(loteIds),
+    getLluviaDiariaEstacionPorStations(stationIds),
   ])
 
   const dailyByLote = new Map<string, LluviaDiariaLoteRow[]>()
@@ -132,7 +136,7 @@ async function MiAgricultorContent({ agricultorKey, isMaster }: { agricultorKey:
 
   return (
     <div className="space-y-6">
-      <AgricultorRainMonthlyChart mensual={mensualRows} prediccion={prediccionRows} />
+      <AgricultorRainMonthlyChart mensual={mensualRows} prediccion={prediccionRows} diaria={diariaEstacionRows} />
 
       {conditions.source.fuente === 'davis' && (
         <div className="flex flex-wrap items-center gap-2">
@@ -148,6 +152,7 @@ async function MiAgricultorContent({ agricultorKey, isMaster }: { agricultorKey:
       <StatCardRow lotes={lotes} />
       <LotesRainGrid lotes={lotes} dailyByLote={dailyByLote} />
       <TemperatureChart series={climateSeries} />
+      <DocumentosClimaSection />
     </div>
   )
 }

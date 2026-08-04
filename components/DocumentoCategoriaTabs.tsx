@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
-import { FlaskConical, Briefcase, ScrollText, Bug } from 'lucide-react'
+import { FlaskConical, Briefcase, ScrollText, Bug, ChartColumn } from 'lucide-react'
 import type { CategoriaId } from '@/lib/documentos'
 
 const ICONOS: Record<CategoriaId, React.ComponentType<{ size?: number; className?: string }>> = {
@@ -9,6 +9,7 @@ const ICONOS: Record<CategoriaId, React.ComponentType<{ size?: number; className
   plagas: Bug,
   convenios: ScrollText,
   pnl: Briefcase,
+  analisis_datos: ChartColumn,
 }
 
 interface Props {

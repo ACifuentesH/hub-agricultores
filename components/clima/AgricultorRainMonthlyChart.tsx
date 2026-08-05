@@ -15,8 +15,9 @@ import { colorForYear } from './chartTheme'
 import {
   ANIO_ACTUAL,
   agregarPrediccionLotesPorMes,
-  buildPrediccionOverlaySemanal,
+  buildPrediccionOverlay,
   esBajaConfianza,
+  type DesgloseSemanal,
 } from './prediccionMensual'
 
 interface Props {
@@ -43,7 +44,7 @@ export default function AgricultorRainMonthlyChart({ mensual, prediccion, diaria
     value: v.count > 0 ? v.sum / v.count : 0,
   }))
 
-  const overlay = buildPrediccionOverlaySemanal(monthlyAvgPoints, prediccionActual, diaria)
+  const overlay = buildPrediccionOverlay(monthlyAvgPoints, prediccionActual, diaria)
   const historicalYears = overlay.years.filter(y => y !== ANIO_ACTUAL)
   const tieneAnioActual = overlay.years.includes(ANIO_ACTUAL)
 
@@ -79,14 +80,10 @@ export default function AgricultorRainMonthlyChart({ mensual, prediccion, diaria
               <ComposedChart data={overlay.data} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                 <XAxis
-                  dataKey="label"
+                  dataKey="month"
                   tick={{ fontSize: 10 }}
                   interval={0}
-                  // Un punto cada semana (48 en total) para poder pararse en
-                  // cualquiera, pero solo se rotula la primera semana de cada
-                  // mes — mismo aspecto de 12 etiquetas que tenía el gráfico
-                  // mensual.
-                  tickFormatter={(value: string) => (value.endsWith('S1') ? value.slice(0, 3) : '')}
+                  tickFormatter={(value: string) => value.slice(0, 3)}
                 />
                 <YAxis
                   tick={{ fontSize: 11 }}
@@ -138,7 +135,8 @@ export default function AgricultorRainMonthlyChart({ mensual, prediccion, diaria
           {tieneAnioActual && (
             <p className="mt-1 text-[10px] leading-snug text-gray-400 dark:text-gray-500">
               Línea sólida: dato real. Línea punteada: pronóstico de {ANIO_ACTUAL}. Punto rojo con
-              &quot;!&quot;: mes con hueco de datos.
+              &quot;!&quot;: mes con hueco de datos. Pasa el mouse sobre un punto para ver el
+              desglose semanal.
             </p>
           )}
           {esBajaConfianza(prediccionActual) && (
@@ -215,6 +213,11 @@ export function PrediccionTooltip({
           const esPronostico = key === 'actual_pronostico'
           const esActual = key === 'actual_real' || esPronostico
           const nombre = esActual ? (esPronostico ? `${ANIO_ACTUAL} (pronóstico)` : ANIO_ACTUAL) : p.name
+          const semanas = (row.semanas as Record<string, DesgloseSemanal> | undefined)?.[key]
+          // Solo tiene sentido mostrar el desglose si al menos una semana
+          // intermedia (S1–S3) tiene dato — si no, las 4 caerían en el mismo
+          // total y repetirían lo que ya dice la línea de arriba.
+          const hayDesglose = semanas?.slice(0, 3).some(v => v !== null) ?? false
           return (
             <div key={key} className="space-y-0.5">
               <div className="flex items-center gap-2">
@@ -235,6 +238,18 @@ export function PrediccionTooltip({
                 <p className="text-[10px] leading-snug text-red-600 dark:text-red-400">
                   Dato de sensor no confiable este mes — se usó pronóstico en su lugar.
                 </p>
+              )}
+              {hayDesglose && semanas && (
+                <div className="ml-4 grid grid-cols-4 gap-1 border-t border-gray-100 pt-1 dark:border-gray-800">
+                  {(['S1', 'S2', 'S3', 'S4'] as const).map((etiqueta, i) => (
+                    <div key={etiqueta} className="text-center">
+                      <p className="text-[9px] uppercase text-gray-400 dark:text-gray-500">{etiqueta}</p>
+                      <p className="tabular-nums text-gray-700 dark:text-gray-200">
+                        {semanas[i] === null ? '—' : fmtNum(semanas[i]!, 0)}
+                      </p>
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
           )

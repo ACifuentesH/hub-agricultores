@@ -141,9 +141,15 @@ function parseYearMonth(mes: string): { year: string; monthIndex: number } | nul
   return { year: m[1], monthIndex }
 }
 
-export type PrediccionOverlayRow = { monthIndex: number; weekIndex: number; label: string } & Record<string, unknown>
+/** Acumulado dentro del mes al cierre de cada semana (S1..S4 = días 1–7/8–14/15–21/22–fin). */
+export type DesgloseSemanal = [number | null, number | null, number | null, number | null]
 
-const SEMANA_LABEL = ['S1', 'S2', 'S3', 'S4']
+export type PrediccionOverlayRow = {
+  monthIndex: number
+  month: string
+  /** Desglose semanal por serie (clave = 'actual_real' | 'actual_pronostico' | año) — solo para el tooltip. */
+  semanas: Record<string, DesgloseSemanal>
+} & Record<string, unknown>
 
 function ultimoDiaDelMes(anio: number, monthIndex: number): number {
   return new Date(anio, monthIndex + 1, 0).getDate()
@@ -186,18 +192,18 @@ function acumuladoSemanalCrudo(
 }
 
 /**
- * 4 puntos semanales que SIEMPRE cierran en `total` (el mismo valor mensual
- * ya calculado — nunca se recalcula desde el dato diario, solo se usa para
+ * Desglose semanal que SIEMPRE cierra en `total` (el mismo valor mensual ya
+ * calculado — nunca se recalcula desde el dato diario, solo se usa para
  * repartir la forma de la acumulación dentro del mes). Sin dato diario ese
- * mes, los primeros 3 puntos quedan `null` y `connectNulls` dibuja la misma
- * línea recta mes a mes que el gráfico ya tenía.
+ * mes, devuelve `[null, null, null, total]` — el tooltip entonces no muestra
+ * desglose (ver `hayDesglose` en el componente).
  */
-function puntosSemanales(
+function desgloseSemanal(
   dailyByDate: Map<string, number>,
   anio: number,
   monthIndex: number,
   total: number | null,
-): [number | null, number | null, number | null, number | null] {
+): DesgloseSemanal {
   if (total === null) return [null, null, null, null]
   const crudo = acumuladoSemanalCrudo(dailyByDate, anio, monthIndex)
   if (!crudo || crudo[3] <= 0) return [null, null, null, total]
@@ -206,25 +212,24 @@ function puntosSemanales(
 }
 
 /**
- * Igual que antes (lluvia mensual histórica + pronóstico del año actual, año
- * actual partido en actual_real/actual_pronostico), pero cada mes se reparte
- * en 4 puntos semanales en vez de uno solo — mismo total mensual en la 4ta
- * semana, para que el gráfico se vea igual, con la acumulación dentro del mes
- * visible en los 3 puntos intermedios cuando hay dato diario (`diaria`,
- * `vista_lluvia_diaria_estacion` de las estaciones del agricultor).
+ * Convierte lluvia mensual histórica ({mes: "YYYY-MM-01", value}, años
+ * anteriores al actual) + el pronóstico ya resuelto del año actual (12
+ * filas, una por mes) en filas por mes con una columna por año — un punto
+ * por mes en el gráfico, igual que siempre. Cada fila lleva además
+ * `semanas`, el desglose de esa lluvia dentro del mes (S1..S4, a partir del
+ * dato diario de las estaciones del agricultor — `diaria`,
+ * `vista_lluvia_diaria_estacion`), que el tooltip muestra al pararse en el
+ * punto sin cambiar el gráfico en sí. El año actual se parte en dos series
+ * (actual_real / actual_pronostico) para poder dibujar un tramo sólido y uno
+ * punteado en la misma línea.
  */
-export function buildPrediccionOverlaySemanal(
+export function buildPrediccionOverlay(
   historicalPoints: Array<{ mes: string; value: number }>,
   actual: PrediccionMes[],
   diaria: Array<{ dia: string | null; lluvia_mm: number | null }>,
 ): { data: PrediccionOverlayRow[]; years: string[] } {
-  const rows: PrediccionOverlayRow[] = []
-  for (let mi = 0; mi < 12; mi++) {
-    for (let wi = 0; wi < 4; wi++) {
-      rows.push({ monthIndex: mi, weekIndex: wi, label: `${MESES_ES[mi].slice(0, 3)} ${SEMANA_LABEL[wi]}` })
-    }
-  }
-  const rowIndex = (monthIndex: number, weekIndex: number) => monthIndex * 4 + weekIndex
+  const rows: PrediccionOverlayRow[] = MESES_ES.map((month, monthIndex) => ({ monthIndex, month, semanas: {} }))
+  const yearsSet = new Set<string>()
 
   // Promedio diario entre estaciones, por si el agricultor tiene lotes en más de una.
   const sumByDate = new Map<string, { sum: number; count: number }>()
@@ -238,48 +243,40 @@ export function buildPrediccionOverlaySemanal(
   const dailyByDate = new Map<string, number>()
   for (const [dia, e] of sumByDate) dailyByDate.set(dia, e.count > 0 ? e.sum / e.count : 0)
 
-  const yearsSet = new Set<string>()
-
-  // Años históricos.
-  const totalHistPorAnioMes = new Map<string, number>() // "YYYY-MI" -> total del mes
   for (const p of historicalPoints) {
     const parsed = parseYearMonth(p.mes)
     if (!parsed || parsed.year === ANIO_ACTUAL) continue
     yearsSet.add(parsed.year)
-    totalHistPorAnioMes.set(`${parsed.year}-${parsed.monthIndex}`, p.value)
-  }
-  for (const [key, total] of totalHistPorAnioMes) {
-    const [yearStr, miStr] = key.split('-')
-    const anio = Number(yearStr)
-    const mi = Number(miStr)
-    const semanas = puntosSemanales(dailyByDate, anio, mi, total)
-    for (let wi = 0; wi < 4; wi++) rows[rowIndex(mi, wi)][yearStr] = semanas[wi]
+    const row = rows[parsed.monthIndex]
+    row[parsed.year] = p.value
+    row.semanas[parsed.year] = desgloseSemanal(dailyByDate, Number(parsed.year), parsed.monthIndex, p.value)
   }
 
-  // Año actual: real (sólido) / pronóstico (punteado) — misma clasificación de antes.
   let lastRealMonthIndex = -1
   for (const r of actual) {
-    if (!r.esPronostico && r.valor !== null) lastRealMonthIndex = Math.max(lastRealMonthIndex, r.mes - 1)
+    if (!r.esPronostico && r.valor !== null) {
+      lastRealMonthIndex = Math.max(lastRealMonthIndex, r.mes - 1)
+    }
   }
 
   const anioActualNum = Number(ANIO_ACTUAL)
   for (const r of actual) {
-    const mi = r.mes - 1
-    if (mi < 0 || mi > 11) continue
-    const semanas = puntosSemanales(dailyByDate, anioActualNum, mi, r.valor)
+    const monthIndex = r.mes - 1
+    if (monthIndex < 0 || monthIndex > 11) continue
+    const row = rows[monthIndex]
     const campo = r.esPronostico ? 'actual_pronostico' : 'actual_real'
-    for (let wi = 0; wi < 4; wi++) {
-      rows[rowIndex(mi, wi)][campo] = semanas[wi]
-      rows[rowIndex(mi, wi)].actual_es_excluido = r.esExcluidoPorCalidad
-    }
+    row[campo] = r.valor
+    row.actual_es_excluido = r.esExcluidoPorCalidad
+    row.semanas[campo] = desgloseSemanal(dailyByDate, anioActualNum, monthIndex, r.valor)
   }
 
-  // Ancla: el último punto real repite su valor en pronóstico, para que el
-  // tramo punteado arranque pegado al sólido, sin hueco.
+  // Ancla: el último mes real repite su valor en la serie de pronóstico
+  // para que el tramo punteado arranque pegado al sólido, sin hueco.
   if (lastRealMonthIndex !== -1) {
-    const anchorRow = rows[rowIndex(lastRealMonthIndex, 3)]
+    const anchorRow = rows[lastRealMonthIndex]
     if (anchorRow.actual_pronostico === undefined) {
       anchorRow.actual_pronostico = anchorRow.actual_real
+      if (anchorRow.semanas.actual_real) anchorRow.semanas.actual_pronostico = anchorRow.semanas.actual_real
     }
   }
 

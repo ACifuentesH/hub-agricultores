@@ -18,11 +18,6 @@ export const CATEGORIAS = [
     descripcion: 'Resultados de laboratorio: fertilidad, textura, calidad de agua y recomendaciones.',
   },
   {
-    id: 'plagas',
-    label: 'Diagnóstico de plagas',
-    descripcion: 'Resultados de diagnóstico de plagas del lote y certificados de los operadores que aplicaron.',
-  },
-  {
     id: 'convenios',
     label: 'Convenios',
     descripcion: 'Contratos y acuerdos del programa de agricultura por contrato.',

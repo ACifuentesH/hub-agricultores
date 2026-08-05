@@ -89,7 +89,6 @@ export const MODULOS: {
     resumen: 'Todos tus documentos, ordenados por tipo, para consultarlos o descargarlos.',
     contiene: [
       'Análisis de suelo del laboratorio',
-      'Diagnóstico de plagas y certificados de los operadores que aplican',
       'Mapas y planos de la finca',
       'Análisis de datos del ciclo',
       'Caso de negocio con costos y rentabilidad',
@@ -180,7 +179,6 @@ export const ETAPA_ALIAS: { stage: Stage; palabras: string[] }[] = [
 /** Qué significa cada sección del módulo Documentación. */
 export const DOC_EXPLICACION: Record<string, string> = {
   analisis_suelo: 'Los análisis de suelo y agua son los resultados del laboratorio: pH, materia orgánica, fósforo, potasio, textura y calidad de agua. Sirven para decidir el encalado y la fórmula de fertilización.',
-  plagas: 'Acá van los resultados de diagnóstico de plagas del lote y los certificados de los operadores que hicieron la aplicación.',
   convenios: 'Los convenios son los contratos y acuerdos firmados dentro del programa de agricultura por contrato.',
   pnl: 'El P&L reúne las proyecciones de costos, rendimiento esperado y rentabilidad del ciclo.',
   analisis_datos: 'Acá van reportes y análisis generados a partir de los datos del ciclo — el estado de resultados y otros análisis del agricultor.',

@@ -1,12 +1,11 @@
 'use client'
 
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
-import { FlaskConical, Briefcase, ScrollText, Bug, ChartColumn } from 'lucide-react'
+import { FlaskConical, Briefcase, ScrollText, ChartColumn } from 'lucide-react'
 import type { CategoriaId } from '@/lib/documentos'
 
 const ICONOS: Record<CategoriaId, React.ComponentType<{ size?: number; className?: string }>> = {
   analisis_suelo: FlaskConical,
-  plagas: Bug,
   convenios: ScrollText,
   pnl: Briefcase,
   analisis_datos: ChartColumn,

@@ -9,7 +9,6 @@
  */
 
 import { ComposedChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
-import { CalendarDays } from 'lucide-react'
 import type { LluviaMensualLoteRow, PrediccionLluviaLoteRow, LluviaDiariaEstacionRow } from '@/lib/seguimiento-lluvia'
 import { fmtNum } from '@/lib/seguimiento-lluvia-calc'
 import { colorForYear } from './chartTheme'
@@ -53,18 +52,7 @@ export default function AgricultorRainMonthlyChart({ mensual, prediccion, diaria
     <div className="rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-900">
       <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
         <div>
-          <div className="flex flex-wrap items-center gap-2">
-            <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-100">Lluvia mensual</h3>
-            {overlay.years.length > 0 && (
-              <span
-                className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-medium text-blue-700 dark:bg-blue-950/40 dark:text-blue-300"
-                title="Pasa el mouse sobre un punto para ver cómo se acumuló la lluvia semana a semana ese mes"
-              >
-                <CalendarDays size={10} />
-                Acumulado por semana
-              </span>
-            )}
-          </div>
+          <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-100">Lluvia mensual</h3>
           <p className="text-[11px] text-gray-500 dark:text-gray-400">
             Promedio entre tus lotes, un año por línea
           </p>
@@ -252,15 +240,20 @@ export function PrediccionTooltip({
                 </p>
               )}
               {hayDesglose && semanas && (
-                <div className="ml-4 grid grid-cols-4 gap-1 border-t border-gray-100 pt-1 dark:border-gray-800">
-                  {(['S1', 'S2', 'S3', 'S4'] as const).map((etiqueta, i) => (
-                    <div key={etiqueta} className="text-center">
-                      <p className="text-[9px] uppercase text-gray-400 dark:text-gray-500">{etiqueta}</p>
-                      <p className="tabular-nums text-gray-700 dark:text-gray-200">
-                        {semanas[i] === null ? '—' : fmtNum(semanas[i]!, 0)}
-                      </p>
-                    </div>
-                  ))}
+                <div className="ml-4 border-t border-gray-100 pt-1 dark:border-gray-800">
+                  <p className="text-[9px] font-medium uppercase tracking-wide text-blue-600 dark:text-blue-400">
+                    Acumulado por semana
+                  </p>
+                  <div className="mt-0.5 grid grid-cols-4 gap-1">
+                    {(['S1', 'S2', 'S3', 'S4'] as const).map((etiqueta, i) => (
+                      <div key={etiqueta} className="text-center">
+                        <p className="text-[9px] uppercase text-gray-400 dark:text-gray-500">{etiqueta}</p>
+                        <p className="tabular-nums text-gray-700 dark:text-gray-200">
+                          {semanas[i] === null ? '—' : fmtNum(semanas[i]!, 0)}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>

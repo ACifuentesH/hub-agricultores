@@ -29,7 +29,7 @@ export async function GET(req: Request) {
   const pedido = url.searchParams.get('agricultor')?.trim() || null
   // Un farmer nunca puede pedir el P&L de otro: se ignora el parámetro.
   const esMaster = profile.role === 'master'
-  const agricultorKey = esMaster ? (pedido ?? profile.agricultor_key) : profile.agricultor_key
+  const agricultorKey = esMaster ? (pedido ?? profile.agricultor_id) : profile.agricultor_id
   if (!agricultorKey) {
     return NextResponse.json({ ok: false, error: 'Falta el agricultor' }, { status: 400 })
   }

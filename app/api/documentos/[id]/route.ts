@@ -34,7 +34,7 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
   // y es visible, y resuelve el storage_path real (nunca el que mande el cliente).
   const supabase = await createClient()
   const { data: doc } = await supabase
-    .from('lote_analisis_suelo')
+    .from('documentos')
     .select('id, storage_path, nombre_archivo')
     .eq('id', id)
     .maybeSingle()
@@ -45,7 +45,7 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
 
   const svc = createServiceClient()
 
-  const { error: storageErr } = await svc.storage.from('analisis-suelo').remove([doc.storage_path])
+  const { error: storageErr } = await svc.storage.from('documentos').remove([doc.storage_path])
   if (storageErr) {
     const msg = storageErr.message?.toLowerCase() ?? ''
     const isMissing = msg.includes('not found') || msg.includes('does not exist') || msg.includes('object not found')
@@ -56,7 +56,7 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
 
   // Borrado siempre acotado por id (primary key) — cumple la regla de no
   // borrar sin WHERE explícito.
-  const { error: delErr } = await svc.from('lote_analisis_suelo').delete().eq('id', id)
+  const { error: delErr } = await svc.from('documentos').delete().eq('id', id)
   if (delErr) {
     return NextResponse.json({ ok: false, error: `Storage borrado pero el registro falló: ${delErr.message}` }, { status: 500 })
   }

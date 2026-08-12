@@ -26,7 +26,7 @@ export async function GET() {
 export async function POST(req: Request) {
   const profile = await getUserProfile()
   if (!profile) return NextResponse.json({ ok: false, error: 'No autenticado' }, { status: 401 })
-  if (!profile.agricultor_key) {
+  if (!profile.agricultor_id) {
     return NextResponse.json(
       { ok: false, error: 'Tu usuario no tiene un agricultor asignado.' },
       { status: 400 },
@@ -58,7 +58,7 @@ export async function POST(req: Request) {
   const { data, error } = await supabase
     .from('tickets')
     .insert({
-      agricultor_key: profile.agricultor_key,
+      agricultor_key: profile.agricultor_id,
       usuario_id: profile.user_id,
       asunto,
       mensaje,

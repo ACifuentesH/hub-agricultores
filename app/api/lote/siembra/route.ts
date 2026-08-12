@@ -65,8 +65,8 @@ export async function POST(req: Request) {
   // Lectura con la sesión del usuario (RLS): confirma que el lote existe y es visible
   const supabase = await createClient()
   const { data: lote } = await supabase
-    .from('lote')
-    .select('lote_id, nombre_lote, ciclo, fecha_inicio_siembra_real, "AgricultorKey"')
+    .from('lotes')
+    .select('lote_id, nombre_lote, ciclo, fecha_siembra, agricultor_id')
     .eq('lote_id', loteId)
     .maybeSingle()
 
@@ -74,12 +74,12 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, error: 'Lote no encontrado' }, { status: 404 })
   }
 
-  const anterior = lote.fecha_inicio_siembra_real ?? null
+  const anterior = lote.fecha_siembra ?? null
   const svc = createServiceClient()
 
   const { error: updErr } = await svc
-    .from('lote')
-    .update({ fecha_inicio_siembra_real: fecha })
+    .from('lotes')
+    .update({ fecha_siembra: fecha })
     .eq('lote_id', loteId)
 
   if (updErr) {
@@ -88,7 +88,7 @@ export async function POST(req: Request) {
 
   // Bitácora: alimenta la campana de novedades con el nombre del lote
   const { error: logErr } = await svc.from('lote_eventos').insert({
-    agricultor_key: lote.AgricultorKey,
+    agricultor_id: lote.agricultor_id,
     lote_id: loteId,
     lote_nombre: lote.nombre_lote,
     ciclo: lote.ciclo,

@@ -5,7 +5,7 @@ export type UserRole = 'master' | 'farmer'
 
 export interface UserProfile {
   user_id: string
-  agricultor_key: string | null
+  agricultor_id: string | null
   role: UserRole
 }
 

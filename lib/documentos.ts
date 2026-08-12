@@ -1,11 +1,11 @@
 /**
  * Catálogo de categorías del módulo Documentación.
  *
- * Los archivos viven todos en la tabla `lote_analisis_suelo` (nombre histórico:
- * nació solo para PDFs de suelo) y en el bucket privado `analisis-suelo`,
- * separados por la columna `categoria`. Se reutilizó esa infraestructura en
- * lugar de crear tablas/buckets nuevos para conservar las políticas RLS y los
- * 101 PDFs ya cargados.
+ * Los archivos viven todos en la tabla `documentos` y en el bucket privado
+ * `documentos` (proyecto Supabase organizacional), separados por la columna
+ * `categoria`. Antes de la migración esto se llamaba `lote_analisis_suelo` /
+ * `analisis-suelo` — se renombró porque ya cubre convenios, P&L y análisis de
+ * datos, no solo suelo. Ver supabase/migrations/20260812120000_documentos_module.sql.
  *
  * Dato puro a propósito: los iconos se mapean en el componente para que este
  * módulo no dependa de React.
@@ -49,7 +49,7 @@ export function labelCategoria(id: string): string {
 }
 
 /**
- * Tipos y tamaño aceptados por el bucket `analisis-suelo`. Compartido entre el
+ * Tipos y tamaño aceptados por el bucket `documentos`. Compartido entre el
  * filtro del uploader (cliente) y la validación de la ruta de upload
  * (servidor) para que ambos lados nunca se desincronicen.
  */

@@ -9,12 +9,10 @@ import { valueWithFreshness, freshnessTextClass, formatDateShort } from '@/lib/f
 import { getCurrentConditions, getForecast, computeAlerts } from '@/lib/clima'
 import DataSourceBadge from '@/components/DataSourceBadge'
 import { resolveCiclo } from '@/lib/ciclo'
-import { labelCategoria } from '@/lib/documentos'
 import NotificacionesButton, { type Novedad } from '@/components/NotificacionesButton'
 import EstadoLotesCard from '@/components/EstadoLotesCard'
 import FaseActualCard from '@/components/FaseActualCard'
 import AvanceCultivoChart from '@/components/AvanceCultivoChart'
-import MisComunicaciones from '@/components/MisComunicaciones'
 
 // Datos vivos: nunca cachear
 export const dynamic = 'force-dynamic'
@@ -52,36 +50,32 @@ export default async function DashboardPage({
     conditions,
     agricultores,
     forecast,
-    { data: docsRecientes },
     { data: eventos },
   ] = await Promise.all([
     // v_lote_detalle ya trae ha plan, encaladas, estado, fase y avance
     supabase
       .from('v_lote_detalle')
       .select('lote_id, nombre, ha_plan, ha_encaladas, inicio_siembra, ha_sembradas, ha_perdidas, ha_cosechadas, estado_lote, fase, avance_pct')
-      .eq('agricultor_key', agricultorKey)
+      .eq('agricultor_id', agricultorKey)
       .eq('ciclo', ciclo)
       .order('nombre'),
     supabase
       .from('v_agricultor_resumen')
       .select('*')
-      .eq('agricultor_key', agricultorKey)
+      .eq('agricultor_id', agricultorKey)
       .eq('ciclo', ciclo)
       .maybeSingle(),
     getCurrentConditions(agricultorKey),
     scope.isMaster ? listAgricultores() : Promise.resolve([]),
+    // No hay clima_forecast en el schema nuevo — getForecast siempre devuelve
+    // vacío (tarjeta de pronóstico/alertas oculta por ahora).
     getForecast(agricultorKey, 7),
-    supabase
-      .from('lote_analisis_suelo')
-      .select('id, nombre_archivo, categoria, uploaded_at, storage_path')
-      .eq('agricultor_key', agricultorKey)
-      .eq('ciclo', ciclo)
-      .order('uploaded_at', { ascending: false })
-      .limit(5),
+    // lote_analisis_suelo (Documentación) queda deferred — el bell de
+    // novedades se alimenta solo de lote_eventos mientras tanto.
     supabase
       .from('lote_eventos')
       .select('id, lote_nombre, tipo, valor_anterior, valor_nuevo, created_at')
-      .eq('agricultor_key', agricultorKey)
+      .eq('agricultor_id', agricultorKey)
       .eq('ciclo', ciclo)
       .order('created_at', { ascending: false })
       .limit(10),
@@ -115,18 +109,6 @@ export default async function DashboardPage({
       id: `clima-${a.id}`, tipo: 'clima', titulo: a.title, detalle: a.detail, fecha: a.fecha,
       enlace: `/clima?x=1${qsAgricultor}`,
       enlaceTexto: 'Ver pronóstico',
-    })
-  }
-  for (const d of docsRecientes ?? []) {
-    // Abre Documentación en la pestaña de la categoría del documento
-    novedades.push({
-      id: `doc-${d.id}`,
-      tipo: 'documento',
-      titulo: `Nuevo documento · ${labelCategoria(d.categoria as string)}`,
-      detalle: d.nombre_archivo as string,
-      fecha: d.uploaded_at as string,
-      enlace: `/documentacion?categoria=${encodeURIComponent(String(d.categoria))}${qsAgricultor}`,
-      enlaceTexto: 'Abrir documento',
     })
   }
   for (const ev of eventos ?? []) {
@@ -278,8 +260,6 @@ export default async function DashboardPage({
           </table>
         </div>
       </div>
-
-      <MisComunicaciones docs={(docsRecientes ?? []) as never} />
     </div>
   )
 }

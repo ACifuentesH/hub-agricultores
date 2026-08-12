@@ -1,18 +1,22 @@
 import { createClient } from './supabase/server'
 
 /**
- * Capa de datos del módulo de seguimiento de lluvia por lote, portado desde
- * `seguimiento-lluvia-saturno` (proyecto aparte, mismo Supabase). Todas las
- * vistas ya existen y ya están performantes — ver comentario en la migración
- * `crear_agricultor_lluvia_map`.
+ * Capa de datos del módulo de seguimiento de lluvia por lote.
  *
- * Regla de seguridad clave: a diferencia del proyecto original (que filtra
- * por el string `agricultor`), acá SIEMPRE se resuelve primero
- * `agricultor_lluvia_id` (vía `agricultor_lluvia_map`, nunca por nombre) y
- * luego `lote_id[]` propios del agricultor en scope; todo lo demás se filtra
- * por esos ids ya resueltos server-side. Las funciones "solo master" tienen
- * nombres separados a propósito y sin filtro por defecto, para que sea
- * estructuralmente difícil llamarlas por error desde un flujo de agricultor.
+ * En el proyecto de la empresa las vistas ya fueron reconstruidas para usar
+ * `agricultor_id` (uuid de `public.agricultores`) directo — a diferencia del
+ * proyecto de producción original, acá NO existe `agricultor_lluvia_map`
+ * (tabla puente vieja, 404 confirmado): `resolveAgricultorLluviaId()` es
+ * ahora un passthrough, no una resolución real. Se conserva la función (y su
+ * nombre) porque `clima/page.tsx` la sigue llamando así.
+ *
+ * `vista_seguimiento_lluvia` es la única vista del módulo que no expone
+ * `zona` (verificado contra el schema real) — `attachZona()` la resuelve
+ * desde `estaciones.zona` por `codigo_estacion`, no desde
+ * `lotes_seguimiento_lluvia` (esa tabla tampoco existe ya en este proyecto).
+ * Las funciones "solo master" tienen nombres separados a propósito y sin
+ * filtro por defecto, para que sea estructuralmente difícil llamarlas por
+ * error desde un flujo de agricultor.
  */
 
 export interface LoteSeguimientoRow {
@@ -134,16 +138,13 @@ export interface LluviaDistribucionNormalRow {
   densidad_probabilidad: number | null
 }
 
-/** Resuelve agricultor_key (agropecuaria.AgricultorKey) → agricultores.id, vía el puente. Nunca por nombre. */
-export async function resolveAgricultorLluviaId(agricultorKey: string): Promise<string | null> {
-  if (!agricultorKey) return null
-  const supabase = await createClient()
-  const { data } = await supabase
-    .from('agricultor_lluvia_map')
-    .select('agricultor_lluvia_id')
-    .eq('agricultor_key', agricultorKey)
-    .maybeSingle()
-  return data?.agricultor_lluvia_id ?? null
+/**
+ * Antes resolvía agricultor_key → agricultor_lluvia_id vía una tabla puente.
+ * En este proyecto las vistas de lluvia ya usan `agricultores.agricultor_id`
+ * directo, así que no hay nada que resolver — passthrough.
+ */
+export async function resolveAgricultorLluviaId(agricultorId: string): Promise<string | null> {
+  return agricultorId || null
 }
 
 /** Lotes en seguimiento de UN agricultor (ya resuelto a agricultor_lluvia_id). */
@@ -158,23 +159,24 @@ export async function getLotesDeAgricultor(agricultorLluviaId: string): Promise<
 }
 
 /**
- * `vista_seguimiento_lluvia` NO expone `zona` (confirmado contra el esquema
- * real vía information_schema — a diferencia de todas las demás vistas de
- * este módulo, que sí la traen). La columna vive en la tabla base
- * `lotes_seguimiento_lluvia`, así que se pega acá con una segunda consulta en
- * vez de asumir que viene en el `select('*')`.
+ * `vista_seguimiento_lluvia` NO expone `zona` (confirmado contra el schema
+ * real — a diferencia de todas las demás vistas de este módulo, que sí la
+ * traen). Se resuelve acá desde `estaciones.zona` por `codigo_estacion`, que
+ * la vista sí trae.
  */
 async function attachZona(
   supabase: Awaited<ReturnType<typeof createClient>>,
   lotes: LoteSeguimientoRow[],
 ): Promise<LoteSeguimientoRow[]> {
   if (lotes.length === 0) return lotes
-  const { data: zonas } = await supabase
-    .from('lotes_seguimiento_lluvia')
-    .select('id, zona')
-    .in('id', lotes.map(l => l.id))
-  const zonaPorId = new Map((zonas ?? []).map(z => [z.id as string, z.zona as string | null]))
-  return lotes.map(l => ({ ...l, zona: zonaPorId.get(l.id) ?? null }))
+  const codigos = Array.from(new Set(lotes.map(l => l.codigo_estacion).filter((c): c is string => !!c)))
+  if (codigos.length === 0) return lotes
+  const { data: estaciones } = await supabase
+    .from('estaciones')
+    .select('codigo_estacion, zona')
+    .in('codigo_estacion', codigos)
+  const zonaPorCodigo = new Map((estaciones ?? []).map(e => [e.codigo_estacion as string, e.zona as string | null]))
+  return lotes.map(l => ({ ...l, zona: l.codigo_estacion ? (zonaPorCodigo.get(l.codigo_estacion) ?? null) : null }))
 }
 
 /** Serie diaria (día del periodo propio de cada lote) para un conjunto de lotes ya resueltos. */

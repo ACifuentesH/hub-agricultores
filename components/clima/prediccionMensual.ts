@@ -61,7 +61,15 @@ function clasificarMes(
     return { valor: valorPronostico, esPronostico: true, esExcluidoPorCalidad: false }
   }
   if (mes === MES_ACTUAL_NUMERO && esPronosticoVista) {
-    return { valor: valorPronostico, esPronostico: true, esExcluidoPorCalidad: false }
+    // El mes en curso ya es "presente", no futuro — el tramo que lo conecta
+    // con el mes anterior tiene que verse sólido aunque todavía no acumule
+    // suficientes días de dato real (el punteado es solo para meses
+    // genuinamente futuros). Se grafica el pronóstico (histórico × factor)
+    // como si fuera el dato real, SIN marcador de alerta — no es un hueco de
+    // calidad, es simplemente el mes en curso; en cuanto la vista acumule
+    // suficientes días (`es_pronostico` pasa a false) este mismo punto se
+    // reemplaza solo por el valor medido real, sin intervención acá.
+    return { valor: valorPronostico, esPronostico: false, esExcluidoPorCalidad: false }
   }
   if (valorReal !== null) {
     return {
@@ -243,6 +251,25 @@ export function buildPrediccionOverlay(
   const dailyByDate = new Map<string, number>()
   for (const [dia, e] of sumByDate) dailyByDate.set(dia, e.count > 0 ? e.sum / e.count : 0)
 
+  // Mes en curso: el punto graficado sigue siendo el pronóstico (histórico ×
+  // factor) — no se reemplaza en la línea. Lo real acumulado a la fecha, si
+  // ya hay algún día de dato, se calcula acá para mostrarlo aparte en el
+  // tooltip (diferenciado del pronóstico), sin tocar lo que se dibuja.
+  let realAcumuladoMesActual: number | null = null
+  {
+    const diaHoy = new Date().getDate()
+    let acumulado = 0
+    let huboDato = false
+    for (let dia = 1; dia <= diaHoy; dia++) {
+      const v = dailyByDate.get(fechaISO(Number(ANIO_ACTUAL), MES_ACTUAL_NUMERO - 1, dia))
+      if (v !== undefined) {
+        acumulado += v
+        huboDato = true
+      }
+    }
+    if (huboDato) realAcumuladoMesActual = acumulado
+  }
+
   for (const p of historicalPoints) {
     const parsed = parseYearMonth(p.mes)
     if (!parsed || parsed.year === ANIO_ACTUAL) continue
@@ -268,6 +295,11 @@ export function buildPrediccionOverlay(
     row[campo] = r.valor
     row.actual_es_excluido = r.esExcluidoPorCalidad
     row.semanas[campo] = desgloseSemanal(dailyByDate, anioActualNum, monthIndex, r.valor)
+    // Solo el mes en curso lleva lo real acumulado a la fecha, aparte del
+    // valor graficado (que sigue siendo el pronóstico) — ver PrediccionTooltip.
+    if (r.mes === MES_ACTUAL_NUMERO && realAcumuladoMesActual !== null) {
+      row.actual_real_parcial = realAcumuladoMesActual
+    }
   }
 
   // Ancla: el último mes real repite su valor en la serie de pronóstico

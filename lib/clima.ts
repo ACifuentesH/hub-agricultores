@@ -39,10 +39,8 @@ export interface ClimateSeries {
   tempMax: number
   /**
    * true cuando la estación de esta serie nunca reportó temp_c (hardware de
-   * solo-lluvia, confirmado con datos reales: varias estaciones del proyecto
-   * de seguimiento de lluvia traen miles de filas con lluvia_mm pero
-   * temp_c/hum_pct siempre null) — distinto de un hueco temporal de datos en
-   * una estación que sí mide temperatura.
+   * solo-lluvia) — distinto de un hueco temporal de datos en una estación que
+   * sí mide temperatura.
    */
   sinSensorTemperatura: boolean
 }
@@ -77,46 +75,33 @@ export interface Alert {
 }
 
 /**
- * Convenience helper: resolves only the numeric station_id for an agricultor.
- * Used by pages that need to query weather_readings directly (e.g. histórico).
- *
- * Lee de v_clima_efectivo (auto-curativa via codigo_up), NO de mapa_productor_clima
- * (que solo se usa como override manual y suele estar vacía).
+ * Resuelve la estación (codigo_estacion) de un agricultor: el schema nuevo
+ * asigna la estación por lote (`lotes.codigo_estacion`), no por agricultor
+ * directamente, así que se toma el primer lote con estación asignada.
+ * Asunción explícita: si un agricultor tuviera lotes en más de una estación,
+ * se muestra la del primero que aparezca — revisar si en la práctica hay
+ * agricultores con estaciones distintas por lote.
  */
-export async function resolveStationId(agricultorKey: string): Promise<string | null> {
-  const { stationId } = await resolveProductorClima(agricultorKey)
-  return stationId
+async function resolveEstacionAgricultor(agricultorId: string): Promise<string | null> {
+  if (!agricultorId) return null
+  const supabase = await createClient()
+  const { data } = await supabase
+    .from('lotes')
+    .select('codigo_estacion')
+    .eq('agricultor_id', agricultorId)
+    .not('codigo_estacion', 'is', null)
+    .limit(1)
+    .maybeSingle()
+  return (data?.codigo_estacion as string | null) ?? null
 }
 
 /**
- * Resolve the weather station for an agricultor. Returns both the legacy text
- * name (productor_clima — usado por clima_forecast queries) y el numeric
- * station_id (usado por weather_readings).
- *
- * La fuente principal es v_clima_efectivo (auto-curativa). mapa_productor_clima
- * se conserva solo para overrides manuales legacy de productor_clima en forecast.
+ * Convenience helper: resuelve solo el `codigo_estacion` para un agricultor.
+ * Usado por páginas que necesitan consultar `lecturas_live`/`lecturas_diarias`
+ * directamente (ej. histórico).
  */
-async function resolveProductorClima(
-  agricultorKey: string,
-): Promise<{ productor: string | null; stationId: string | null }> {
-  const supabase = await createClient()
-  const [{ data: efectivo }, { data: mapeo }] = await Promise.all([
-    supabase
-      .from('v_clima_efectivo')
-      .select('station_id, davis_key')
-      .eq('agricultor_key', agricultorKey)
-      .maybeSingle(),
-    supabase
-      .from('mapa_productor_clima')
-      .select('productor_clima')
-      .eq('agricultor_key', agricultorKey)
-      .limit(1)
-      .maybeSingle(),
-  ])
-  return {
-    productor: mapeo?.productor_clima ?? efectivo?.davis_key ?? null,
-    stationId: efectivo?.station_id ?? null,
-  }
+export async function resolveStationId(agricultorKey: string): Promise<string | null> {
+  return resolveEstacionAgricultor(agricultorKey)
 }
 
 const SIN_DATOS: CurrentConditions = {
@@ -130,199 +115,111 @@ const SIN_DATOS: CurrentConditions = {
 }
 
 /**
- * Latest current reading for an agricultor — uses `v_clima_efectivo` to decide:
- *   - davis: query clima_lecturas directly (full reading incl. solar_rad)
- *   - triangulated: call triangulate_clima(lat, lon) RPC (IDW over nearest stations)
- *   - sin_datos: return empty state with source meta
- *
- * The returned `source` field tells the UI how to render origin/precision badges.
+ * Última lectura para un agricultor: resuelve su estación (vía `lotes`) y
+ * trae la fila más reciente de `lecturas_live` con `temp_c` no nulo (las
+ * últimas filas pueden ser resúmenes horarios sin temp_c si el sensor estaba
+ * caído ese intervalo).
  */
 export async function getCurrentConditions(agricultorKey: string): Promise<CurrentConditions> {
   if (!agricultorKey) return SIN_DATOS
   const supabase = await createClient()
 
-  const { data: efectivo } = await supabase
-    .from('v_clima_efectivo')
-    .select('fuente, davis_key, station_id, fecha_real, temp_real, hum_real, lluvia_real, lat, lon')
-    .eq('agricultor_key', agricultorKey)
+  const codigoEstacion = await resolveEstacionAgricultor(agricultorKey)
+  if (!codigoEstacion) return SIN_DATOS
+
+  const { data: estacion } = await supabase
+    .from('estaciones')
+    .select('codigo_estacion, station_name')
+    .eq('codigo_estacion', codigoEstacion)
+    .maybeSingle()
+  if (!estacion) return SIN_DATOS
+
+  const { data: full } = await supabase
+    .from('lecturas_live')
+    .select('temp_c, hum_pct, lluvia_mm, fecha_hora, radiacion_w_m2')
+    .eq('codigo_estacion', codigoEstacion)
+    .not('temp_c', 'is', null)
+    .order('fecha_hora', { ascending: false })
+    .limit(1)
     .maybeSingle()
 
-  if (!efectivo) return SIN_DATOS
-
-  // Path A — davis directo (estación propia mapeada en weather_readings via station_id)
-  if (efectivo.fuente === 'davis' && efectivo.station_id) {
-    // Última lectura COMPLETA con sensores válidos (las últimas filas pueden ser
-    // resúmenes horarios sin temp_c si el sensor estaba caído ese intervalo).
-    // Tomamos la fila más reciente que tenga temp_c no-null.
-    const { data: full } = await supabase
-      .from('weather_readings')
-      .select('temp_c, hum_pct, lluvia_mm, fecha_hora, ts, radiacion_w_m2')
-      .eq('station_id', efectivo.station_id)
-      .not('temp_c', 'is', null)
-      .order('ts', { ascending: false })
-      .limit(1)
-      .maybeSingle()
-
-    if (!full) {
-      return {
-        ...SIN_DATOS,
-        productorClima: efectivo.davis_key,
-        source: { fuente: 'davis', davisKey: efectivo.davis_key },
-      }
-    }
-
-    // weather_readings.fecha_hora es text "naive" (sin TZ). Lo tratamos como UTC.
-    const fechaIso = typeof full.fecha_hora === 'string'
-      ? full.fecha_hora.replace(' ', 'T') + 'Z'
-      : full.fecha_hora
-
+  if (!full) {
     return {
-      tempC: full.temp_c,
-      humPct: full.hum_pct,
-      lluviaMm: full.lluvia_mm,
-      fecha: fechaIso,
-      descripcion: describeCondition(full.lluvia_mm, full.radiacion_w_m2, full.hum_pct),
-      productorClima: efectivo.davis_key,
-      source: { fuente: 'davis', davisKey: efectivo.davis_key },
+      ...SIN_DATOS,
+      productorClima: estacion.station_name,
+      source: { fuente: 'davis', davisKey: estacion.station_name },
     }
   }
 
-  // Path B — triangulado por IDW desde estaciones cercanas.
-  //
-  // INACTIVO: `v_clima_efectivo` ya no emite la fuente 'triangulated' (ver
-  // migración `clima_sin_triangulacion`), así que esta rama no se alcanza.
-  // Se conserva —igual que la RPC `triangulate_clima` y las coordenadas— para
-  // que reactivarla sea solo reponer una línea del CASE de la vista.
-  if (efectivo.fuente === 'triangulated' && efectivo.lat != null && efectivo.lon != null) {
-    const { data: tri } = await supabase.rpc('triangulate_clima', {
-      target_lat: efectivo.lat,
-      target_lon: efectivo.lon,
-      k_stations: 3,
-      max_dist_km: 200,
-    })
-
-    const t = Array.isArray(tri) && tri.length > 0 ? tri[0] : null
-    if (!t || t.out_n_estaciones === 0) {
-      return {
-        ...SIN_DATOS,
-        descripcion: 'Sin estaciones cercanas',
-        source: {
-          fuente: 'triangulated',
-          davisKey: null,
-          nEstaciones: 0,
-          precision: 'sin_estaciones_cercanas',
-          lat: efectivo.lat,
-          lon: efectivo.lon,
-        },
-      }
-    }
-
-    const tempC = t.out_temp_c != null ? Number(t.out_temp_c) : null
-    const humPct = t.out_hum_pct != null ? Number(t.out_hum_pct) : null
-    const lluviaMm = t.out_lluvia_mm != null ? Number(t.out_lluvia_mm) : null
-
-    return {
-      tempC,
-      humPct,
-      lluviaMm,
-      fecha: t.out_fecha_hora ?? null,
-      descripcion: describeCondition(lluviaMm, null, humPct),
-      productorClima: null,
-      source: {
-        fuente: 'triangulated',
-        davisKey: null,
-        nEstaciones: t.out_n_estaciones,
-        distMinKm: t.out_dist_min_km != null ? Number(t.out_dist_min_km) : undefined,
-        distMaxKm: t.out_dist_max_km != null ? Number(t.out_dist_max_km) : undefined,
-        estacionesUsadas: t.out_estaciones_usadas ?? undefined,
-        precision: (t.out_precision_estimada as ClimaPrecision) ?? undefined,
-        lat: efectivo.lat,
-        lon: efectivo.lon,
-      },
-    }
+  return {
+    tempC: full.temp_c,
+    humPct: full.hum_pct,
+    lluviaMm: full.lluvia_mm,
+    fecha: full.fecha_hora,
+    descripcion: describeCondition(full.lluvia_mm, full.radiacion_w_m2, full.hum_pct),
+    productorClima: estacion.station_name,
+    source: { fuente: 'davis', davisKey: estacion.station_name },
   }
-
-  // Path C — sin lat/lon: nada que triangular
-  return SIN_DATOS
 }
 
-/** Daily aggregated series for the last N days. */
+/**
+ * Serie diaria para los últimos N días — a diferencia de producción (que
+ * agrupaba lecturas crudas por día en JS), acá se lee directo de
+ * `lecturas_diarias`, que ya viene pre-agregada por estación/día.
+ */
 export async function getClimateSeries(agricultorKey: string, days = 14): Promise<ClimateSeries> {
-  const { stationId } = await resolveProductorClima(agricultorKey)
-  if (!stationId) return emptySeries()
+  const codigoEstacion = await resolveEstacionAgricultor(agricultorKey)
+  if (!codigoEstacion) return emptySeries()
 
-  const sinceTs = Math.floor((Date.now() - days * 86400000) / 1000)
   const supabase = await createClient()
+  const sinceDate = new Date(Date.now() - days * 86400000).toISOString().slice(0, 10)
+
   const { data } = await supabase
-    .from('weather_readings')
-    .select('fecha_hora, temp_c, hum_pct, ts')
-    .eq('station_id', stationId)
-    .gte('ts', sinceTs)
-    .order('ts', { ascending: true })
-    // Lecturas cada ~15 min => hasta ~96/día. Sin este limit explícito, el
-    // default de PostgREST (1000 filas) cortaba una ventana de 30 días a la
-    // altura del día ~10-11 (1000/96 ≈ 10.4), mostrando el mes "incompleto"
-    // aunque los datos de días posteriores sí existían en la base.
-    .limit(days * 100)
+    .from('lecturas_diarias')
+    .select('dia, temp_c_avg, hum_pct_avg')
+    .eq('codigo_estacion', codigoEstacion)
+    .gte('dia', sinceDate)
+    .order('dia', { ascending: true })
 
-  if (!data || data.length === 0) return emptySeries(await esSensorSoloLluvia(supabase, stationId))
+  if (!data || data.length === 0) return emptySeries(await esSensorSoloLluvia(supabase, codigoEstacion))
 
-  // Bucket by day (fecha_hora is "naive" string YYYY-MM-DD HH:MM:SS treated as UTC)
-  const byDay = new Map<string, { temps: number[]; hums: number[] }>()
-  for (const row of data) {
-    if (!row.fecha_hora) continue
-    const day = String(row.fecha_hora).slice(0, 10)
-    const bucket = byDay.get(day) ?? { temps: [], hums: [] }
-    if (row.temp_c != null) bucket.temps.push(row.temp_c)
-    if (row.hum_pct != null) bucket.hums.push(row.hum_pct)
-    byDay.set(day, bucket)
-  }
-
-  const days_sorted = Array.from(byDay.keys()).sort()
-  const dailyTemp = days_sorted.map(d => avg(byDay.get(d)!.temps))
-  const dailyHum  = days_sorted.map(d => avg(byDay.get(d)!.hums))
+  const dailyTemp = data.map(r => (r.temp_c_avg != null ? Number(r.temp_c_avg) : NaN))
+  const dailyHum = data.map(r => (r.hum_pct_avg != null ? Number(r.hum_pct_avg) : NaN))
+  const dates = data.map(r => String(r.dia))
 
   // Estaciones de solo-lluvia (sin sensor de temperatura/humedad) traen filas
-  // en la ventana pero con temp_c/hum_pct siempre null — dailyTemp queda
-  // entero de NaN. Sin este chequeo, tempMin/tempMax quedaban en
-  // Infinity/-Infinity y denormalize() devolvía NaN en vez de mostrar el
-  // estado vacío correctamente (se veía un chart en blanco, no el mensaje).
+  // en la ventana pero con temp_c_avg/hum_pct_avg siempre null.
   if (dailyTemp.every(v => !Number.isFinite(v))) {
-    return emptySeries(await esSensorSoloLluvia(supabase, stationId))
+    return emptySeries(await esSensorSoloLluvia(supabase, codigoEstacion))
   }
 
   const tempMin = Math.min(...dailyTemp.filter(Number.isFinite))
   const tempMax = Math.max(...dailyTemp.filter(Number.isFinite))
-  const humMin  = Math.min(...dailyHum.filter(Number.isFinite))
-  const humMax  = Math.max(...dailyHum.filter(Number.isFinite))
+  const humMin = Math.min(...dailyHum.filter(Number.isFinite))
+  const humMax = Math.max(...dailyHum.filter(Number.isFinite))
 
   return {
     tempSeries: dailyTemp.map(v => normalize(v, tempMin, tempMax)),
-    humSeries:  dailyHum.map(v => normalize(v, humMin, humMax)),
-    dates: days_sorted,
+    humSeries: dailyHum.map(v => normalize(v, humMin, humMax)),
+    dates,
     tempMin,
     tempMax,
     sinSensorTemperatura: false,
   }
 }
 
-/** Chequeo barato (limit 1, ya filtrado por station_id) de si esta estación alguna vez reportó temp_c. */
+/** Chequeo barato (limit 1, ya filtrado por codigo_estacion) de si esta estación alguna vez reportó temp_c. */
 async function esSensorSoloLluvia(
   supabase: Awaited<ReturnType<typeof createClient>>,
-  stationId: string,
+  codigoEstacion: string,
 ): Promise<boolean> {
   const { data } = await supabase
-    .from('weather_readings')
-    .select('ts')
-    .eq('station_id', stationId)
+    .from('lecturas_live')
+    .select('fecha_hora')
+    .eq('codigo_estacion', codigoEstacion)
     .not('temp_c', 'is', null)
     .limit(1)
   return !data || data.length === 0
-}
-
-function avg(xs: number[]): number {
-  if (xs.length === 0) return NaN
-  return xs.reduce((a, b) => a + b, 0) / xs.length
 }
 
 function normalize(v: number, min: number, max: number): number {
@@ -343,73 +240,27 @@ function describeCondition(lluvia: number | null, solar: number | null, hum: num
 }
 
 /**
- * Get the next N days of forecast. Falls back to the most-recent download batch
- * if no future-dated rows exist (so demo data still renders).
+ * Pronóstico a N días: el schema nuevo no tiene tabla de pronóstico
+ * (`clima_forecast` no existe) — decisión explícita de ocultar esta tarjeta
+ * por ahora. Se conserva la función (siempre vacía) para no romper
+ * `lib/asistente.ts`, que la sigue llamando.
  */
 export async function getForecast(agricultorKey: string, days = 7): Promise<ForecastBundle> {
-  const productor = await resolveProductorClima(agricultorKey)
-  if (!productor) return { rows: [], descargadoEn: null, isStale: true }
-
-  const supabase = await createClient()
-  const today = new Date().toISOString().slice(0, 10)
-
-  // Try future-dated forecast first
-  const { data: futureRows } = await supabase
-    .from('clima_forecast')
-    .select('fecha, temp_max_c, temp_min_c, lluvia_mm, prob_lluvia_pct, hum_avg_pct, viento_max_kmh, descargado_en')
-    .eq('productor_clima', productor)
-    .gte('fecha', today)
-    .order('fecha', { ascending: true })
-    .limit(days)
-
-  if (futureRows && futureRows.length > 0) {
-    return {
-      rows: futureRows.map(stripDescargado),
-      descargadoEn: futureRows[0]?.descargado_en ?? null,
-      isStale: false,
-    }
-  }
-
-  // Fall back to latest batch (whatever date)
-  const { data: latestBatch } = await supabase
-    .from('clima_forecast')
-    .select('fecha, temp_max_c, temp_min_c, lluvia_mm, prob_lluvia_pct, hum_avg_pct, viento_max_kmh, descargado_en')
-    .eq('productor_clima', productor)
-    .order('fecha', { ascending: true })
-    .order('descargado_en', { ascending: false })
-    .limit(days)
-
-  if (!latestBatch || latestBatch.length === 0) {
-    return { rows: [], descargadoEn: null, isStale: true }
-  }
-
-  const lastFecha = latestBatch[latestBatch.length - 1]?.fecha
-  const ageMs = lastFecha ? Date.now() - new Date(lastFecha).getTime() : Infinity
-  const isStale = ageMs > 2 * 86400000
-
-  return {
-    rows: latestBatch.map(stripDescargado),
-    descargadoEn: latestBatch[0]?.descargado_en ?? null,
-    isStale,
-  }
-}
-
-function stripDescargado(row: ForecastDay & { descargado_en?: string }): ForecastDay {
-  const { descargado_en: _drop, ...rest } = row
-  void _drop
-  return rest
+  void agricultorKey
+  void days
+  return { rows: [], descargadoEn: null, isStale: true }
 }
 
 /**
- * Heuristic agronomic alerts derived from a forecast bundle. Pure logic.
- * Thresholds tuned for Venezuelan llanos corn — adjust as agronomy team tunes.
+ * Alertas agronómicas heurísticas derivadas de un pronóstico. Lógica pura,
+ * sin cambios — hoy siempre recibe `rows: []` porque `getForecast` no tiene
+ * fuente de datos, así que devuelve `[]`.
  */
 export function computeAlerts(rows: ForecastDay[]): Alert[] {
   const alerts: Alert[] = []
   for (const r of rows) {
     const dia = formatShortDate(r.fecha)
 
-    // Lluvia fuerte → siempre danger
     if (r.lluvia_mm != null && r.lluvia_mm >= 30) {
       alerts.push({
         id: `rain-strong-${r.fecha}`,
@@ -430,7 +281,6 @@ export function computeAlerts(rows: ForecastDay[]): Alert[] {
       })
     }
 
-    // Calor extremo (umbral conservador para maíz)
     if (r.temp_max_c != null && r.temp_max_c >= 38) {
       alerts.push({
         id: `heat-${r.fecha}`,
@@ -442,7 +292,6 @@ export function computeAlerts(rows: ForecastDay[]): Alert[] {
       })
     }
 
-    // Frío inusual (en llano venezolano, <12°C ya es señal)
     if (r.temp_min_c != null && r.temp_min_c <= 12) {
       alerts.push({
         id: `cold-${r.fecha}`,
@@ -454,7 +303,6 @@ export function computeAlerts(rows: ForecastDay[]): Alert[] {
       })
     }
 
-    // Viento fuerte (acame del maíz)
     if (r.viento_max_kmh != null && r.viento_max_kmh >= 40) {
       alerts.push({
         id: `wind-${r.fecha}`,
@@ -466,40 +314,39 @@ export function computeAlerts(rows: ForecastDay[]): Alert[] {
       })
     }
   }
-  // Sort by severity (danger first), then date
   const order = { danger: 0, warn: 1, info: 2 }
   return alerts.sort((a, b) => order[a.severity] - order[b.severity] || a.fecha.localeCompare(b.fecha))
 }
 
 function formatShortDate(iso: string): string {
-  // Force UTC interpretation so "2026-04-20" doesn't shift by timezone
   const d = new Date(iso + 'T00:00:00')
   return d.toLocaleDateString('es-VE', { weekday: 'short', day: 'numeric', month: 'short' })
 }
 
 /**
- * Lista de agricultores para el selector de master, SOLO en /clima: acá no
- * tiene sentido mostrar los "perfiles gemelos" (mismo productor, dos
- * AgricultorKey — una por ciclo, ver AGENTS.md) porque ni el clima actual ni
- * el seguimiento de lluvia dependen del ciclo. Se filtra a las filas cuyo
- * `ciclo` incluye 2026 — NUNCA con `.eq('ciclo', '2026')`, porque
- * `agropecuaria.ciclo` a veces trae el valor combinado "2025,2026" para un
- * agricultor con lotes en ambos ciclos bajo la misma key (regla de
- * AGENTS.md: ese campo "no sirve para filtrar" con igualdad exacta).
- *
- * A diferencia de `listAgricultores()` (lib/access.ts, usada en
- * documentación/cultivo/master), acá NO se le agrega el sufijo "· ciclo" al
- * nombre: al quedar un solo perfil por productor no hace falta desambiguar.
+ * Lista de agricultores con al menos un lote en ciclo 2026, para el selector
+ * de master en /clima. A diferencia de producción, acá no hay "perfiles
+ * gemelos" que desambiguar (ver lib/access.ts) porque el ciclo vive en
+ * `lotes`, no en la identidad del agricultor.
  */
 export async function listAgricultores2026(): Promise<AgricultorOption[]> {
   const supabase = await createClient()
-  const { data } = await supabase
-    .from('agropecuaria')
-    .select('AgricultorKey, nombre_agropecuaria, ciclo')
+  const { data: lotes2026 } = await supabase
+    .from('lotes')
+    .select('agricultor_id')
     .ilike('ciclo', '%2026%')
-    .order('nombre_agropecuaria', { ascending: true })
+
+  const ids = Array.from(new Set((lotes2026 ?? []).map(l => l.agricultor_id as string)))
+  if (ids.length === 0) return []
+
+  const { data } = await supabase
+    .from('agricultores')
+    .select('agricultor_id, nombre')
+    .in('agricultor_id', ids)
+    .order('nombre', { ascending: true })
+
   return (data ?? []).map(a => ({
-    key: a.AgricultorKey as string,
-    nombre: (a.nombre_agropecuaria as string | null) ?? (a.AgricultorKey as string),
+    key: a.agricultor_id as string,
+    nombre: (a.nombre as string | null) ?? (a.agricultor_id as string),
   }))
 }

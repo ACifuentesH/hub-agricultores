@@ -34,7 +34,7 @@ export async function POST(req: Request) {
   const esMaster = profile.role === 'master'
   const agricultorKey = esMaster
     ? (body.agricultor_key?.trim() || null)
-    : profile.agricultor_key
+    : profile.agricultor_id
 
   const ciclo = resolveCiclo(body.ciclo)
 

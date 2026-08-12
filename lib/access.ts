@@ -1,7 +1,13 @@
 import { createClient } from './supabase/server'
 
 export interface AgricultorScope {
-  /** null only when role=master and no selection has been made yet */
+  /**
+   * null only when role=master and no selection has been made yet.
+   * Holds `agricultores.agricultor_id` (uuid) — el nombre del campo se
+   * conserva por compatibilidad con las pantallas que todavía no se
+   * migraron (documentación, clima, master), que lo leen como
+   * `scope.agricultorKey`.
+   */
   agricultorKey: string | null
   isMaster: boolean
   /** Display name when known (master+selected, or any farmer) */
@@ -15,11 +21,11 @@ export interface AgricultorOption {
 
 /**
  * Resolves which agricultor's data the current request should see.
- * - farmer: their own agricultor_key, ignores ?agricultor query param
+ * - farmer: their own agricultor_id, ignores ?agricultor query param
  * - master: ?agricultor query param, or null if not selected yet
  */
 export async function resolveAgricultorScope(
-  profile: { role: string | null; agricultor_key: string | null },
+  profile: { role: string | null; agricultor_id: string | null },
   searchParams?: { agricultor?: string }
 ): Promise<AgricultorScope> {
   if (profile.role === 'master') {
@@ -29,20 +35,20 @@ export async function resolveAgricultorScope(
     }
     const supabase = await createClient()
     const { data } = await supabase
-      .from('agropecuaria')
-      .select('nombre_agropecuaria')
-      .eq('AgricultorKey', selected)
+      .from('agricultores')
+      .select('nombre')
+      .eq('agricultor_id', selected)
       .maybeSingle()
     return {
       agricultorKey: selected,
       isMaster: true,
-      agropecuariaName: data?.nombre_agropecuaria ?? selected,
+      agropecuariaName: data?.nombre ?? selected,
     }
   }
 
-  // farmer (or any non-master): bound to their own key
+  // farmer (or any non-master): bound to their own id
   return {
-    agricultorKey: profile.agricultor_key,
+    agricultorKey: profile.agricultor_id,
     isMaster: false,
     agropecuariaName: null,
   }
@@ -52,18 +58,11 @@ export async function resolveAgricultorScope(
 export async function listAgricultores(): Promise<AgricultorOption[]> {
   const supabase = await createClient()
   const { data } = await supabase
-    .from('agropecuaria')
-    .select('AgricultorKey, nombre_agropecuaria, ciclo')
-    .order('nombre_agropecuaria', { ascending: true })
-  return (data ?? []).map((a) => {
-    const base = (a.nombre_agropecuaria as string | null) ?? (a.AgricultorKey as string)
-    // El mismo productor existe como DOS perfiles (2025 y 2026) con keys
-    // distintas; sin el ciclo en la etiqueta el master elegía el perfil
-    // equivocado y "no le salían" los PDFs/lotes cargados en el otro.
-    const ciclo = a.ciclo as string | null
-    return {
-      key: a.AgricultorKey as string,
-      nombre: ciclo ? `${base} · ${ciclo}` : base,
-    }
-  })
+    .from('agricultores')
+    .select('agricultor_id, nombre')
+    .order('nombre', { ascending: true })
+  return (data ?? []).map((a) => ({
+    key: a.agricultor_id as string,
+    nombre: (a.nombre as string | null) ?? (a.agricultor_id as string),
+  }))
 }

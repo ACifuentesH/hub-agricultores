@@ -3,7 +3,7 @@ import { requireRole } from '@/lib/auth'
 import Link from 'next/link'
 import { resolveCiclo } from '@/lib/ciclo'
 import {
-  Users, CloudSun, Sprout, FolderOpen, CalendarOff,
+  Users, CloudSun, Sprout, CalendarOff,
   CircleCheck, CircleAlert, CircleX, ExternalLink,
 } from 'lucide-react'
 
@@ -15,8 +15,11 @@ export const dynamic = 'force-dynamic'
  *
  * El master no administra permisos: valida que lo que ve cada usuario esté
  * completo. Por eso la tabla se arma sobre USUARIOS (quienes realmente entran
- * a la app), no sobre agropecuarias, y cada fila muestra si sus pantallas
+ * a la app), no sobre agricultores, y cada fila muestra si sus pantallas
  * tendrán datos o saldrán vacías, con acceso directo a la vista del usuario.
+ *
+ * La columna "Con documentos" queda fuera por ahora: `lote_analisis_suelo`
+ * (módulo Documentación) todavía no existe en el schema nuevo.
  *
  * Vive dentro del grupo (app) para heredar la barra fija, la cabecera y el
  * filtro de ciclo. Antes tenía un layout propio duplicado que se quedó atrás.
@@ -36,77 +39,58 @@ export default async function MasterPage({
 
   const [
     { data: perfiles },
-    { data: agropecuarias },
+    { data: agricultores },
     { data: lotes },
-    { data: docs },
-    { data: clima },
   ] = await Promise.all([
-    svc.from('user_profiles').select('agricultor_key, role').neq('role', 'master'),
-    svc.from('agropecuaria').select('AgricultorKey, nombre_agropecuaria, ciclo'),
-    svc.from('lote').select('AgricultorKey, ha_sembradas, fecha_inicio_siembra_real, ha_perdidas, ha_cosechadas').eq('ciclo', ciclo),
-    svc.from('lote_analisis_suelo').select('agricultor_key, categoria').eq('ciclo', ciclo),
-    svc.from('v_clima_efectivo').select('agricultor_key, fuente, davis_key'),
+    svc.from('user_profiles').select('agricultor_id, role').neq('role', 'master'),
+    svc.from('agricultores').select('agricultor_id, nombre'),
+    svc.from('lotes').select('agricultor_id, ha_sembradas, fecha_siembra, ha_perdidas, ha_cosechadas, codigo_estacion').eq('ciclo', ciclo),
   ])
 
-  const nombrePorKey = new Map(
-    (agropecuarias ?? []).map(a => [a.AgricultorKey as string, a.nombre_agropecuaria as string | null]),
-  )
-  const climaPorKey = new Map(
-    (clima ?? []).map(c => [c.agricultor_key as string, c]),
+  const nombrePorId = new Map(
+    (agricultores ?? []).map(a => [a.agricultor_id as string, a.nombre as string | null]),
   )
 
-  const lotesPorKey = new Map<string, typeof lotes>()
+  const lotesPorId = new Map<string, typeof lotes>()
   for (const l of lotes ?? []) {
-    const k = l.AgricultorKey as string
+    const k = l.agricultor_id as string
     if (!k) continue
-    const arr = lotesPorKey.get(k) ?? []
+    const arr = lotesPorId.get(k) ?? []
     arr!.push(l)
-    lotesPorKey.set(k, arr)
-  }
-
-  const docsPorKey = new Map<string, number>()
-  for (const d of docs ?? []) {
-    const k = d.agricultor_key as string
-    docsPorKey.set(k, (docsPorKey.get(k) ?? 0) + 1)
+    lotesPorId.set(k, arr)
   }
 
   const filas = (perfiles ?? [])
     .map(p => {
-      const key = p.agricultor_key as string
-      const misLotes = lotesPorKey.get(key) ?? []
-      const conSiembra = misLotes.filter(
-        l => l.fecha_inicio_siembra_real != null && l.fecha_inicio_siembra_real !== '',
-      ).length
-      const c = climaPorKey.get(key)
+      const key = p.agricultor_id as string
+      const misLotes = lotesPorId.get(key) ?? []
+      const conSiembra = misLotes.filter(l => l.fecha_siembra != null).length
+      // "Con clima" = alguno de sus lotes tiene estación asignada — misma
+      // regla que lib/clima.ts (resolveEstacionAgricultor: primer lote con
+      // codigo_estacion no nulo). Sin triangulación: quien no tiene estación
+      // ve el módulo de clima vacío.
+      const estacion = misLotes.find(l => l.codigo_estacion)?.codigo_estacion ?? null
       return {
         key,
-        nombre: nombrePorKey.get(key) ?? key,
-        existeAgro: nombrePorKey.has(key),
-        fuente: (c?.fuente as string | undefined) ?? 'sin_perfil',
-        estacion: (c?.davis_key as string | null) ?? null,
+        nombre: nombrePorId.get(key) ?? key,
+        existeAgro: nombrePorId.has(key),
+        fuente: estacion ? 'davis' : 'sin_datos',
+        estacion,
         lotes: misLotes.length,
-        haSembradas: misLotes.reduce((s, l) => s + (parseFloat(l.ha_sembradas ?? '0') || 0), 0),
+        haSembradas: misLotes.reduce((s, l) => s + (Number(l.ha_sembradas) || 0), 0),
         conSiembra,
-        docs: docsPorKey.get(key) ?? 0,
       }
     })
     .sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'))
 
   // El ciclo en curso no tiene cierre: se detecta por dato, no por año fijo.
   const cicloTieneCierre = (lotes ?? []).some(
-    l =>
-      (l.ha_perdidas != null && l.ha_perdidas !== '') ||
-      (l.ha_cosechadas != null && l.ha_cosechadas !== ''),
+    l => (Number(l.ha_perdidas) || 0) > 0 || (Number(l.ha_cosechadas) || 0) > 0,
   )
 
-  // "Con clima" = estación Davis propia y nada más. La triangulación se retiró
-  // (ver migración `clima_sin_triangulacion`): quien no tiene estación ve el
-  // módulo vacío, así que contarlo aquí como "con clima" mentía sobre la
-  // cobertura real.
   const conClima = filas.filter(f => f.fuente === 'davis').length
   const conLotes = filas.filter(f => f.lotes > 0).length
-  const conDocs = filas.filter(f => f.docs > 0).length
-  const sinNada = filas.filter(f => f.lotes === 0 && f.docs === 0).length
+  const sinNada = filas.filter(f => f.lotes === 0).length
 
   return (
     <div className="space-y-6">
@@ -117,7 +101,7 @@ export default async function MasterPage({
       </div>
 
       {/* Señales globales de completitud */}
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-3">
         <Kpi icon={<Users className="text-green-600" size={22} />} label="Usuarios" value={String(filas.length)} />
         <Kpi
           icon={<CloudSun className="text-blue-500" size={22} />}
@@ -131,12 +115,6 @@ export default async function MasterPage({
           value={`${conLotes}/${filas.length}`}
           alerta={conLotes < filas.length}
         />
-        <Kpi
-          icon={<FolderOpen className="text-violet-600" size={22} />}
-          label="Con documentos"
-          value={`${conDocs}/${filas.length}`}
-          alerta={conDocs < filas.length}
-        />
       </div>
 
       {sinNada > 0 && (
@@ -144,7 +122,7 @@ export default async function MasterPage({
           <CircleAlert size={16} className="mt-0.5 shrink-0 text-amber-700 dark:text-amber-400" />
           <p className="text-sm text-amber-900 dark:text-amber-200">
             <b>{sinNada}</b> usuario{sinNada === 1 ? '' : 's'} verá{sinNada === 1 ? '' : 'n'} el ciclo {ciclo}
-            prácticamente vacío: sin lotes ni documentos cargados.
+            prácticamente vacío: sin lotes cargados.
           </p>
         </div>
       )}
@@ -156,7 +134,7 @@ export default async function MasterPage({
           </h2>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[760px] text-sm">
+          <table className="w-full min-w-[680px] text-sm">
             <thead className="bg-gray-50 text-xs uppercase text-gray-500 dark:bg-gray-800 dark:text-gray-400">
               <tr>
                 <th className="px-4 py-3 text-left">Usuario</th>
@@ -164,7 +142,6 @@ export default async function MasterPage({
                 <th className="px-4 py-3 text-right">Lotes</th>
                 <th className="px-4 py-3 text-right">Ha sembradas</th>
                 <th className="px-4 py-3 text-right">Con siembra</th>
-                <th className="px-4 py-3 text-right">Docs</th>
                 <th className="px-4 py-3 text-right">Ver como</th>
               </tr>
             </thead>
@@ -202,22 +179,18 @@ export default async function MasterPage({
                       </span>
                     )}
                   </td>
-                  <td className="px-4 py-3 text-right text-gray-600 dark:text-gray-300">
-                    {f.docs > 0 ? f.docs : <span className="text-gray-400">0</span>}
-                  </td>
                   <td className="px-4 py-3">
                     <div className="flex flex-wrap items-center justify-end gap-1">
                       <VerComo href={`/dashboard?agricultor=${encodeURIComponent(f.key)}&ciclo=${ciclo}`} label="Panel" />
                       <VerComo href={`/clima?agricultor=${encodeURIComponent(f.key)}&ciclo=${ciclo}`} label="Clima" />
                       <VerComo href={`/cultivo?agricultor=${encodeURIComponent(f.key)}&ciclo=${ciclo}`} label="Cultivo" />
-                      <VerComo href={`/documentacion?agricultor=${encodeURIComponent(f.key)}&ciclo=${ciclo}`} label="Docs" />
                     </div>
                   </td>
                 </tr>
               ))}
               {filas.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="px-4 py-6 text-center text-sm text-gray-500 dark:text-gray-400">
+                  <td colSpan={6} className="px-4 py-6 text-center text-sm text-gray-500 dark:text-gray-400">
                     No hay usuarios agricultores registrados.
                   </td>
                 </tr>
@@ -264,9 +237,6 @@ function ClimaChip({ fuente, estacion }: { fuente: string; estacion: string | nu
       </span>
     )
   }
-  // Nota: ya no existe el chip "Triangulado". `v_clima_efectivo` dejó de emitir
-  // esa fuente (migración `clima_sin_triangulacion`), así que quien no tiene
-  // estación propia cae directo en "Sin datos".
   return (
     <span
       className="inline-flex items-center gap-1 rounded-full bg-red-100 px-2 py-0.5 text-[11px] text-red-700 dark:bg-red-900/40 dark:text-red-300"

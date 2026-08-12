@@ -13,19 +13,19 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   const { data: profile } = await supabase
     .from('user_profiles')
-    .select('role, agricultor_key')
+    .select('role, agricultor_id')
     .eq('user_id', user.id)
     .single()
 
-  const { data: agro } = profile?.agricultor_key
+  const { data: agricultor } = profile?.agricultor_id
     ? await supabase
-        .from('agropecuaria')
-        .select('nombre_agropecuaria')
-        .eq('AgricultorKey', profile.agricultor_key)
+        .from('agricultores')
+        .select('nombre')
+        .eq('agricultor_id', profile.agricultor_id)
         .single()
     : { data: null }
 
-  const displayName = agro?.nombre_agropecuaria ?? user.email ?? 'Usuario'
+  const displayName = agricultor?.nombre ?? user.email ?? 'Usuario'
 
   return (
     <div className="flex min-h-screen bg-gray-50 dark:bg-gray-950">
@@ -48,7 +48,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         <main className="flex-1 p-4 sm:p-6">{children}</main>
       </div>
       <AsistenteWidget
-        defaultAgricultorKey={profile?.agricultor_key ?? null}
+        defaultAgricultorKey={profile?.agricultor_id ?? null}
         isMaster={(profile?.role ?? 'farmer') === 'master'}
       />
       <TicketsWidget />

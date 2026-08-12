@@ -1,6 +1,5 @@
 import { getUserProfile } from '@/lib/auth'
 import { redirect } from 'next/navigation'
-import { createServiceClient } from '@/lib/supabase/server'
 import { resolveAgricultorScope, listAgricultores } from '@/lib/access'
 import MasterAgricultorSelector from '@/components/MasterAgricultorSelector'
 import MasterEmptyState from '@/components/MasterEmptyState'
@@ -41,18 +40,10 @@ export default async function DocumentacionPage({
 
   const agricultorKey = scope.agricultorKey ?? ''
 
-  // Lista global de agricultores para el dropdown del uploader (solo master)
-  let agricultoresParaMaster: { AgricultorKey: string; nombre_agropecuaria: string; ciclo: string | null }[] = []
-  let agricultores: { key: string; nombre: string }[] = []
-  if (scope.isMaster) {
-    const svc = createServiceClient()
-    const [{ data }, lista] = await Promise.all([
-      svc.from('agropecuaria').select('AgricultorKey, nombre_agropecuaria, ciclo').order('nombre_agropecuaria'),
-      listAgricultores(),
-    ])
-    agricultoresParaMaster = data ?? []
-    agricultores = lista
-  }
+  // Lista global de agricultores para el dropdown del uploader (solo master).
+  // Un solo listAgricultores(): el uploader y el selector lateral usan la
+  // misma forma {key, nombre} — ya no hay perfiles duplicados por ciclo.
+  const agricultores = scope.isMaster ? await listAgricultores() : []
 
   return (
     <div className="relative space-y-6">
@@ -83,7 +74,7 @@ export default async function DocumentacionPage({
         )}
       </div>
 
-      {scope.isMaster && <DocumentoUploader agricultores={agricultoresParaMaster} />}
+      {scope.isMaster && <DocumentoUploader agricultores={agricultores} />}
 
       <DocumentoCategoriaTabs categorias={CATEGORIAS} activa={categoria} />
 

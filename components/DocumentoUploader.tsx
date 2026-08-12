@@ -5,11 +5,11 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Upload, Loader2, Check, X, FileText, AlertCircle } from 'lucide-react'
 import { CATEGORIAS, CATEGORIA_DEFAULT, ACEPTADOS_MIME, MAX_BYTES, type CategoriaId } from '@/lib/documentos'
+import { CICLOS, CICLO_ACTIVO } from '@/lib/ciclo'
 
 interface Agricultor {
-  AgricultorKey: string
-  nombre_agropecuaria: string
-  ciclo: string | null
+  key: string
+  nombre: string
 }
 
 interface LoteOption {
@@ -63,9 +63,9 @@ export default function DocumentoUploader({ agricultores }: { agricultores: Agri
     const ck = cacheKey(key, ciclo)
     if (!key || lotesCache.current[ck]) return
     const { data } = await supabase
-      .from('lote')
+      .from('lotes')
       .select('lote_id, nombre_lote')
-      .eq('AgricultorKey', key)
+      .eq('agricultor_id', key)
       .eq('ciclo', ciclo)
       .order('nombre_lote')
     lotesCache.current[ck] = (data ?? []) as LoteOption[]
@@ -89,11 +89,11 @@ export default function DocumentoUploader({ agricultores }: { agricultores: Agri
         return {
           id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${file.name}`,
           file,
-          suggestedKey: top?.agricultor_key ?? null,
-          suggestedName: top?.nombre_agropecuaria ?? null,
+          suggestedKey: top?.agricultor_id ?? null,
+          suggestedName: top?.nombre ?? null,
           similitud: top?.similitud ?? null,
-          finalKey: top?.agricultor_key ?? '',
-          ciclo: top?.ciclo?.includes('2026') ? '2026' : (top?.ciclo ?? '2026'),
+          finalKey: top?.agricultor_id ?? '',
+          ciclo: top?.ciclo ?? CICLO_ACTIVO,
           loteId: '',
           categoria: CATEGORIA_DEFAULT,
           status: 'pending',
@@ -134,7 +134,7 @@ export default function DocumentoUploader({ agricultores }: { agricultores: Agri
     // app/api/documentos/upload/route.ts para el contrato completo.
     const fd = new FormData()
     fd.set('file', p.file)
-    fd.set('agricultor_key', p.finalKey)
+    fd.set('agricultor_id', p.finalKey)
     fd.set('ciclo', p.ciclo)
     fd.set('categoria', p.categoria)
     fd.set('lote_id', p.loteId)
@@ -244,9 +244,8 @@ export default function DocumentoUploader({ agricultores }: { agricultores: Agri
                     >
                       <option value="">— Asignar agricultor —</option>
                       {agricultores.map(a => (
-                        <option key={a.AgricultorKey} value={a.AgricultorKey}>
-                          {a.nombre_agropecuaria}
-                          {a.ciclo && ` (${a.ciclo})`}
+                        <option key={a.key} value={a.key}>
+                          {a.nombre}
                         </option>
                       ))}
                     </select>
@@ -275,8 +274,9 @@ export default function DocumentoUploader({ agricultores }: { agricultores: Agri
                       disabled={p.status === 'uploading' || p.status === 'done'}
                       className="text-xs px-2 py-1 rounded border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200"
                     >
-                      <option value="2025">2025</option>
-                      <option value="2026">2026</option>
+                      {CICLOS.map(c => (
+                        <option key={c} value={c}>{c}</option>
+                      ))}
                     </select>
                     {/* Categoría: sección del módulo Documentación */}
                     <select

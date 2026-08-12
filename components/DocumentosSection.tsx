@@ -31,16 +31,16 @@ export default async function DocumentosSection({
 
   const [{ data: docs }, { data: lotesRef }] = await Promise.all([
     supabase
-      .from('lote_analisis_suelo')
+      .from('documentos')
       .select('id, ciclo, lote_id, storage_path, nombre_archivo, tamano_bytes, uploaded_at')
-      .eq('agricultor_key', agricultorKey)
+      .eq('agricultor_id', agricultorKey)
       .eq('ciclo', ciclo)
       .eq('categoria', categoria)
       .order('uploaded_at', { ascending: false }),
     supabase
-      .from('lote')
+      .from('lotes')
       .select('lote_id, nombre_lote')
-      .eq('AgricultorKey', agricultorKey)
+      .eq('agricultor_id', agricultorKey)
       .eq('ciclo', ciclo),
   ])
 

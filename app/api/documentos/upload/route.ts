@@ -8,10 +8,9 @@ export const dynamic = 'force-dynamic'
 
 /**
  * Carga de un documento (análisis de suelo, mapa, caso de negocio o convenio)
- * para un agricultor. Reemplaza el insert directo desde el browser que hacía
- * `AnalisisSueloUploader`: la tabla `lote_analisis_suelo` y el bucket
- * `analisis-suelo` ahora son solo-lectura en RLS para master, así que la
- * escritura vive acá con `service_role`, igual que `app/api/lote/siembra`.
+ * para un agricultor. La tabla `documentos` y el bucket `documentos` no
+ * tienen política de escritura en RLS (por diseño, ver la migración), así
+ * que la escritura vive acá con `service_role`, igual que `app/api/lote/siembra`.
  *
  * Un archivo por request — el uploader cliente sigue subiendo con
  * concurrencia limitada, cada subida es su propio POST.
@@ -40,12 +39,12 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, error: 'Falta el archivo' }, { status: 400 })
   }
 
-  const agricultorKey = String(form.get('agricultor_key') ?? '').trim()
+  const agricultorId = String(form.get('agricultor_id') ?? '').trim()
   const ciclo = String(form.get('ciclo') ?? '').trim()
   const categoriaRaw = String(form.get('categoria') ?? '').trim()
   const loteId = String(form.get('lote_id') ?? '').trim() || null
 
-  if (!agricultorKey) {
+  if (!agricultorId) {
     return NextResponse.json({ ok: false, error: 'Falta el agricultor' }, { status: 400 })
   }
   // Nunca inferir/normalizar en escritura: a diferencia de resolveCategoria()
@@ -70,19 +69,19 @@ export async function POST(req: Request) {
   // (y el lote, si viene) existen y son visibles para este master.
   const supabase = await createClient()
   const { data: agricultor } = await supabase
-    .from('agropecuaria')
-    .select('AgricultorKey')
-    .eq('AgricultorKey', agricultorKey)
+    .from('agricultores')
+    .select('agricultor_id')
+    .eq('agricultor_id', agricultorId)
     .maybeSingle()
   if (!agricultor) {
     return NextResponse.json({ ok: false, error: 'Agricultor no encontrado' }, { status: 404 })
   }
   if (loteId) {
     const { data: lote } = await supabase
-      .from('lote')
+      .from('lotes')
       .select('lote_id')
       .eq('lote_id', loteId)
-      .eq('AgricultorKey', agricultorKey)
+      .eq('agricultor_id', agricultorId)
       .eq('ciclo', ciclo)
       .maybeSingle()
     if (!lote) {
@@ -93,10 +92,10 @@ export async function POST(req: Request) {
   const svc = createServiceClient()
 
   const safe = file.name.replace(/[^a-zA-Z0-9._-]/g, '_').slice(-100)
-  const path = `${agricultorKey}/${ciclo}/${categoria}/${Date.now()}_${safe}`
+  const path = `${agricultorId}/${ciclo}/${categoria}/${Date.now()}_${safe}`
 
   const { error: upErr } = await svc.storage
-    .from('analisis-suelo')
+    .from('documentos')
     .upload(path, file, {
       cacheControl: '3600',
       upsert: false,
@@ -107,9 +106,9 @@ export async function POST(req: Request) {
   }
 
   const { data: inserted, error: insErr } = await svc
-    .from('lote_analisis_suelo')
+    .from('documentos')
     .insert({
-      agricultor_key: agricultorKey,
+      agricultor_id: agricultorId,
       ciclo,
       categoria,
       lote_id: loteId,
@@ -124,14 +123,14 @@ export async function POST(req: Request) {
 
   if (insErr) {
     // rollback: borrar el archivo subido
-    await svc.storage.from('analisis-suelo').remove([path])
+    await svc.storage.from('documentos').remove([path])
     return NextResponse.json({ ok: false, error: insErr.message }, { status: 500 })
   }
 
   // Reenvío best-effort al bucket `productorhub` (proyecto Supabase del
   // equipo que hereda la plataforma): el guardado de arriba ya es la fuente
   // de verdad durante la transición, así que un fallo acá solo se informa,
-  // nunca revierte el upload. Mismo `path` que en `analisis-suelo`.
+  // nunca revierte el upload. Mismo `path` que en el bucket `documentos`.
   let syncWarning: string | undefined
   try {
     const buffer = Buffer.from(await file.arrayBuffer())

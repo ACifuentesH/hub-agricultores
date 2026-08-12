@@ -212,7 +212,15 @@ export function PrediccionTooltip({
           const row = p.payload ?? {}
           const esPronostico = key === 'actual_pronostico'
           const esActual = key === 'actual_real' || esPronostico
-          const nombre = esActual ? (esPronostico ? `${ANIO_ACTUAL} (pronóstico)` : ANIO_ACTUAL) : p.name
+          // El mes en curso se grafica como "actual_real" (línea sólida, sin
+          // alarma — ver prediccionMensual.ts) pero el valor que muestra sigue
+          // siendo el pronóstico; `actual_real_parcial` (abajo) es lo medido
+          // de verdad. Se etiqueta "(pronóstico)" también acá para que no se
+          // confunda con un mes ya cerrado.
+          const esMesEnCursoConParcial = key === 'actual_real' && typeof row.actual_real_parcial === 'number'
+          const nombre = esActual
+            ? (esPronostico || esMesEnCursoConParcial ? `${ANIO_ACTUAL} (pronóstico)` : ANIO_ACTUAL)
+            : p.name
           const semanas = (row.semanas as Record<string, DesgloseSemanal> | undefined)?.[key]
           // Solo tiene sentido mostrar el desglose si al menos una semana
           // intermedia (S1–S3) tiene dato — si no, las 4 caerían en el mismo
@@ -238,6 +246,15 @@ export function PrediccionTooltip({
                 <p className="text-[10px] leading-snug text-red-600 dark:text-red-400">
                   Dato de sensor no confiable este mes — se usó pronóstico en su lugar.
                 </p>
+              )}
+              {esActual && typeof row.actual_real_parcial === 'number' && (
+                <div className="flex items-center gap-2 pl-4">
+                  <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-blue-500" />
+                  <span className="text-[11px] text-gray-500 dark:text-gray-400">Real hasta hoy</span>
+                  <span className="ml-auto pl-3 text-[11px] font-medium tabular-nums text-blue-700 dark:text-blue-400">
+                    {fmtNum(row.actual_real_parcial, 1)} mm
+                  </span>
+                </div>
               )}
               {hayDesglose && semanas && (
                 <div className="ml-4 border-t border-gray-100 pt-1 dark:border-gray-800">

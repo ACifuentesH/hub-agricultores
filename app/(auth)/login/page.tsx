@@ -17,12 +17,35 @@ export default function LoginPage() {
 
 function RealLoginForm() {
   const router = useRouter()
+  const [modo, setModo] = useState<'cedula' | 'password'>('cedula')
+  const [cedula, setCedula] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [anim, setAnim] = useState(true)
+
+  async function handleCedulaLogin(e: React.FormEvent) {
+    e.preventDefault()
+    setLoading(true)
+    setError('')
+
+    const res = await fetch('/api/auth/cedula-login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ cedula }),
+    })
+    const body = await res.json().catch(() => ({ ok: false, error: 'Error inesperado' }))
+
+    if (!body.ok) {
+      setError(body.error ?? 'No se pudo iniciar sesión.')
+      setLoading(false)
+      return
+    }
+
+    router.push(body.role === 'master' ? '/master' : '/dashboard')
+  }
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault()
@@ -201,82 +224,141 @@ function RealLoginForm() {
             </p>
           </div>
 
-          <form onSubmit={handleLogin} className="space-y-5">
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5"
-              >
-                Correo electrónico
-              </label>
-              <input
-                id="email"
-                type="email"
-                placeholder="tu@correo.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                autoComplete="email"
-                className="w-full px-3.5 py-2.5 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 rounded-lg text-sm text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-green-700/30 focus:border-green-700 transition-shadow"
-              />
-            </div>
-
-            <div>
-              <div className="flex items-center justify-between mb-1.5">
+          {modo === 'cedula' ? (
+            <form onSubmit={handleCedulaLogin} className="space-y-5">
+              <div>
                 <label
-                  htmlFor="password"
-                  className="text-xs font-medium text-gray-700 dark:text-gray-300"
+                  htmlFor="cedula"
+                  className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5"
                 >
-                  Contraseña
+                  Cédula
                 </label>
-                <a
-                  href="#"
-                  className="text-xs text-green-800 dark:text-green-400 hover:underline"
-                >
-                  ¿Olvidaste?
-                </a>
-              </div>
-              <div className="relative">
                 <input
-                  id="password"
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  id="cedula"
+                  type="text"
+                  inputMode="numeric"
+                  placeholder="27673399 (sin la V ni ceros)"
+                  value={cedula}
+                  onChange={(e) => setCedula(e.target.value)}
                   required
-                  autoComplete="current-password"
-                  className="w-full px-3.5 py-2.5 pr-10 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 rounded-lg text-sm text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-green-700/30 focus:border-green-700 transition-shadow"
+                  autoComplete="off"
+                  className="w-full px-3.5 py-2.5 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 rounded-lg text-sm text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-green-700/30 focus:border-green-700 transition-shadow"
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword((v) => !v)}
-                  aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
-                >
-                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                </button>
               </div>
-            </div>
 
-            {error && (
-              <div className="text-xs text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 rounded-lg px-3 py-2">
-                {error}
-              </div>
-            )}
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="group w-full inline-flex items-center justify-center gap-2 bg-green-800 hover:bg-green-900 text-white font-medium py-2.5 rounded-lg transition-all disabled:opacity-60 disabled:cursor-not-allowed shadow-sm hover:shadow"
-            >
-              {loading ? 'Ingresando...' : (
-                <>
-                  Ingresar
-                  <ArrowRight size={16} className="transition-transform group-hover:translate-x-0.5" />
-                </>
+              {error && (
+                <div className="text-xs text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 rounded-lg px-3 py-2">
+                  {error}
+                </div>
               )}
-            </button>
-          </form>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="group w-full inline-flex items-center justify-center gap-2 bg-green-800 hover:bg-green-900 text-white font-medium py-2.5 rounded-lg transition-all disabled:opacity-60 disabled:cursor-not-allowed shadow-sm hover:shadow"
+              >
+                {loading ? 'Ingresando...' : (
+                  <>
+                    Ingresar
+                    <ArrowRight size={16} className="transition-transform group-hover:translate-x-0.5" />
+                  </>
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => { setModo('password'); setError('') }}
+                className="w-full text-center text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+              >
+                ¿Sos del equipo master? Ingresar con correo y contraseña
+              </button>
+            </form>
+          ) : (
+            <form onSubmit={handleLogin} className="space-y-5">
+              <div>
+                <label
+                  htmlFor="email"
+                  className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5"
+                >
+                  Correo electrónico
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  placeholder="tu@correo.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  autoComplete="email"
+                  className="w-full px-3.5 py-2.5 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 rounded-lg text-sm text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-green-700/30 focus:border-green-700 transition-shadow"
+                />
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label
+                    htmlFor="password"
+                    className="text-xs font-medium text-gray-700 dark:text-gray-300"
+                  >
+                    Contraseña
+                  </label>
+                  <a
+                    href="#"
+                    className="text-xs text-green-800 dark:text-green-400 hover:underline"
+                  >
+                    ¿Olvidaste?
+                  </a>
+                </div>
+                <div className="relative">
+                  <input
+                    id="password"
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    autoComplete="current-password"
+                    className="w-full px-3.5 py-2.5 pr-10 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 rounded-lg text-sm text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-green-700/30 focus:border-green-700 transition-shadow"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((v) => !v)}
+                    aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
+                  >
+                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+              </div>
+
+              {error && (
+                <div className="text-xs text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 rounded-lg px-3 py-2">
+                  {error}
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="group w-full inline-flex items-center justify-center gap-2 bg-green-800 hover:bg-green-900 text-white font-medium py-2.5 rounded-lg transition-all disabled:opacity-60 disabled:cursor-not-allowed shadow-sm hover:shadow"
+              >
+                {loading ? 'Ingresando...' : (
+                  <>
+                    Ingresar
+                    <ArrowRight size={16} className="transition-transform group-hover:translate-x-0.5" />
+                  </>
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => { setModo('cedula'); setError('') }}
+                className="w-full text-center text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+              >
+                ← Ingresar con cédula
+              </button>
+            </form>
+          )}
 
           <p className="text-xs text-gray-400 dark:text-gray-500 text-center mt-10">
             Acceso restringido · Programa Saturno

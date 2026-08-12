@@ -23,7 +23,7 @@ export default function DocumentoDownloadBtn({ storagePath, filename, size = 'md
     try {
       const supabase = createClient()
       const { data, error } = await supabase.storage
-        .from('analisis-suelo')
+        .from('documentos')
         .createSignedUrl(storagePath, 60)
 
       if (error || !data?.signedUrl) {

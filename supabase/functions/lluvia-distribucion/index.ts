@@ -1,0 +1,43 @@
+/**
+ * lluvia-distribucion v8 — regresa a ONI+AMO (TNA no mejoro mayo VZ)
+ * Mantiene bias correction temperatura (probado, funciona)
+ * Mantiene anti-drizzle y ERA5-Land 0.1°
+ */
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+const CORS={'Access-Control-Allow-Origin':'*','Content-Type':'application/json'};
+const MN:Record<number,string>={1:'Enero',2:'Febrero',3:'Marzo',4:'Abril',5:'Mayo',6:'Junio',7:'Julio',8:'Agosto',9:'Septiembre',10:'Octubre',11:'Noviembre',12:'Diciembre'};
+const SU=Deno.env.get('SUPABASE_URL')!,SK=Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+const J=(d:unknown,s=200)=>new Response(JSON.stringify(d,null,2),{status:s,headers:CORS});
+const E=(m:string)=>J({ok:false,error:m},400);
+const sleep=(ms:number)=>new Promise(r=>setTimeout(r,ms));
+function wp(it:{valor:number;peso:number}[],p:number){if(!it.length)return 0;const s=[...it].sort((a,b)=>a.valor-b.valor);const tw=s.reduce((a,x)=>a+x.peso,0);let cw=0;for(const i of s){cw+=i.peso;if(cw/tw>=p)return Math.round(i.valor*10)/10;}return s[s.length-1].valor;}
+function pmq(it:{valor:number;peso:number}[],u:number){const s=[...it].sort((a,b)=>a.valor-b.valor);const tw=s.reduce((a,x)=>a+x.peso,0);let hw=0;for(let i=0;i<s.length;i++){const c=s[i],n=s[i+1];if(c.valor<u){if(!n||n.valor>=u){hw+=c.peso+(n?n.peso*Math.min((u-c.valor)/(n.valor-c.valor),0.5):0);break;}else hw+=c.peso;}}return Math.min(99,Math.max(1,Math.round(hw/tw*100)));}
+async function fetchIdx(url:string){const t=await fetch(url).then(r=>r.text());const r:Record<string,number>={};for(const l of t.split('\n')){const p=l.trim().split(/\s+/);if(p.length<13||isNaN(+p[0]))continue;const y=+p[0];for(let m=1;m<=12;m++){const v=+p[m];if(!isNaN(v)&&v>-90)r[`${y}-${String(m).padStart(2,'0')}`]=v;}}return r;}
+function omj(o:Record<string,number>,y:number){const v=[5,6,7].map(m=>o[`${y}-${String(m).padStart(2,'0')}`]).filter(x=>x!==undefined)as number[];return v.length<2?null:v.reduce((a,x)=>a+x,0)/v.length;}
+function amom(a:Record<string,number>,y:number,m:number){return a[`${y}-${String(m).padStart(2,'0')}`]??null;}
+async function fetchERA5(lat:number,lon:number,year:number,month:number,retries=3){const pad=(n:number)=>String(n).padStart(2,'0');const ld=new Date(year,month,0).getDate();const url=`https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lon}&start_date=${year}-${pad(month)}-01&end_date=${year}-${pad(month)}-${ld}&daily=precipitation_sum,relative_humidity_2m_mean,temperature_2m_mean,temperature_2m_max,et0_fao_evapotranspiration&model=era5_land&timezone=America%2FCaracas`;for(let a=0;a<retries;a++){if(a>0)await sleep(800*a);try{const res=await fetch(url);if(res.status===429){await sleep(2000*(a+1));continue;}if(!res.ok)return null;const d=(await res.json())?.daily;if(!d)return null;const vf=(x:(number|null)[])=>x.filter(v=>v!==null)as number[];const sum=(x:number[])=>x.reduce((a,v)=>a+v,0);const avg=(x:number[])=>x.length?sum(x)/x.length:0;const ll=vf(d.precipitation_sum);if(ll.length<15)return null;return{lluvia_mm:Math.round(sum(ll)*10)/10,hum_pct:Math.round(avg(vf(d.relative_humidity_2m_mean))*10)/10,tavg:Math.round(avg(vf(d.temperature_2m_mean))*100)/100,tmax:Math.round(avg(vf(d.temperature_2m_max))*100)/100,et0_mm:Math.round(sum(vf(d.et0_fao_evapotranspiration))*10)/10,ds_raw:ll.filter(v=>v<1).length};}catch{}}return null;}
+async function tempBias(sid:string|null,lat:number,lon:number,month:number){if(!sid)return null;try{const{data}=await createClient(SU,SK).rpc('get_monthly_avg_temp',{p_station_id:sid,p_month:month});if(!data?.length)return null;const rows=data.slice(0,4);const e5=await Promise.all(rows.map((r:any)=>fetchERA5(lat,lon,r.anio,month)));const pairs=rows.map((r:any,i:number)=>({d:r.davis_tavg,e:e5[i]?.tavg})).filter((p:any)=>p.e!=null);if(!pairs.length)return null;const b=pairs.reduce((s:number,p:any)=>s+(p.d-p.e),0)/pairs.length;return{bias_c:Math.round(b*100)/100,n:pairs.length};}catch{return null;}}
+function cdd(raw:number,ll:number,nd:number){const f=ll<100?2.2:ll<150?1.8:ll<200?1.5:ll<250?1.3:ll<300?1.1:1.0;return Math.min(nd-3,Math.round(raw*f));}
+async function fetchBatch(cs:{year:number;oni:number;amo:number;peso:number}[],lat:number,lon:number,month:number){const res=[];for(let i=0;i<cs.length;i+=4){if(i>0)await sleep(900);res.push(...await Promise.all(cs.slice(i,i+4).map(async c=>({...c,era5:await fetchERA5(lat,lon,c.year,month)}))));}return res;}
+Deno.serve(async(req)=>{if(req.method==='OPTIONS')return new Response(null,{headers:{...CORS,'Access-Control-Allow-Methods':'GET','Access-Control-Allow-Headers':'*'}});const u=new URL(req.url);const lat=parseFloat(u.searchParams.get('lat')??''),lon=parseFloat(u.searchParams.get('lon')??''),month=parseInt(u.searchParams.get('month')??'5'),year=parseInt(u.searchParams.get('year')??String(new Date().getFullYear())),topN=parseInt(u.searchParams.get('top_n')??'12'),desde=parseInt(u.searchParams.get('era5_desde')??'1990'),sid=u.searchParams.get('station_id');if(isNaN(lat)||isNaN(lon))return E('Faltan lat y lon');if(month<1||month>12)return E('month 1-12');try{
+  const[oniAll,amoAll,bias]=await Promise.all([fetchIdx('https://psl.noaa.gov/data/correlation/nina34.anom.data'),fetchIdx('https://psl.noaa.gov/data/correlation/amon.us.long.data'),tempBias(sid,lat,lon,month)]);
+  const oniNow=omj(oniAll,year)??omj(oniAll,year-1)??0;
+  const amoNow=amom(amoAll,year,month)??amom(amoAll,year-1,month)??0.1;
+  const fase=oniNow>=0.5?'El Niño':oniNow<=-0.5?'La Niña':'Neutro',mes=MN[month]??`Mes ${month}`;
+  const cands=[];for(let y=desde;y<year;y++){const oni=omj(oniAll,y),amo=amom(amoAll,y,month);if(oni===null||amo===null)continue;const d=Math.sqrt((oni-oniNow)**2+(amo-amoNow)**2);cands.push({year:y,oni,amo,peso:1/(d+0.05)});}
+  cands.sort((a,b)=>b.peso-a.peso);const top=cands.slice(0,topN);if(!top.length)return E('Sin candidatos');
+  const raw=await fetchBatch(top,lat,lon,month);
+  const valid=raw.filter(r=>r.era5!==null)as(typeof raw[0]&{era5:NonNullable<typeof raw[0]['era5']>})[];
+  if(valid.length<3)return E(`Solo ${valid.length} años validos`);
+  const sw=valid.reduce((s,r)=>s+r.peso,0);for(const r of valid)r.peso=Math.round(r.peso/sw*1000)/1000;
+  const ld=new Date(year,month,0).getDate();
+  const corr=valid.map(r=>({...r,era5:{...r.era5,tavg:bias?Math.round((r.era5.tavg+bias.bias_c)*100)/100:r.era5.tavg,tmax:bias?Math.round((r.era5.tmax+bias.bias_c)*100)/100:r.era5.tmax,dias_secos:cdd(r.era5.ds_raw,r.era5.lluvia_mm,ld),ds_raw:r.era5.ds_raw}}));
+  const ll=corr.map(r=>({valor:r.era5.lluvia_mm,peso:r.peso})),hm=corr.map(r=>({valor:r.era5.hum_pct,peso:r.peso})),ds=corr.map(r=>({valor:r.era5.dias_secos,peso:r.peso})),tv=corr.map(r=>({valor:r.era5.tavg,peso:r.peso}));
+  const tp=corr.reduce((s,r)=>s+r.peso,0);
+  const distL={p10:wp(ll,.1),p25:wp(ll,.25),p50:wp(ll,.5),p75:wp(ll,.75),p90:wp(ll,.9),media:Math.round(corr.reduce((s,r)=>s+r.era5.lluvia_mm*r.peso,0)/tp*10)/10};
+  const hd={p25:wp(hm,.25),p50:wp(hm,.5),p75:wp(hm,.75)},dd={p10:wp(ds,.1),p25:wp(ds,.25),p50:wp(ds,.5),p75:wp(ds,.75),p90:wp(ds,.9)},td={p25:wp(tv,.25),p50:wp(tv,.5),p75:wp(tv,.75)};
+  const umb=[50,100,125,150,175,200,225,250,275,300,350,400];
+  const pll=umb.map(u=>({umbral_mm:u,prob_menor_pct:pmq(ll,u),label:`P(lluvia ${mes} < ${u}mm) = ${pmq(ll,u)}%`}));
+  const pds=[3,5,7,10,13,15,18].map(u=>{const p=100-pmq(ds,u+1);return{umbral_dias:u,prob_mayor_pct:p,label:`P(días secos > ${u}) = ${p}%`};});
+  return J({ok:true,lat,lon,mes,month,year,oni_actual:Math.round(oniNow*100)/100,amo_actual:Math.round(amoNow*1000)/1000,fase_enso:fase,n_analogos:corr.length,fuente:'ERA5-Land 0.1° + ONI + AMO + anti-drizzle',bias_temp:bias?{aplicado:true,bias_c:bias.bias_c,n_años:bias.n}:{aplicado:false},analogos:corr.map(r=>({año:r.year,peso:r.peso,oni:Math.round(r.oni*100)/100,amo:Math.round(r.amo*1000)/1000,lluvia_mm:r.era5.lluvia_mm,hum_pct:r.era5.hum_pct,tavg_c:r.era5.tavg,et0_mm:r.era5.et0_mm,dias_secos:r.era5.dias_secos,dias_secos_raw:(r.era5 as any).ds_raw})),distribucion_lluvia:distL,distribucion_temperatura:td,distribucion_humedad:hd,distribucion_dias_secos:dd,probabilidades_lluvia:pll,prob_dias_secos:pds,interpretacion:{indices:`${fase} (ONI ${oniNow.toFixed(2)}, AMO ${amoNow.toFixed(3)})`,lluvia:`${mes} ${year}: mediana ${distL.p50}mm, P10-P90: ${distL.p10}–${distL.p90}mm.`,temperatura:`Temp P25-P75: ${td.p25}–${td.p75}°C${bias?` (Davis +${bias.bias_c}°C, ${bias.n} años)`:'(sin Davis)'}.`,deficit:`P(lluvia < 150mm): ${pmq(ll,150)}%.`,dias_secos:`Días secos mediana ${dd.p50}, P10-P90: ${dd.p10}–${dd.p90} días.`,humedad:`Humedad P25-P75: ${hd.p25}–${hd.p75}%.`}});
+}catch(e){return J({ok:false,error:(e as Error).message},500);}});

@@ -32,7 +32,7 @@ export default function DocumentoPreviewModal({ storagePath, filename, onClose }
 
     const supabase = createClient()
     supabase.storage
-      .from('analisis-suelo')
+      .from('documentos')
       .createSignedUrl(storagePath, 120)
       .then(({ data, error: err }) => {
         if (cancelled) return

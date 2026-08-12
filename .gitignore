@@ -52,6 +52,14 @@ next-env.d.ts
 # nombres/keys reales de agricultores, no van al repo)
 scripts/bulk-import-report.csv
 scripts/bulk-import-result.csv
+scripts/migrate-documentos-agricultores.csv
+scripts/migrate-documentos-result.csv
+
+# aprovisionamiento de usuarios por cédula: cédulas reales de agricultores
+usuarios_cedula_provisionados.csv
+
+# estado local de la CLI de Supabase (supabase link / functions deploy)
+supabase/.temp/
 
 # modo demo temporal: CSVs con data real de agricultores/negocio exportada de
 # Supabase mientras la cuenta estaba suspendida por facturación. No va al repo.

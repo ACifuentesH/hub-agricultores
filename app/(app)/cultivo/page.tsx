@@ -10,7 +10,7 @@ import MasterAgricultorSelector from '@/components/MasterAgricultorSelector'
 import MasterEmptyState from '@/components/MasterEmptyState'
 import ClimateSparkline from '@/components/ClimateSparkline'
 import DataSourceBadge from '@/components/DataSourceBadge'
-import { CloudSun, CloudRain, Sun, Cloud, Sprout, AlertCircle, CalendarOff, FlaskConical } from 'lucide-react'
+import { CloudSun, CloudRain, Sun, Cloud, Sprout, AlertCircle, CalendarOff } from 'lucide-react'
 import { freshnessLevel, freshnessTextClass, formatDateShort } from '@/lib/freshness'
 import { resolveCiclo } from '@/lib/ciclo'
 import { FASE_CORTA, describirFaseDetallada } from '@/lib/agro-glosario'
@@ -50,11 +50,11 @@ export default async function CultivoPage({
   const supabase = await createClient()
   const [{ data: lotes }, conditions, series, agricultores, { data: visitas }] = await Promise.all([
     supabase
-      .from('lote')
-      .select('lote_id, nombre_lote, codigo_lote, ha_sembradas, fecha_inicio_siembra, fecha_inicio_siembra_real, ha_cosechadas, rendimiento_real, ha_perdidas, unidad_produccion_v, compactacion, segmentacion_particulas, drenajes_internos, condicion_drenaje')
-      .eq('AgricultorKey', agricultorKey)
+      .from('lotes')
+      .select('lote_id, nombre_lote, hectareas, cultivo, fecha_siembra, fecha_cosecha_estimada, fecha_cosecha_real, ha_sembradas, ha_perdidas, ha_cosechadas, estado_lote')
+      .eq('agricultor_id', agricultorKey)
       .eq('ciclo', ciclo)
-      .order('fecha_inicio_siembra_real', { ascending: true }),
+      .order('fecha_siembra', { ascending: true }),
     getCurrentConditions(agricultorKey),
     getClimateSeries(agricultorKey, 14),
     scope.isMaster ? listAgricultores() : Promise.resolve([]),
@@ -62,33 +62,9 @@ export default async function CultivoPage({
     supabase
       .from('v_lote_detalle')
       .select('lote_id, fecha_visita, tecnico, fase, observaciones, acuerdos, estado_experto')
-      .eq('agricultor_key', agricultorKey)
+      .eq('agricultor_id', agricultorKey)
       .eq('ciclo', ciclo),
   ])
-
-  // Condición de suelo e insumos aplicados por lote — movidos aquí desde el
-  // antiguo módulo "Suelo", que pasó a ser el repositorio de Documentación.
-  // producto_registro se cruza por nombre de lote (lote_v) Y por ciclo: sin el
-  // filtro de ciclo, los insumos de 2025 aparecían bajo el filtro 2026 en los
-  // lotes cuyo nombre se repite entre ciclos.
-  const nombresLote = (lotes ?? []).map(l => l.nombre_lote).filter(Boolean) as string[]
-  const { data: insumos } = nombresLote.length
-    ? await supabase
-        .from('producto_registro')
-        .select('lote_v, nombre_producto, categoria_producto, dosis_real_ha, dosis_recomendada_v, ha_aplicadas, fecha_registro')
-        .in('lote_v', nombresLote)
-        .eq('ciclo', ciclo)
-        .order('fecha_registro', { ascending: false })
-    : { data: [] }
-
-  type InsumoRow = NonNullable<typeof insumos>[number]
-  const insumosByLote = (insumos ?? []).reduce<Record<string, InsumoRow[]>>((acc, ins) => {
-    if (!ins) return acc
-    const k = ins.lote_v ?? 'Sin lote'
-    if (!acc[k]) acc[k] = []
-    acc[k]!.push(ins)
-    return acc
-  }, {})
 
   // Índice de visitas por lote, para no recorrer el array en cada tarjeta
   const visitaPorLote = new Map(
@@ -101,9 +77,11 @@ export default async function CultivoPage({
   const tempLevel = freshnessLevel(conditions.fecha)
   const tempIsStale = tempLevel === 'warn' || tempLevel === 'stale'
 
-  // Separar lotes con / sin fecha de siembra real (decisión 2026-04-18: marcar diferente)
-  const lotesConFecha = (lotes ?? []).filter(l => l.fecha_inicio_siembra_real != null && l.fecha_inicio_siembra_real !== '')
-  const lotesSinFecha = (lotes ?? []).filter(l => l.fecha_inicio_siembra_real == null || l.fecha_inicio_siembra_real === '')
+  // Separar lotes con / sin fecha de siembra (el schema nuevo tiene un único
+  // campo `fecha_siembra`, no distingue "planeada" de "confirmada" como en
+  // producción)
+  const lotesConFecha = (lotes ?? []).filter(l => l.fecha_siembra != null)
+  const lotesSinFecha = (lotes ?? []).filter(l => l.fecha_siembra == null)
 
   return (
     <div className="space-y-6">
@@ -154,7 +132,7 @@ export default async function CultivoPage({
           </p>
           <div className="flex flex-wrap gap-1.5">
             {lotes!.map(l => {
-              const tieneFecha = l.fecha_inicio_siembra_real != null && l.fecha_inicio_siembra_real !== ''
+              const tieneFecha = l.fecha_siembra != null
               return (
                 <a
                   key={l.lote_id}
@@ -165,8 +143,8 @@ export default async function CultivoPage({
                       : 'bg-amber-50 dark:bg-amber-950/30 text-amber-800 dark:text-amber-300 border-amber-200/60 dark:border-amber-900/40 hover:bg-amber-100 dark:hover:bg-amber-900/50'
                   }`}
                   title={tieneFecha
-                    ? `Sembrado: ${l.fecha_inicio_siembra_real}`
-                    : 'Sin fecha de siembra real'}
+                    ? `Sembrado: ${l.fecha_siembra}`
+                    : 'Sin fecha de siembra'}
                 >
                   {l.nombre_lote}
                 </a>
@@ -176,10 +154,10 @@ export default async function CultivoPage({
         </div>
       )}
 
-      {/* Per-lote panels — solo lotes con fecha de siembra real */}
+      {/* Per-lote panels — solo lotes con fecha de siembra */}
       <div className="space-y-6">
         {lotesConFecha.map((l) => {
-          const fechaReal = l.fecha_inicio_siembra_real
+          const fechaReal = l.fecha_siembra
           const stageInfo = getCurrentStageInfo(fechaReal)
           const diasDesde = stageInfo?.dias ?? 0
           const visita = visitaDe(l.lote_id)
@@ -194,16 +172,16 @@ export default async function CultivoPage({
                     {l.nombre_lote}
                   </h2>
                   <p className="text-xs text-gray-400 dark:text-gray-500">
-                    {l.codigo_lote} · {l.unidad_produccion_v ?? 'Sin unidad'}
+                    {l.hectareas != null ? `${l.hectareas} ha` : 'Sin hectáreas'} · {l.cultivo ?? 'Maíz'}
                   </p>
                 </div>
                 <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
-                  Siembra <span className="text-gray-700 dark:text-gray-300 font-medium">{l.fecha_inicio_siembra_real ?? '—'}</span>
+                  Siembra <span className="text-gray-700 dark:text-gray-300 font-medium">{l.fecha_siembra ?? '—'}</span>
                   {scope.isMaster && (
                     <FechaSiembraEditor
                       loteId={l.lote_id}
                       loteNombre={l.nombre_lote ?? l.lote_id}
-                      fechaActual={l.fecha_inicio_siembra_real ?? null}
+                      fechaActual={l.fecha_siembra ?? null}
                     />
                   )}
                 </div>
@@ -250,7 +228,7 @@ export default async function CultivoPage({
                         }`
                       : stageInfo
                         ? `Etapa ${stageInfo.meta.label} — ${stageInfo.meta.phase}. ${getPhaseDescription(stageInfo.stage)}`
-                        : 'Lote sin fecha de siembra real registrada.'}
+                        : 'Lote sin fecha de siembra registrada.'}
                   </p>
                   {visita?.estado_experto && (
                     <p className="mt-2.5 border-t border-gray-100 pt-2 text-xs text-gray-500 dark:border-gray-800 dark:text-gray-400">
@@ -276,13 +254,13 @@ export default async function CultivoPage({
         )}
       </div>
 
-      {/* Lotes pendientes de cargar fecha de siembra real */}
+      {/* Lotes pendientes de cargar fecha de siembra */}
       {lotesSinFecha.length > 0 && (
         <div className="bg-amber-50/40 dark:bg-amber-950/20 rounded-xl border border-amber-200/60 dark:border-amber-900/40 overflow-hidden">
           <div className="px-5 py-4 border-b border-amber-200/60 dark:border-amber-900/40 flex items-center gap-2">
             <CalendarOff size={16} className="text-amber-700 dark:text-amber-400" />
             <h2 className="font-semibold text-amber-900 dark:text-amber-200 text-sm">
-              Pendientes de cargar fecha de siembra confirmada · {lotesSinFecha.length} lote{lotesSinFecha.length === 1 ? '' : 's'}
+              Pendientes de cargar fecha de siembra · {lotesSinFecha.length} lote{lotesSinFecha.length === 1 ? '' : 's'}
             </h2>
           </div>
           <div className="overflow-x-auto">
@@ -290,10 +268,8 @@ export default async function CultivoPage({
               <thead className="bg-amber-100/40 dark:bg-amber-950/30 text-amber-800 dark:text-amber-300 text-[11px] uppercase">
                 <tr>
                   <th className="px-4 py-2 text-left">Lote</th>
-                  <th className="px-4 py-2 text-left">Código</th>
-                  <th className="px-4 py-2 text-left">Unidad</th>
-                  <th className="px-4 py-2 text-left">Fecha planeada</th>
-                  <th className="px-4 py-2 text-right">Ha sembradas</th>
+                  <th className="px-4 py-2 text-left">Cultivo</th>
+                  <th className="px-4 py-2 text-right">Hectáreas</th>
                   {scope.isMaster && <th className="px-4 py-2 text-right">Fecha de siembra</th>}
                 </tr>
               </thead>
@@ -305,10 +281,8 @@ export default async function CultivoPage({
                     className="hover:bg-amber-100/30 dark:hover:bg-amber-950/30 scroll-mt-20"
                   >
                     <td className="px-4 py-2 font-medium text-gray-800 dark:text-gray-100">{l.nombre_lote}</td>
-                    <td className="px-4 py-2 text-gray-500 dark:text-gray-400">{l.codigo_lote ?? '—'}</td>
-                    <td className="px-4 py-2 text-gray-500 dark:text-gray-400">{l.unidad_produccion_v ?? '—'}</td>
-                    <td className="px-4 py-2 text-gray-500 dark:text-gray-400">{l.fecha_inicio_siembra ?? '—'}</td>
-                    <td className="px-4 py-2 text-right text-gray-600 dark:text-gray-300">{l.ha_sembradas ?? '—'}</td>
+                    <td className="px-4 py-2 text-gray-500 dark:text-gray-400">{l.cultivo ?? '—'}</td>
+                    <td className="px-4 py-2 text-right text-gray-600 dark:text-gray-300">{l.hectareas ?? '—'}</td>
                     {scope.isMaster && (
                       <td className="px-4 py-2 text-right">
                         <FechaSiembraEditor
@@ -325,81 +299,8 @@ export default async function CultivoPage({
           </div>
           <div className="px-5 py-3 text-[11px] text-amber-800 dark:text-amber-300 flex items-center gap-1.5">
             <AlertCircle size={12} />
-            Estos lotes no aparecen en la línea de tiempo porque no tienen fecha de siembra real registrada. Pídale al equipo agronómico que la complete.
+            Estos lotes no aparecen en la línea de tiempo porque no tienen fecha de siembra registrada.
           </div>
-        </div>
-      )}
-
-      {/* Condición de suelo e insumos por lote (antes vivían en el módulo Suelo).
-          Se listan TODOS los lotes, con o sin fecha de siembra, para no perder
-          la información de los que aún no entran en la línea de tiempo. */}
-      {(lotes?.length ?? 0) > 0 && (
-        <div className="space-y-4">
-          <div className="flex items-center gap-2">
-            <FlaskConical size={18} className="text-amber-600" />
-            <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
-              Condición de suelo e insumos
-            </h2>
-          </div>
-
-          {lotes!.map(l => (
-            <div
-              key={`suelo-${l.lote_id}`}
-              className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900"
-            >
-              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-100 px-5 py-4 dark:border-gray-800">
-                <div>
-                  <h3 className="font-semibold text-gray-800 dark:text-gray-100">{l.nombre_lote}</h3>
-                  <p className="text-xs text-gray-400 dark:text-gray-500">{l.codigo_lote}</p>
-                </div>
-                <div className="flex flex-wrap gap-3 text-xs text-gray-500 dark:text-gray-400">
-                  <span>Compactación: <b className="text-gray-700 dark:text-gray-200">{l.compactacion ?? '—'}</b></span>
-                  <span>Drenaje: <b className="text-gray-700 dark:text-gray-200">{l.condicion_drenaje ?? '—'}</b></span>
-                  <span>Drenajes internos: <b className="text-gray-700 dark:text-gray-200">{l.drenajes_internos ?? '—'}</b></span>
-                </div>
-              </div>
-
-              <div className="overflow-x-auto">
-                <table className="w-full min-w-[720px] text-sm">
-                  <thead className="bg-gray-50 text-xs uppercase text-gray-500 dark:bg-gray-800 dark:text-gray-400">
-                    <tr>
-                      <th className="px-4 py-3 text-left">Producto</th>
-                      <th className="px-4 py-3 text-left">Categoría</th>
-                      <th className="px-4 py-3 text-right">Dosis real (ha)</th>
-                      <th className="px-4 py-3 text-right">Dosis recom. (ha)</th>
-                      <th className="px-4 py-3 text-right">Ha aplicadas</th>
-                      <th className="px-4 py-3 text-left">Fecha</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-                    {(insumosByLote[l.nombre_lote as string] ?? []).slice(0, 10).map((ins, i) => (
-                      <tr key={i} className="hover:bg-gray-50 dark:hover:bg-gray-900/40">
-                        <td className="px-4 py-2.5 font-medium text-gray-800 dark:text-gray-100">{ins?.nombre_producto}</td>
-                        <td className="px-4 py-2.5">
-                          <span className="rounded-full bg-blue-50 px-2 py-0.5 text-xs text-blue-700 dark:bg-blue-950/40 dark:text-blue-300">
-                            {ins?.categoria_producto}
-                          </span>
-                        </td>
-                        <td className="px-4 py-2.5 text-right text-gray-600 dark:text-gray-300">{ins?.dosis_real_ha?.toFixed(2)}</td>
-                        <td className="px-4 py-2.5 text-right text-gray-600 dark:text-gray-300">{ins?.dosis_recomendada_v?.toFixed(2)}</td>
-                        <td className="px-4 py-2.5 text-right text-gray-600 dark:text-gray-300">{ins?.ha_aplicadas}</td>
-                        <td className="px-4 py-2.5 text-xs text-gray-400 dark:text-gray-500">
-                          {ins?.fecha_registro ? new Date(ins.fecha_registro).toLocaleDateString('es-VE') : '—'}
-                        </td>
-                      </tr>
-                    ))}
-                    {!(insumosByLote[l.nombre_lote as string]?.length) && (
-                      <tr>
-                        <td colSpan={6} className="px-4 py-4 text-center text-sm text-gray-400 dark:text-gray-500">
-                          Sin registros de insumos
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          ))}
         </div>
       )}
     </div>

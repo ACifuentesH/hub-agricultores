@@ -9,6 +9,10 @@ export const dynamic = 'force-dynamic'
  * arma una sesión real de Supabase Auth para su usuario ya aprovisionado
  * (ver scripts/crear_usuarios_cedula.py). No crea usuarios nuevos acá — si
  * la cédula no tiene cuenta aprovisionada, devuelve error.
+ *
+ * Ruta bajo /api/session (no /api/auth): en varias redes empresariales el
+ * proxy/firewall bloquea paths que contienen "/auth" con 403, aunque el resto
+ * del sitio de Vercel pase bien.
  */
 export async function POST(req: Request) {
   let body: { cedula?: string }

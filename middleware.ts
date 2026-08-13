@@ -1,9 +1,10 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
-// /api/auth/cedula-login crea la sesión — tiene que ser alcanzable sin una
-// sesión previa, igual que /login.
-const PUBLIC_ROUTES = ['/login', '/api/auth/cedula-login']
+// /api/session/cedula crea la sesión — tiene que ser alcanzable sin una
+// sesión previa, igual que /login. (Evitar /api/auth/*: muchos proxies
+// empresariales lo bloquean con 403.)
+const PUBLIC_ROUTES = ['/login', '/api/session/cedula']
 
 export async function middleware(request: NextRequest) {
   // Modo demo: la cuenta de Supabase está suspendida, así que ni siquiera se

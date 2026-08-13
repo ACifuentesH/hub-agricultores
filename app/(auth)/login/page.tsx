@@ -31,12 +31,20 @@ function RealLoginForm() {
     setLoading(true)
     setError('')
 
-    const res = await fetch('/api/auth/cedula-login', {
+    const res = await fetch('/api/session/cedula', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ cedula }),
+      credentials: 'same-origin',
+      cache: 'no-store',
     })
-    const body = await res.json().catch(() => ({ ok: false, error: 'Error inesperado' }))
+    const body = await res.json().catch(() => ({
+      ok: false,
+      error:
+        res.status === 403
+          ? 'La red bloqueó el ingreso (403). Prueba otra red o pide a TI que permita este sitio.'
+          : `Error inesperado (${res.status}).`,
+    }))
 
     if (!body.ok) {
       setError(body.error ?? 'No se pudo iniciar sesión.')

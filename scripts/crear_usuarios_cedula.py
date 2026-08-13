@@ -7,7 +7,7 @@ Cada agricultor obtiene:
     {agricultor_id}@login.saturno.internal (nunca se muestra ni se usa a mano
     — ver lib/cedula-auth.ts, mismo esquema)
   - password aleatoria (no se usa: el login real es vía
-    app/api/auth/cedula-login/route.ts, que genera la sesión con
+    app/api/session/cedula/route.ts, que genera la sesión con
     service_role, no con esta contraseña)
   - una fila en user_profiles (role='farmer')
 

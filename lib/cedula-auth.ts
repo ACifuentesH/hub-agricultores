@@ -6,7 +6,7 @@
  * agricultor solo tipee su cédula, se usa un email sintético determinístico
  * — nunca se muestra ni se le pide al usuario — y el login intercambia la
  * cédula por una sesión real vía un magic link generado server-side con
- * `service_role` (ver app/api/auth/cedula-login/route.ts). Esto mantiene
+ * `service_role` (ver app/api/session/cedula/route.ts). Esto mantiene
  * `auth.uid()` real para que la RLS funcione igual que con login por clave.
  *
  * ADVERTENCIA DE SEGURIDAD (decisión explícita del usuario, 2026-08-11): la

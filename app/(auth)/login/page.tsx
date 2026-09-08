@@ -1,9 +1,8 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
-import { Sprout, ArrowRight, Eye, EyeOff } from 'lucide-react'
+import { useState, Suspense } from 'react'
+import { useSearchParams } from 'next/navigation'
+import { Sprout, ArrowRight } from 'lucide-react'
 import DemoLoginGate from '@/components/DemoLoginGate'
 
 export default function LoginPage() {
@@ -12,71 +11,21 @@ export default function LoginPage() {
   if (process.env.NEXT_PUBLIC_DEMO_MODE === 'true') {
     return <DemoLoginGate />
   }
-  return <RealLoginForm />
+  return (
+    <Suspense fallback={null}>
+      <RealLoginForm />
+    </Suspense>
+  )
 }
 
 function RealLoginForm() {
-  const router = useRouter()
-  const [modo, setModo] = useState<'cedula' | 'password'>('cedula')
-  const [cedula, setCedula] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [showPassword, setShowPassword] = useState(false)
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
+  const searchParams = useSearchParams()
+  const [documento, setDocumento] = useState('')
+  const [error] = useState(searchParams.get('error') ?? '')
   const [anim, setAnim] = useState(true)
 
-  async function handleCedulaLogin(e: React.FormEvent) {
-    e.preventDefault()
-    setLoading(true)
-    setError('')
-
-    const res = await fetch('/api/session/cedula', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ cedula }),
-      credentials: 'same-origin',
-      cache: 'no-store',
-    })
-    const body = await res.json().catch(() => ({
-      ok: false,
-      error:
-        res.status === 403
-          ? 'La red bloqueó el ingreso (403). Prueba otra red o pide a TI que permita este sitio.'
-          : `Error inesperado (${res.status}).`,
-    }))
-
-    if (!body.ok) {
-      setError(body.error ?? 'No se pudo iniciar sesión.')
-      setLoading(false)
-      return
-    }
-
-    router.push(body.role === 'master' ? '/master' : '/dashboard')
-  }
-
-  async function handleLogin(e: React.FormEvent) {
-    e.preventDefault()
-    setLoading(true)
-    setError('')
-
-    const supabase = createClient()
-    const { data, error: authError } = await supabase.auth.signInWithPassword({ email, password })
-
-    if (authError) {
-      setError('Credenciales incorrectas. Intenta de nuevo.')
-      setLoading(false)
-      return
-    }
-
-    const { data: profile } = await supabase
-      .from('user_profiles')
-      .select('role')
-      .eq('user_id', data.user.id)
-      .single()
-
-    router.push(profile?.role === 'master' ? '/master' : '/dashboard')
-  }
+  // POST HTML clásico a /ingreso/cedula (sin fetch/XHR): en redes
+  // empresariales a menudo bloquean POST a /api/* o requests JSON.
 
   return (
     <div
@@ -85,16 +34,11 @@ function RealLoginForm() {
     >
       {/* Brand panel — left 60% on desktop */}
       <div className="relative lg:col-span-3 hidden lg:flex flex-col justify-between p-12 text-white overflow-hidden isolate bg-green-950">
-        {/* Capa 1 — foto con Ken Burns */}
         <div
           className="absolute -inset-[6%] z-0 bg-cover bg-center login-kenburns"
           style={{ backgroundImage: "url('/login-bg.jpg')" }}
         />
-
-        {/* Capa 2 — degradado de marca (mismas opacidades que hoy) */}
         <div className="absolute inset-0 z-[1] bg-gradient-to-br from-green-950/80 via-green-900/50 to-emerald-950/85" />
-
-        {/* Capa 3 — barrido de luz verde-lima */}
         <div
           className="absolute -inset-[30%] z-[2] blur-2xl mix-blend-screen login-sweep"
           style={{
@@ -102,8 +46,6 @@ function RealLoginForm() {
               'radial-gradient(45% 40% at 30% 35%, rgba(163,230,53,.30) 0%, rgba(34,197,94,.12) 40%, transparent 72%)',
           }}
         />
-
-        {/* Capa 4 — neblina ámbar */}
         <div
           className="absolute -inset-[20%] z-[2] blur-3xl mix-blend-screen login-haze"
           style={{
@@ -111,11 +53,7 @@ function RealLoginForm() {
               'radial-gradient(50% 45% at 72% 78%, rgba(234,179,8,.22) 0%, transparent 68%)',
           }}
         />
-
-        {/* Capa 5 — base del campo con vaivén */}
         <div className="absolute inset-x-0 bottom-0 h-[34%] z-[2] bg-gradient-to-t from-green-950/70 to-transparent login-field" />
-
-        {/* Capa 6 — partículas de polen */}
         <div className="absolute inset-0 z-[3] pointer-events-none overflow-hidden">
           {[
             { left: '12%', size: 5, dur: 19, delay: 0, color: 'rgba(214,255,180,.9)', glow: true },
@@ -141,8 +79,6 @@ function RealLoginForm() {
             />
           ))}
         </div>
-
-        {/* Capa 7 — viñeta */}
         <div
           className="absolute inset-0 z-[4] pointer-events-none"
           style={{ boxShadow: 'inset 0 0 160px 40px rgba(2,26,12,.55)' }}
@@ -209,10 +145,9 @@ function RealLoginForm() {
         </button>
       </div>
 
-      {/* Form panel — right 40% on desktop, full width on mobile */}
+      {/* Form panel */}
       <div className="lg:col-span-2 flex flex-col justify-center px-6 sm:px-12 py-12">
         <div className="w-full max-w-sm mx-auto">
-          {/* Mobile brand */}
           <div className="lg:hidden flex items-center gap-2.5 mb-10">
             <div className="w-9 h-9 rounded-lg bg-green-800 flex items-center justify-center text-white">
               <Sprout size={18} />
@@ -228,145 +163,46 @@ function RealLoginForm() {
               Bienvenido de vuelta
             </h2>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Ingresa tus credenciales para acceder al panel.
+              Personas naturales: cédula. Personas jurídicas: RIF.
             </p>
           </div>
 
-          {modo === 'cedula' ? (
-            <form onSubmit={handleCedulaLogin} className="space-y-5">
-              <div>
-                <label
-                  htmlFor="cedula"
-                  className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5"
-                >
-                  Cédula
-                </label>
-                <input
-                  id="cedula"
-                  type="text"
-                  inputMode="numeric"
-                  placeholder="27673399 (sin la V ni ceros)"
-                  value={cedula}
-                  onChange={(e) => setCedula(e.target.value)}
-                  required
-                  autoComplete="off"
-                  className="w-full px-3.5 py-2.5 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 rounded-lg text-sm text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-green-700/30 focus:border-green-700 transition-shadow"
-                />
+          <form action="/ingreso/cedula" method="post" className="space-y-5">
+            <div>
+              <label
+                htmlFor="documento"
+                className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5"
+              >
+                Cédula o RIF
+              </label>
+              <input
+                id="documento"
+                name="documento"
+                type="text"
+                placeholder="Cédula o RIF"
+                value={documento}
+                onChange={(e) => setDocumento(e.target.value)}
+                required
+                autoComplete="off"
+                autoFocus
+                className="w-full px-3.5 py-2.5 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 rounded-lg text-sm text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-green-700/30 focus:border-green-700 transition-shadow"
+              />
+            </div>
+
+            {error && (
+              <div className="text-xs text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 rounded-lg px-3 py-2">
+                {error}
               </div>
+            )}
 
-              {error && (
-                <div className="text-xs text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 rounded-lg px-3 py-2">
-                  {error}
-                </div>
-              )}
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="group w-full inline-flex items-center justify-center gap-2 bg-green-800 hover:bg-green-900 text-white font-medium py-2.5 rounded-lg transition-all disabled:opacity-60 disabled:cursor-not-allowed shadow-sm hover:shadow"
-              >
-                {loading ? 'Ingresando...' : (
-                  <>
-                    Ingresar
-                    <ArrowRight size={16} className="transition-transform group-hover:translate-x-0.5" />
-                  </>
-                )}
-              </button>
-
-              <button
-                type="button"
-                onClick={() => { setModo('password'); setError('') }}
-                className="w-full text-center text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-              >
-                ¿Sos del equipo master? Ingresar con correo y contraseña
-              </button>
-            </form>
-          ) : (
-            <form onSubmit={handleLogin} className="space-y-5">
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5"
-                >
-                  Correo electrónico
-                </label>
-                <input
-                  id="email"
-                  type="email"
-                  placeholder="tu@correo.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  autoComplete="email"
-                  className="w-full px-3.5 py-2.5 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 rounded-lg text-sm text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-green-700/30 focus:border-green-700 transition-shadow"
-                />
-              </div>
-
-              <div>
-                <div className="flex items-center justify-between mb-1.5">
-                  <label
-                    htmlFor="password"
-                    className="text-xs font-medium text-gray-700 dark:text-gray-300"
-                  >
-                    Contraseña
-                  </label>
-                  <a
-                    href="#"
-                    className="text-xs text-green-800 dark:text-green-400 hover:underline"
-                  >
-                    ¿Olvidaste?
-                  </a>
-                </div>
-                <div className="relative">
-                  <input
-                    id="password"
-                    type={showPassword ? 'text' : 'password'}
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    autoComplete="current-password"
-                    className="w-full px-3.5 py-2.5 pr-10 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 rounded-lg text-sm text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-green-700/30 focus:border-green-700 transition-shadow"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword((v) => !v)}
-                    aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
-                  >
-                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                  </button>
-                </div>
-              </div>
-
-              {error && (
-                <div className="text-xs text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 rounded-lg px-3 py-2">
-                  {error}
-                </div>
-              )}
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="group w-full inline-flex items-center justify-center gap-2 bg-green-800 hover:bg-green-900 text-white font-medium py-2.5 rounded-lg transition-all disabled:opacity-60 disabled:cursor-not-allowed shadow-sm hover:shadow"
-              >
-                {loading ? 'Ingresando...' : (
-                  <>
-                    Ingresar
-                    <ArrowRight size={16} className="transition-transform group-hover:translate-x-0.5" />
-                  </>
-                )}
-              </button>
-
-              <button
-                type="button"
-                onClick={() => { setModo('cedula'); setError('') }}
-                className="w-full text-center text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-              >
-                ← Ingresar con cédula
-              </button>
-            </form>
-          )}
+            <button
+              type="submit"
+              className="group w-full inline-flex items-center justify-center gap-2 bg-green-800 hover:bg-green-900 text-white font-medium py-2.5 rounded-lg transition-all shadow-sm hover:shadow"
+            >
+              Ingresar
+              <ArrowRight size={16} className="transition-transform group-hover:translate-x-0.5" />
+            </button>
+          </form>
 
           <p className="text-xs text-gray-400 dark:text-gray-500 text-center mt-10">
             Acceso restringido · Programa Saturno

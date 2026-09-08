@@ -56,10 +56,18 @@ scripts/migrate-documentos-agricultores.csv
 scripts/migrate-documentos-result.csv
 
 # aprovisionamiento de usuarios por cédula: cédulas reales de agricultores
-usuarios_cedula_provisionados.csv
+usuarios_cedula_provisionados*.csv
+
+# salidas de scripts de diagnóstico puntuales: traen datos reales de
+# agricultores/lotes exportados durante el diagnóstico, no van al repo
+scripts/_ha_snapshot_polar.json
+scripts/_cedula_match_result.json
 
 # estado local de la CLI de Supabase (supabase link / functions deploy)
 supabase/.temp/
+
+# scratch de scripts de migración puntuales (ya ejecutados)
+/tmp/
 
 # modo demo temporal: CSVs con data real de agricultores/negocio exportada de
 # Supabase mientras la cuenta estaba suspendida por facturación. No va al repo.

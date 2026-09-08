@@ -16,7 +16,6 @@ import {
   ANIO_ACTUAL,
   agregarPrediccionLotesPorMes,
   buildPrediccionOverlay,
-  esBajaConfianza,
   type DesgloseSemanal,
 } from './prediccionMensual'
 
@@ -137,11 +136,6 @@ export default function AgricultorRainMonthlyChart({ mensual, prediccion, diaria
               Línea sólida: dato real. Línea punteada: pronóstico de {ANIO_ACTUAL}. Punto rojo con
               &quot;!&quot;: mes con hueco de datos. Pasa el mouse sobre un punto para ver el
               desglose semanal.
-            </p>
-          )}
-          {esBajaConfianza(prediccionActual) && (
-            <p className="mt-1 rounded border border-red-300/50 bg-red-50 px-2 py-1 text-[10px] leading-snug text-red-700 dark:border-red-900/40 dark:bg-red-950/30 dark:text-red-300">
-              Pronóstico de baja confianza — pocos meses de referencia disponibles este año.
             </p>
           )}
         </>

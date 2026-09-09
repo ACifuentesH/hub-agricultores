@@ -16,19 +16,25 @@ export interface Visita {
 
 /**
  * Última visita técnica al lote (tabla `seguimiento`, la misma que alimenta
- * la fase del cultivo). Cuando el lote no tiene ninguna visita fenológica
- * formal cargada, cae a la última actividad de campo (`actividades_registro`)
- * como señal de frescura: hay lotes sin "seguimiento" que igual tienen
- * control de plagas, fertilización o estimación de rendimiento cargados esta
- * semana — no están abandonados, solo no pasaron por la visita formal.
+ * la fase del cultivo) — o la última actividad de campo
+ * (`actividades_registro`), la que sea más reciente de las dos. Hay lotes
+ * donde la visita fenológica formal quedó vieja (semanas o meses) mientras el
+ * técnico siguió cargando control de plagas, fertilización o estimación de
+ * rendimiento por otro lado: mostrar la visita vieja como si fuera la última
+ * novedad del lote es lo que hacía ver el lote como abandonado sin estarlo.
  */
 export default function UltimaVisitaCard({ v }: { v: Visita | null }) {
   const dias = v?.fecha_visita
     ? Math.floor((Date.now() - new Date(v.fecha_visita).getTime()) / 86400000)
     : null
 
-  if (!v?.fecha_visita && v?.ultima_actividad_fecha) {
-    const diasAct = Math.floor((Date.now() - new Date(v.ultima_actividad_fecha).getTime()) / 86400000)
+  const visitaMs = v?.fecha_visita ? new Date(v.fecha_visita).getTime() : null
+  const actividadMs = v?.ultima_actividad_fecha ? new Date(v.ultima_actividad_fecha).getTime() : null
+  const usarActividad = actividadMs != null && (visitaMs == null || actividadMs > visitaMs)
+
+  if (v && usarActividad) {
+    const fechaActividad = v.ultima_actividad_fecha as string
+    const diasAct = Math.floor((Date.now() - new Date(fechaActividad).getTime()) / 86400000)
     return (
       <div className="rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-900">
         <p className="mb-3 flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
@@ -37,7 +43,7 @@ export default function UltimaVisitaCard({ v }: { v: Visita | null }) {
         <div className="space-y-2">
           <div className="flex items-baseline gap-2">
             <span className="text-sm font-semibold text-gray-800 dark:text-gray-100">
-              {formatDateShort(v.ultima_actividad_fecha)}
+              {formatDateShort(fechaActividad)}
             </span>
             <span className={`text-[11px] ${diasAct > 30 ? 'text-amber-600 dark:text-amber-400' : 'text-gray-500 dark:text-gray-400'}`}>
               {diasAct === 0 ? 'hoy' : `hace ${diasAct} día${diasAct === 1 ? '' : 's'}`}
@@ -59,7 +65,9 @@ export default function UltimaVisitaCard({ v }: { v: Visita | null }) {
             </p>
           )}
           <p className="border-t border-gray-100 pt-2 text-[10px] text-gray-400 dark:border-gray-800 dark:text-gray-500">
-            Sin visita fenológica formal registrada — esta es la última actividad de campo cargada en Saturno.
+            {v?.fecha_visita
+              ? `Más reciente que la última visita fenológica formal (${formatDateShort(v.fecha_visita)}).`
+              : 'Sin visita fenológica formal registrada — esta es la última actividad de campo cargada en Saturno.'}
           </p>
         </div>
       </div>

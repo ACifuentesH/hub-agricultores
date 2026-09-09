@@ -162,6 +162,13 @@ export default async function CultivoPage({
           const diasDesde = stageInfo?.dias ?? 0
           const visita = visitaDe(l.lote_id)
           const faseDetalle = describirFaseDetallada(visita?.fase)
+          // Misma ventana de 30 días que usa saturno_refrescar_derivados() para
+          // avance_pct: una fase medida hace 4 meses no es más confiable que el
+          // estimado por calendario, aunque "medida en campo" suene más sólido.
+          const faseVigente = Boolean(
+            visita?.fase && visita?.fecha_visita &&
+            Date.now() - new Date(visita.fecha_visita).getTime() <= 30 * 86400000,
+          )
 
           return (
             <div key={l.lote_id} id={`lote-${l.lote_id}`} className="space-y-4 scroll-mt-20">
@@ -222,14 +229,19 @@ export default async function CultivoPage({
 
                 <StatCard title="Resumen de fase">
                   <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
-                    {visita?.fase
-                      ? `Fase ${visita.fase} medida en campo. ${
+                    {faseVigente
+                      ? `Fase ${visita!.fase} medida en campo. ${
                           faseDetalle ?? (stageInfo ? getPhaseDescription(stageInfo.stage) : '')
                         }`
                       : stageInfo
-                        ? `Etapa ${stageInfo.meta.label} — ${stageInfo.meta.phase}. ${getPhaseDescription(stageInfo.stage)}`
+                        ? `Etapa ${stageInfo.meta.label} — ${stageInfo.meta.phase} (estimado por calendario). ${getPhaseDescription(stageInfo.stage)}`
                         : 'Lote sin fecha de siembra registrada.'}
                   </p>
+                  {!faseVigente && visita?.fase && (
+                    <p className="mt-1 text-[11px] text-amber-600 dark:text-amber-400">
+                      Última fase medida en campo: {visita.fase} el {formatDateShort(visita.fecha_visita)} — desactualizada, se usa el estimado por calendario en su lugar.
+                    </p>
+                  )}
                   {visita?.estado_experto && (
                     <p className="mt-2.5 border-t border-gray-100 pt-2 text-xs text-gray-500 dark:border-gray-800 dark:text-gray-400">
                       Valoración del técnico: <span className="font-medium text-gray-700 dark:text-gray-200">{visita.estado_experto}</span>

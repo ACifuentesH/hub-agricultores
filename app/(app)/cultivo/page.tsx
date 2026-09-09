@@ -61,7 +61,7 @@ export default async function CultivoPage({
     // Última visita técnica por lote — mismo origen que la fase del cultivo
     supabase
       .from('v_lote_detalle')
-      .select('lote_id, fecha_visita, tecnico, fase, observaciones, acuerdos, estado_experto')
+      .select('lote_id, fecha_visita, tecnico, fase, observaciones, acuerdos, estado_experto, ultima_actividad_fecha, ultima_actividad_tipo, ultima_actividad_comentario, ultima_actividad_tecnico')
       .eq('agricultor_id', agricultorKey)
       .eq('ciclo', ciclo),
   ])

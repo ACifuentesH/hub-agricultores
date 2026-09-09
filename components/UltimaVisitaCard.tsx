@@ -1,4 +1,4 @@
-import { ClipboardCheck } from 'lucide-react'
+import { ClipboardCheck, Sprout } from 'lucide-react'
 import { formatDateShort } from '@/lib/freshness'
 
 export interface Visita {
@@ -8,16 +8,63 @@ export interface Visita {
   observaciones: string | null
   acuerdos: string | null
   estado_experto: string | null
+  ultima_actividad_fecha?: string | null
+  ultima_actividad_tipo?: string | null
+  ultima_actividad_comentario?: string | null
+  ultima_actividad_tecnico?: string | null
 }
 
 /**
- * Última visita técnica al lote, tal como la registró el técnico en Saturno
- * (tabla `seguimiento`). Es el mismo origen que alimenta la fase del cultivo.
+ * Última visita técnica al lote (tabla `seguimiento`, la misma que alimenta
+ * la fase del cultivo). Cuando el lote no tiene ninguna visita fenológica
+ * formal cargada, cae a la última actividad de campo (`actividades_registro`)
+ * como señal de frescura: hay lotes sin "seguimiento" que igual tienen
+ * control de plagas, fertilización o estimación de rendimiento cargados esta
+ * semana — no están abandonados, solo no pasaron por la visita formal.
  */
 export default function UltimaVisitaCard({ v }: { v: Visita | null }) {
   const dias = v?.fecha_visita
     ? Math.floor((Date.now() - new Date(v.fecha_visita).getTime()) / 86400000)
     : null
+
+  if (!v?.fecha_visita && v?.ultima_actividad_fecha) {
+    const diasAct = Math.floor((Date.now() - new Date(v.ultima_actividad_fecha).getTime()) / 86400000)
+    return (
+      <div className="rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-900">
+        <p className="mb-3 flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+          <Sprout size={13} /> Última actividad de campo
+        </p>
+        <div className="space-y-2">
+          <div className="flex items-baseline gap-2">
+            <span className="text-sm font-semibold text-gray-800 dark:text-gray-100">
+              {formatDateShort(v.ultima_actividad_fecha)}
+            </span>
+            <span className={`text-[11px] ${diasAct > 30 ? 'text-amber-600 dark:text-amber-400' : 'text-gray-500 dark:text-gray-400'}`}>
+              {diasAct === 0 ? 'hoy' : `hace ${diasAct} día${diasAct === 1 ? '' : 's'}`}
+            </span>
+          </div>
+          {v.ultima_actividad_tipo && (
+            <p className="text-xs text-gray-600 dark:text-gray-300">
+              Tipo: <span className="font-medium">{v.ultima_actividad_tipo}</span>
+            </p>
+          )}
+          {v.ultima_actividad_tecnico && (
+            <p className="text-xs text-gray-600 dark:text-gray-300">
+              Técnico: <span className="font-medium">{v.ultima_actividad_tecnico}</span>
+            </p>
+          )}
+          {v.ultima_actividad_comentario && (
+            <p className="line-clamp-3 text-xs leading-relaxed text-gray-600 dark:text-gray-300">
+              {v.ultima_actividad_comentario}
+            </p>
+          )}
+          <p className="border-t border-gray-100 pt-2 text-[10px] text-gray-400 dark:border-gray-800 dark:text-gray-500">
+            Sin visita fenológica formal registrada — esta es la última actividad de campo cargada en Saturno.
+          </p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-900">
@@ -27,7 +74,7 @@ export default function UltimaVisitaCard({ v }: { v: Visita | null }) {
 
       {!v?.fecha_visita ? (
         <p className="text-sm text-gray-500 dark:text-gray-400">
-          Sin visitas registradas en este lote todavía.
+          Sin visitas ni actividad de campo registradas en este lote todavía.
         </p>
       ) : (
         <div className="space-y-2">

@@ -78,9 +78,9 @@ export default function EstadoLotesCard({ r, sinEvaluarConActividad = 0 }: Estad
 
       {r.lotes_sin_evaluar > 0 && (
         <p className="mt-3 border-t border-gray-100 pt-2.5 text-[11px] text-gray-500 dark:border-gray-800 dark:text-gray-400">
-          {r.lotes_sin_evaluar} lote{r.lotes_sin_evaluar === 1 ? '' : 's'} sin visita técnica aún
+          {r.lotes_sin_evaluar} lote{r.lotes_sin_evaluar === 1 ? '' : 's'} sin valoración formal
           {sinEvaluarConActividad > 0 && (
-            <> — {sinEvaluarConActividad} con actividad de campo reciente igual (ver en Cultivo)</>
+            <> — {sinEvaluarConActividad} con actividad de campo registrada (ver en Cultivo)</>
           )}
         </p>
       )}

@@ -83,12 +83,7 @@ export default async function DashboardPage({
   ])
 
   const filas = lotes ?? []
-  const sinEvaluarConActividad = filas.filter(l => {
-    if (l.estado_lote) return false
-    if (!l.ultima_actividad_fecha) return false
-    const dias = (Date.now() - new Date(l.ultima_actividad_fecha as string).getTime()) / 86400000
-    return dias <= 30
-  }).length
+  const sinEvaluarConActividad = filas.filter(l => !l.estado_lote && l.ultima_actividad_fecha).length
   const totalHa = filas.reduce((s, l) => s + (Number(l.ha_sembradas) || 0), 0)
   const totalPerdidas = filas.reduce((s, l) => s + (Number(l.ha_perdidas) || 0), 0)
   const lotesConSiembra = filas.filter(l => l.inicio_siembra != null).length
@@ -310,19 +305,17 @@ function EstadoChip({
     // teléfono) porque ahí sí sale técnico + comentario completos.
     if (ultimaActividadFecha) {
       const dias = Math.floor((Date.now() - new Date(ultimaActividadFecha).getTime()) / 86400000)
-      if (dias <= 30) {
-        const chip = (
-          <span className="inline-flex items-center gap-1 rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-800 hover:bg-blue-200 dark:bg-blue-900/40 dark:text-blue-300 dark:hover:bg-blue-900/60">
-            Actividad reciente
-            <span className="text-blue-600/70 dark:text-blue-400/70">
-              · {ultimaActividadTipo ?? 'campo'} · hace {dias}d
-            </span>
+      const chip = (
+        <span className="inline-flex items-center gap-1 rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-800 hover:bg-blue-200 dark:bg-blue-900/40 dark:text-blue-300 dark:hover:bg-blue-900/60">
+          {ultimaActividadTipo ?? 'Actividad'}
+          <span className="text-blue-600/70 dark:text-blue-400/70">
+            · {dias === 0 ? 'hoy' : `hace ${dias}d`}
           </span>
-        )
-        return enlaceLote
-          ? <Link href={enlaceLote} title="Ver técnico y detalle en Cultivo">{chip}</Link>
-          : chip
-      }
+        </span>
+      )
+      return enlaceLote
+        ? <Link href={enlaceLote} title="Ver técnico y detalle en Cultivo">{chip}</Link>
+        : chip
     }
     return <span className="text-xs text-gray-400 dark:text-gray-500">Sin evaluar</span>
   }

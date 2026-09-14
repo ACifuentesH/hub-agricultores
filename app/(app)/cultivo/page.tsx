@@ -162,15 +162,9 @@ export default async function CultivoPage({
           const diasDesde = stageInfo?.dias ?? 0
           const visita = visitaDe(l.lote_id)
           const faseDetalle = describirFaseDetallada(visita?.fase)
-          // fase_fecha es la fecha real de la fase (puede venir de la visita
-          // formal o de una actividad de campo más reciente que la mencione
-          // en su comentario — ver saturno_refrescar_derivados()). Solo se
-          // usa para el tono del texto (aviso ámbar si es vieja); la fase se
-          // muestra siempre que exista, nunca se esconde.
-          const faseVigente = Boolean(
-            visita?.fase && visita?.fase_fecha &&
-            Date.now() - new Date(visita.fase_fecha).getTime() <= 30 * 86400000,
-          )
+          const diasFase = visita?.fase_fecha
+            ? Math.floor((Date.now() - new Date(visita.fase_fecha).getTime()) / 86400000)
+            : null
 
           return (
             <div key={l.lote_id} id={`lote-${l.lote_id}`} className="space-y-4 scroll-mt-20">
@@ -235,11 +229,10 @@ export default async function CultivoPage({
                       <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
                         {visita.fase}{faseDetalle ? ` — ${faseDetalle}` : ''}
                       </p>
-                      <p className={`mt-1.5 text-[11px] ${faseVigente ? 'text-gray-500 dark:text-gray-400' : 'text-amber-600 dark:text-amber-400'}`}>
-                        Última fase registrada: {formatDateShort(visita.fase_fecha ?? null)}
-                        {visita.fase_fuente === 'actividad' && ' (mencionada en una actividad de campo, no en la visita fenológica formal)'}
-                        {visita.fase_fuente === 'plantabilidad' && ' (visita de plantabilidad)'}
-                        {!faseVigente && ' — puede estar desactualizada, puede que el lote haya avanzado desde entonces'}
+                      <p className="mt-1.5 text-[11px] text-gray-500 dark:text-gray-400">
+                        {diasFase === 0 ? 'Hoy' : `Hace ${diasFase} día${diasFase === 1 ? '' : 's'}`}
+                        {visita.fase_fuente === 'actividad' && ' · actividad de campo'}
+                        {visita.fase_fuente === 'plantabilidad' && ' · visita de plantabilidad'}
                       </p>
                     </>
                   ) : (

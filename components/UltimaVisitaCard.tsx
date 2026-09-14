@@ -5,6 +5,8 @@ export interface Visita {
   fecha_visita: string | null
   tecnico: string | null
   fase: string | null
+  fase_fecha?: string | null
+  fase_fuente?: string | null
   observaciones: string | null
   acuerdos: string | null
   estado_experto: string | null

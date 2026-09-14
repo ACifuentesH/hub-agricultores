@@ -61,7 +61,7 @@ export default async function CultivoPage({
     // Última visita técnica por lote — mismo origen que la fase del cultivo
     supabase
       .from('v_lote_detalle')
-      .select('lote_id, fecha_visita, tecnico, fase, observaciones, acuerdos, estado_experto, ultima_actividad_fecha, ultima_actividad_tipo, ultima_actividad_comentario, ultima_actividad_tecnico')
+      .select('lote_id, fecha_visita, tecnico, fase, fase_fecha, fase_fuente, observaciones, acuerdos, estado_experto, ultima_actividad_fecha, ultima_actividad_tipo, ultima_actividad_comentario, ultima_actividad_tecnico')
       .eq('agricultor_id', agricultorKey)
       .eq('ciclo', ciclo),
   ])
@@ -162,12 +162,14 @@ export default async function CultivoPage({
           const diasDesde = stageInfo?.dias ?? 0
           const visita = visitaDe(l.lote_id)
           const faseDetalle = describirFaseDetallada(visita?.fase)
-          // Misma ventana de 30 días que usa saturno_refrescar_derivados() para
-          // avance_pct: una fase medida hace 4 meses no es más confiable que el
-          // estimado por calendario, aunque "medida en campo" suene más sólido.
+          // fase_fecha es la fecha real de la fase (puede venir de la visita
+          // formal o de una actividad de campo más reciente que la mencione
+          // en su comentario — ver saturno_refrescar_derivados()). Solo se
+          // usa para el tono del texto (aviso ámbar si es vieja); la fase se
+          // muestra siempre que exista, nunca se esconde.
           const faseVigente = Boolean(
-            visita?.fase && visita?.fecha_visita &&
-            Date.now() - new Date(visita.fecha_visita).getTime() <= 30 * 86400000,
+            visita?.fase && visita?.fase_fecha &&
+            Date.now() - new Date(visita.fase_fecha).getTime() <= 30 * 86400000,
           )
 
           return (
@@ -234,7 +236,8 @@ export default async function CultivoPage({
                         {visita.fase}{faseDetalle ? ` — ${faseDetalle}` : ''}
                       </p>
                       <p className={`mt-1.5 text-[11px] ${faseVigente ? 'text-gray-500 dark:text-gray-400' : 'text-amber-600 dark:text-amber-400'}`}>
-                        Última fase registrada: {formatDateShort(visita.fecha_visita)}
+                        Última fase registrada: {formatDateShort(visita.fase_fecha ?? null)}
+                        {visita.fase_fuente === 'actividad' && ' (mencionada en una actividad de campo, no en la visita fenológica formal)'}
                         {!faseVigente && ' — puede estar desactualizada, puede que el lote haya avanzado desde entonces'}
                       </p>
                     </>

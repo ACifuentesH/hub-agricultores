@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { getUserProfile } from '@/lib/auth'
 import { redirect } from 'next/navigation'
+import Link from 'next/link'
 import { Sprout, Wheat, CloudSun, AlertTriangle } from 'lucide-react'
 import { resolveAgricultorScope, listAgricultores } from '@/lib/access'
 import MasterAgricultorSelector from '@/components/MasterAgricultorSelector'
@@ -257,6 +258,7 @@ export default async function DashboardPage({
                       estado={l.estado_lote as string | null}
                       ultimaActividadFecha={l.ultima_actividad_fecha as string | null}
                       ultimaActividadTipo={l.ultima_actividad_tipo as string | null}
+                      enlaceLote={`/cultivo?x=1${qsAgricultor}#lote-${l.lote_id}`}
                     />
                   </td>
                 </tr>
@@ -289,29 +291,35 @@ function SinDato() {
 }
 
 function EstadoChip({
-  estado, ultimaActividadFecha, ultimaActividadTipo,
+  estado, ultimaActividadFecha, ultimaActividadTipo, enlaceLote,
 }: {
   estado: string | null
   ultimaActividadFecha?: string | null
   ultimaActividadTipo?: string | null
+  enlaceLote?: string
 }) {
   if (!estado) {
     // Sin visita fenológica formal, pero puede que igual haya trabajo de
     // campo reciente (control de plagas, fertilización, estimación de
     // rendimiento...) cargado en Saturno por otra vía — mostrar "Sin
     // evaluar" a secas ahí hacía ver el lote abandonado sin estarlo, la
-    // misma inconsistencia que ya se corrigió en /cultivo.
+    // misma inconsistencia que ya se corrigió en /cultivo. Se linkea a la
+    // tarjeta del lote en Cultivo (no un title, que no se ve en el
+    // teléfono) porque ahí sí sale técnico + comentario completos.
     if (ultimaActividadFecha) {
       const dias = Math.floor((Date.now() - new Date(ultimaActividadFecha).getTime()) / 86400000)
       if (dias <= 30) {
-        return (
-          <span
-            className="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900/40 dark:text-blue-300"
-            title={`${ultimaActividadTipo ?? 'Actividad'} hace ${dias} día${dias === 1 ? '' : 's'} — sin visita fenológica formal`}
-          >
+        const chip = (
+          <span className="inline-flex items-center gap-1 rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-800 hover:bg-blue-200 dark:bg-blue-900/40 dark:text-blue-300 dark:hover:bg-blue-900/60">
             Actividad reciente
+            <span className="text-blue-600/70 dark:text-blue-400/70">
+              · {ultimaActividadTipo ?? 'campo'} · hace {dias}d
+            </span>
           </span>
         )
+        return enlaceLote
+          ? <Link href={enlaceLote} title="Ver técnico y detalle en Cultivo">{chip}</Link>
+          : chip
       }
     }
     return <span className="text-xs text-gray-400 dark:text-gray-500">Sin evaluar</span>

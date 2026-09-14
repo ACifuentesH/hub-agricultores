@@ -238,6 +238,7 @@ export default async function CultivoPage({
                       <p className={`mt-1.5 text-[11px] ${faseVigente ? 'text-gray-500 dark:text-gray-400' : 'text-amber-600 dark:text-amber-400'}`}>
                         Última fase registrada: {formatDateShort(visita.fase_fecha ?? null)}
                         {visita.fase_fuente === 'actividad' && ' (mencionada en una actividad de campo, no en la visita fenológica formal)'}
+                        {visita.fase_fuente === 'plantabilidad' && ' (visita de plantabilidad)'}
                         {!faseVigente && ' — puede estar desactualizada, puede que el lote haya avanzado desde entonces'}
                       </p>
                     </>

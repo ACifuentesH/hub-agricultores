@@ -162,9 +162,6 @@ export default async function CultivoPage({
           const diasDesde = stageInfo?.dias ?? 0
           const visita = visitaDe(l.lote_id)
           const faseDetalle = describirFaseDetallada(visita?.fase)
-          const diasFase = visita?.fase_fecha
-            ? Math.floor((Date.now() - new Date(visita.fase_fecha).getTime()) / 86400000)
-            : null
 
           return (
             <div key={l.lote_id} id={`lote-${l.lote_id}`} className="space-y-4 scroll-mt-20">
@@ -226,14 +223,19 @@ export default async function CultivoPage({
                 <StatCard title="Resumen de fase">
                   {visita?.fase ? (
                     <>
-                      <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
-                        {visita.fase}{faseDetalle ? ` — ${faseDetalle}` : ''}
-                      </p>
-                      <p className="mt-1.5 text-[11px] text-gray-500 dark:text-gray-400">
-                        {diasFase === 0 ? 'Hoy' : `Hace ${diasFase} día${diasFase === 1 ? '' : 's'}`}
-                        {visita.fase_fuente === 'actividad' && ' · actividad de campo'}
-                        {visita.fase_fuente === 'plantabilidad' && ' · visita de plantabilidad'}
-                      </p>
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-3xl font-bold tabular-nums text-gray-900 dark:text-gray-100">
+                          {visita.fase}
+                        </span>
+                        {faseDetalle && (
+                          <span className="text-sm text-gray-600 dark:text-gray-300">{faseDetalle}</span>
+                        )}
+                      </div>
+                      {(visita.fase_fuente === 'actividad' || visita.fase_fuente === 'plantabilidad') && (
+                        <p className="mt-1.5 text-[11px] text-gray-400 dark:text-gray-500">
+                          {visita.fase_fuente === 'actividad' ? 'Registrada en actividad de campo' : 'Registrada en visita de plantabilidad'}
+                        </p>
+                      )}
                     </>
                   ) : (
                     <p className="text-sm text-gray-500 dark:text-gray-400">

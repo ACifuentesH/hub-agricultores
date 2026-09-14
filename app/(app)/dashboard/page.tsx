@@ -304,13 +304,9 @@ function EstadoChip({
     // tarjeta del lote en Cultivo (no un title, que no se ve en el
     // teléfono) porque ahí sí sale técnico + comentario completos.
     if (ultimaActividadFecha) {
-      const dias = Math.floor((Date.now() - new Date(ultimaActividadFecha).getTime()) / 86400000)
       const chip = (
         <span className="inline-flex items-center gap-1 rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-800 hover:bg-blue-200 dark:bg-blue-900/40 dark:text-blue-300 dark:hover:bg-blue-900/60">
-          {ultimaActividadTipo ?? 'Actividad'}
-          <span className="text-blue-600/70 dark:text-blue-400/70">
-            · {dias === 0 ? 'hoy' : `hace ${dias}d`}
-          </span>
+          {ultimaActividadTipo ?? 'Actividad registrada'}
         </span>
       )
       return enlaceLote

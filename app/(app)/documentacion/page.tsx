@@ -7,7 +7,7 @@ import DocumentosSection from '@/components/DocumentosSection'
 import DocumentoUploader from '@/components/DocumentoUploader'
 import DocumentoCategoriaTabs from '@/components/DocumentoCategoriaTabs'
 import { resolveCiclo } from '@/lib/ciclo'
-import { CATEGORIAS, resolveCategoria } from '@/lib/documentos'
+import { CATEGORIAS, CATEGORIAS_VISIBLES, resolveCategoria } from '@/lib/documentos'
 
 // Datos vivos: nunca cachear
 export const dynamic = 'force-dynamic'
@@ -76,7 +76,7 @@ export default async function DocumentacionPage({
 
       {scope.isMaster && <DocumentoUploader agricultores={agricultores} />}
 
-      <DocumentoCategoriaTabs categorias={CATEGORIAS} activa={categoria} />
+      <DocumentoCategoriaTabs categorias={CATEGORIAS_VISIBLES} activa={categoria} />
 
       <DocumentosSection
         agricultorKey={agricultorKey}

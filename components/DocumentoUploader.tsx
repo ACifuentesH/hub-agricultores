@@ -4,7 +4,7 @@ import { useState, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Upload, Loader2, Check, X, FileText, AlertCircle } from 'lucide-react'
-import { CATEGORIAS, CATEGORIA_DEFAULT, ACEPTADOS_MIME, MAX_BYTES, type CategoriaId } from '@/lib/documentos'
+import { CATEGORIAS_VISIBLES, CATEGORIA_DEFAULT, ACEPTADOS_MIME, MAX_BYTES, type CategoriaId } from '@/lib/documentos'
 import { CICLOS, CICLO_ACTIVO } from '@/lib/ciclo'
 
 interface Agricultor {
@@ -285,7 +285,7 @@ export default function DocumentoUploader({ agricultores }: { agricultores: Agri
                       disabled={p.status === 'uploading' || p.status === 'done'}
                       className="max-w-[160px] truncate rounded border border-gray-200 bg-white px-2 py-1 text-xs text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
                     >
-                      {CATEGORIAS.map(c => (
+                      {CATEGORIAS_VISIBLES.map(c => (
                         <option key={c.id} value={c.id}>{c.label}</option>
                       ))}
                     </select>

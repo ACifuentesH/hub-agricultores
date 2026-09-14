@@ -38,6 +38,15 @@ export type CategoriaId = (typeof CATEGORIAS)[number]['id']
 
 export const CATEGORIA_DEFAULT: CategoriaId = 'analisis_suelo'
 
+// Ocultas por pedido del 14-sep-2026: ningún agricultor tiene todavía un
+// documento cargado en pnl ni en analisis_datos (0/35) — el proceso que las
+// llena no arrancó. Se ocultan de las pestañas y del selector de subida
+// hasta que el equipo empiece a cargarlas; CATEGORIAS completo se mantiene
+// para no romper resolveCategoria()/labelCategoria() sobre lo que ya exista.
+const CATEGORIAS_OCULTAS: readonly CategoriaId[] = ['pnl', 'analisis_datos']
+
+export const CATEGORIAS_VISIBLES = CATEGORIAS.filter(c => !CATEGORIAS_OCULTAS.includes(c.id))
+
 /** Normaliza un valor libre a una categoría válida. */
 export function resolveCategoria(raw?: string | null): CategoriaId {
   const v = raw?.trim()

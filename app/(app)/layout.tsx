@@ -1,8 +1,6 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import Sidebar from '@/components/Sidebar'
-import AsistenteWidget from '@/components/AsistenteWidget'
-import TicketsWidget from '@/components/TicketsWidget'
 import UserMenu from '@/components/UserMenu'
 import ModuloTitulo from '@/components/ModuloTitulo'
 
@@ -47,11 +45,6 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         </header>
         <main className="flex-1 p-4 sm:p-6">{children}</main>
       </div>
-      <AsistenteWidget
-        defaultAgricultorKey={profile?.agricultor_id ?? null}
-        isMaster={(profile?.role ?? 'farmer') === 'master'}
-      />
-      <TicketsWidget />
     </div>
   )
 }

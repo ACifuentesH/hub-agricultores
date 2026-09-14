@@ -14,6 +14,8 @@ export interface Visita {
   ultima_actividad_tipo?: string | null
   ultima_actividad_comentario?: string | null
   ultima_actividad_tecnico?: string | null
+  avance_pct?: number | null
+  rendimiento_kg_ha?: number | null
 }
 
 /**

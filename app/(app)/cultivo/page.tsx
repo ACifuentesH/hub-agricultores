@@ -61,7 +61,7 @@ export default async function CultivoPage({
     // Última visita técnica por lote — mismo origen que la fase del cultivo
     supabase
       .from('v_lote_detalle')
-      .select('lote_id, fecha_visita, tecnico, fase, fase_fecha, fase_fuente, observaciones, acuerdos, estado_experto, ultima_actividad_fecha, ultima_actividad_tipo, ultima_actividad_comentario, ultima_actividad_tecnico')
+      .select('lote_id, fecha_visita, tecnico, fase, fase_fecha, fase_fuente, observaciones, acuerdos, estado_experto, ultima_actividad_fecha, ultima_actividad_tipo, ultima_actividad_comentario, ultima_actividad_tecnico, avance_pct, rendimiento_kg_ha')
       .eq('agricultor_id', agricultorKey)
       .eq('ciclo', ciclo),
   ])
@@ -244,8 +244,18 @@ export default async function CultivoPage({
                         : 'Lote sin fecha de siembra registrada.'}
                     </p>
                   )}
-                  {visita?.estado_experto && (
+                  {visita?.avance_pct != null && (
                     <p className="mt-2.5 border-t border-gray-100 pt-2 text-xs text-gray-500 dark:border-gray-800 dark:text-gray-400">
+                      Avance del ciclo: <span className="font-medium text-gray-700 dark:text-gray-200">{visita.avance_pct}%</span>
+                    </p>
+                  )}
+                  {visita?.rendimiento_kg_ha != null && (
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      Rendimiento real: <span className="font-medium text-gray-700 dark:text-gray-200">{visita.rendimiento_kg_ha.toLocaleString('es-VE')} kg/ha</span>
+                    </p>
+                  )}
+                  {visita?.estado_experto && (
+                    <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                       Valoración del técnico: <span className="font-medium text-gray-700 dark:text-gray-200">{visita.estado_experto}</span>
                     </p>
                   )}

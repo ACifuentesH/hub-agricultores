@@ -1,12 +1,14 @@
 import { Leaf } from 'lucide-react'
 import { FASE_EXPLICACION, describirFaseDetallada } from '@/lib/agro-glosario'
+import { formatDateShort } from '@/lib/freshness'
 import type { Stage } from '@/lib/corn-stages'
 
 /**
- * Fase fenológica en la que está la mayoría de los lotes del agricultor.
- *
- * El dato es MEDIDO EN CAMPO por el técnico (V2, V5, R1…), no calculado a partir
- * de la fecha de siembra: es más fiable que estimarlo por días transcurridos.
+ * Fase fenológica en la que está la mayoría de los lotes del agricultor,
+ * medida por el técnico en su última visita (V2, V5, R1…) — se muestra
+ * siempre que exista, sin importar la antigüedad, porque un dato real viejo
+ * es preferible a esconderlo o a inventar uno por calendario. La fecha va al
+ * lado para que se pueda juzgar qué tan al día está.
  */
 
 /** Agrupa las etapas de Saturno (V1..V12, R1..R6) en las 6 fases del glosario. */
@@ -36,10 +38,12 @@ export default function FaseActualCard({
   fase,
   lotesConFase,
   lotesTotales,
+  fecha,
 }: {
   fase: string | null
   lotesConFase: number
   lotesTotales: number
+  fecha?: string | null
 }) {
   const stage = faseAStage(fase)
   const tipo = fase?.trim().toUpperCase().charAt(0) ?? ''
@@ -77,6 +81,7 @@ export default function FaseActualCard({
 
           <p className="mt-3 border-t border-gray-100 pt-2.5 text-[11px] text-gray-500 dark:border-gray-800 dark:text-gray-400">
             Fase más frecuente entre {lotesConFase} de tus {lotesTotales} lotes
+            {fecha && <> · última visita usada: {formatDateShort(fecha)}</>}
           </p>
         </>
       )}

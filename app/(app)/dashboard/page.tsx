@@ -204,6 +204,7 @@ export default async function DashboardPage({
             fase={(resumen?.fase_dominante as string | null) ?? null}
             lotesConFase={(resumen?.lotes_con_fase as number) ?? 0}
             lotesTotales={filas.length}
+            fecha={(resumen?.fase_dominante_fecha as string | null) ?? null}
           />
         </div>
       </div>
@@ -215,6 +216,7 @@ export default async function DashboardPage({
           avance_pct: l.avance_pct as number | null,
           fase: l.fase as string | null,
           estado_lote: l.estado_lote as string | null,
+          sembrado: l.inicio_siembra != null,
         }))}
         avancePromedio={(resumen?.avance_promedio as number | null) ?? null}
       />

@@ -13,7 +13,7 @@ import DataSourceBadge from '@/components/DataSourceBadge'
 import { CloudSun, CloudRain, Sun, Cloud, Sprout, AlertCircle, CalendarOff } from 'lucide-react'
 import { freshnessLevel, freshnessTextClass, formatDateShort } from '@/lib/freshness'
 import { resolveCiclo } from '@/lib/ciclo'
-import { FASE_CORTA, describirFaseDetallada } from '@/lib/agro-glosario'
+import { describirFaseDetallada } from '@/lib/agro-glosario'
 import FechaSiembraEditor from '@/components/FechaSiembraEditor'
 
 // Datos vivos: nunca cachear (lotes/clima/condiciones cambian frecuentemente)
@@ -228,18 +228,21 @@ export default async function CultivoPage({
                 </StatCard>
 
                 <StatCard title="Resumen de fase">
-                  <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
-                    {faseVigente
-                      ? `Fase ${visita!.fase} medida en campo. ${
-                          faseDetalle ?? (stageInfo ? getPhaseDescription(stageInfo.stage) : '')
-                        }`
-                      : stageInfo
-                        ? `Etapa ${stageInfo.meta.label} — ${stageInfo.meta.phase} (estimado por calendario). ${getPhaseDescription(stageInfo.stage)}`
+                  {visita?.fase ? (
+                    <>
+                      <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+                        {visita.fase}{faseDetalle ? ` — ${faseDetalle}` : ''}
+                      </p>
+                      <p className={`mt-1.5 text-[11px] ${faseVigente ? 'text-gray-500 dark:text-gray-400' : 'text-amber-600 dark:text-amber-400'}`}>
+                        Última fase registrada: {formatDateShort(visita.fecha_visita)}
+                        {!faseVigente && ' — puede estar desactualizada, puede que el lote haya avanzado desde entonces'}
+                      </p>
+                    </>
+                  ) : (
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      {stageInfo
+                        ? `Sin fase registrada todavía. Lleva ${stageInfo.dias} días desde la siembra.`
                         : 'Lote sin fecha de siembra registrada.'}
-                  </p>
-                  {!faseVigente && visita?.fase && (
-                    <p className="mt-1 text-[11px] text-amber-600 dark:text-amber-400">
-                      Última fase medida en campo: {visita.fase} el {formatDateShort(visita.fecha_visita)} — desactualizada, se usa el estimado por calendario en su lugar.
                     </p>
                   )}
                   {visita?.estado_experto && (
@@ -337,9 +340,4 @@ function pickWeatherIcon(descripcion: string) {
     case 'Nublado':  return Cloud
     default:         return CloudSun
   }
-}
-
-function getPhaseDescription(stage: 0 | 1 | 2 | 3 | 4 | 5): string {
-  // Texto único compartido con el asistente (lib/agro-glosario.ts)
-  return FASE_CORTA[stage]
 }

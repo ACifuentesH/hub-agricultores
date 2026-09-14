@@ -5,6 +5,7 @@ export interface LoteAvance {
   avance_pct: number | null
   fase: string | null
   estado_lote: string | null
+  sembrado: boolean
 }
 
 /**
@@ -35,38 +36,32 @@ export default function AvanceCultivoChart({
   lotes: LoteAvance[]
   avancePromedio: number | null
 }) {
-  const sembrados = lotes.filter(l => l.avance_pct != null)
-  const sinIniciar = lotes.length - sembrados.length
+  const conAvance = lotes.filter(l => l.avance_pct != null)
+  // "Sin iniciar" antes confundía dos cosas distintas: lotes que de verdad no
+  // se sembraron, y lotes sembrados que nunca tuvieron una visita ni
+  // actividad que diera un % — ahora se distinguen porque avance_pct puede
+  // ser null en un lote sembrado (no se inventa un número, ver AGENTS.md).
+  const sinSembrar = lotes.filter(l => !l.sembrado).length
+  const sembradosSinDato = lotes.filter(l => l.sembrado && l.avance_pct == null).length
 
-  if (sembrados.length === 0) {
+  if (conAvance.length === 0) {
     return (
       <div className="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900">
         <p className="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
           Avance del cultivo
         </p>
         <p className="mt-3 text-sm text-gray-500 dark:text-gray-400">
-          Ninguno de tus lotes tiene fecha de siembra confirmada, así que todavía no
-          se puede calcular el avance.
+          {sinSembrar === lotes.length
+            ? 'Ninguno de tus lotes tiene fecha de siembra confirmada, así que todavía no se puede calcular el avance.'
+            : 'Tus lotes están sembrados, pero todavía no hay ninguna visita ni actividad registrada para calcular el avance.'}
         </p>
       </div>
     )
   }
 
   const promedio = avancePromedio ?? Math.round(
-    sembrados.reduce((s, l) => s + (l.avance_pct ?? 0), 0) / sembrados.length,
+    conAvance.reduce((s, l) => s + (l.avance_pct ?? 0), 0) / conAvance.length,
   )
-
-  // Distribución por tramo, para que el promedio no esconda la dispersión
-  const tramos = [
-    { rango: '0-25%', min: 0, max: 25 },
-    { rango: '26-50%', min: 26, max: 50 },
-    { rango: '51-75%', min: 51, max: 75 },
-    { rango: '76-100%', min: 76, max: 100 },
-  ].map(t => ({
-    ...t,
-    n: sembrados.filter(l => (l.avance_pct ?? 0) >= t.min && (l.avance_pct ?? 0) <= t.max).length,
-  }))
-  const maxTramo = Math.max(...tramos.map(t => t.n), 1)
 
   return (
     <div className="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900">
@@ -78,9 +73,9 @@ export default function AvanceCultivoChart({
           </p>
         </div>
         <p className="text-[11px] text-gray-500 dark:text-gray-400">
-          Promedio de {sembrados.length} lote{sembrados.length === 1 ? '' : 's'} sembrado
-          {sembrados.length === 1 ? '' : 's'}
-          {sinIniciar > 0 && ` · ${sinIniciar} sin iniciar (excluido${sinIniciar === 1 ? '' : 's'})`}
+          Promedio de {conAvance.length} lote{conAvance.length === 1 ? '' : 's'} con dato
+          {sinSembrar > 0 && ` · ${sinSembrar} sin sembrar (excluido${sinSembrar === 1 ? '' : 's'})`}
+          {sembradosSinDato > 0 && ` · ${sembradosSinDato} sembrado${sembradosSinDato === 1 ? '' : 's'} sin visita ni actividad aún`}
         </p>
       </div>
 
@@ -140,28 +135,6 @@ export default function AvanceCultivoChart({
               </div>
             )
           })}
-        </div>
-      </div>
-
-      {/* Dispersión: el promedio solo no dice si los lotes van parejos */}
-      <div className="mt-5 border-t border-gray-100 pt-4 dark:border-gray-800">
-        <p className="mb-2.5 text-[11px] font-medium uppercase tracking-wider text-gray-400 dark:text-gray-500">
-          Cómo se reparten tus lotes
-        </p>
-        <div className="flex items-end gap-2" style={{ height: 64 }}>
-          {tramos.map(t => (
-            <div key={t.rango} className="flex flex-1 flex-col items-center justify-end gap-1">
-              <span className="text-[11px] font-semibold tabular-nums text-gray-700 dark:text-gray-200">
-                {t.n > 0 ? t.n : ''}
-              </span>
-              <div
-                className="w-full rounded-t bg-green-600/80 transition-all dark:bg-green-500/70"
-                style={{ height: `${Math.max(t.n ? 6 : 2, (t.n / maxTramo) * 40)}px` }}
-                title={`${t.n} lote(s) entre ${t.rango}`}
-              />
-              <span className="text-[10px] text-gray-500 dark:text-gray-400">{t.rango}</span>
-            </div>
-          ))}
         </div>
       </div>
 

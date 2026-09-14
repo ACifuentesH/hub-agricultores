@@ -55,7 +55,7 @@ export default async function DashboardPage({
     // v_lote_detalle ya trae ha plan, encaladas, estado, fase y avance
     supabase
       .from('v_lote_detalle')
-      .select('lote_id, nombre, ha_plan, ha_encaladas, inicio_siembra, ha_sembradas, ha_perdidas, ha_cosechadas, estado_lote, fase, avance_pct')
+      .select('lote_id, nombre, ha_plan, ha_encaladas, inicio_siembra, ha_sembradas, ha_perdidas, ha_cosechadas, estado_lote, fase, avance_pct, ultima_actividad_fecha, ultima_actividad_tipo')
       .eq('agricultor_id', agricultorKey)
       .eq('ciclo', ciclo)
       .order('nombre'),
@@ -82,6 +82,12 @@ export default async function DashboardPage({
   ])
 
   const filas = lotes ?? []
+  const sinEvaluarConActividad = filas.filter(l => {
+    if (l.estado_lote) return false
+    if (!l.ultima_actividad_fecha) return false
+    const dias = (Date.now() - new Date(l.ultima_actividad_fecha as string).getTime()) / 86400000
+    return dias <= 30
+  }).length
   const totalHa = filas.reduce((s, l) => s + (Number(l.ha_sembradas) || 0), 0)
   const totalPerdidas = filas.reduce((s, l) => s + (Number(l.ha_perdidas) || 0), 0)
   const lotesConSiembra = filas.filter(l => l.inicio_siembra != null).length
@@ -192,7 +198,7 @@ export default async function DashboardPage({
         </div>
 
         <div className="space-y-4">
-          <EstadoLotesCard r={resumen as never} />
+          <EstadoLotesCard r={resumen as never} sinEvaluarConActividad={sinEvaluarConActividad} />
           <FaseActualCard
             fase={(resumen?.fase_dominante as string | null) ?? null}
             lotesConFase={(resumen?.lotes_con_fase as number) ?? 0}
@@ -246,7 +252,13 @@ export default async function DashboardPage({
                   <td className="px-4 py-3 text-right tabular-nums text-gray-600 dark:text-gray-300">{num(l.ha_sembradas)}</td>
                   <td className="px-4 py-3 text-right tabular-nums text-gray-600 dark:text-gray-300">{num(l.ha_perdidas)}</td>
                   <td className="px-4 py-3 text-right tabular-nums text-gray-600 dark:text-gray-300">{num(l.ha_cosechadas)}</td>
-                  <td className="px-4 py-3"><EstadoChip estado={l.estado_lote as string | null} /></td>
+                  <td className="px-4 py-3">
+                    <EstadoChip
+                      estado={l.estado_lote as string | null}
+                      ultimaActividadFecha={l.ultima_actividad_fecha as string | null}
+                      ultimaActividadTipo={l.ultima_actividad_tipo as string | null}
+                    />
+                  </td>
                 </tr>
               ))}
               {filas.length === 0 && (
@@ -276,8 +288,32 @@ function SinDato() {
   return <span className="text-gray-300 dark:text-gray-600" title="Sin dato registrado">—</span>
 }
 
-function EstadoChip({ estado }: { estado: string | null }) {
+function EstadoChip({
+  estado, ultimaActividadFecha, ultimaActividadTipo,
+}: {
+  estado: string | null
+  ultimaActividadFecha?: string | null
+  ultimaActividadTipo?: string | null
+}) {
   if (!estado) {
+    // Sin visita fenológica formal, pero puede que igual haya trabajo de
+    // campo reciente (control de plagas, fertilización, estimación de
+    // rendimiento...) cargado en Saturno por otra vía — mostrar "Sin
+    // evaluar" a secas ahí hacía ver el lote abandonado sin estarlo, la
+    // misma inconsistencia que ya se corrigió en /cultivo.
+    if (ultimaActividadFecha) {
+      const dias = Math.floor((Date.now() - new Date(ultimaActividadFecha).getTime()) / 86400000)
+      if (dias <= 30) {
+        return (
+          <span
+            className="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900/40 dark:text-blue-300"
+            title={`${ultimaActividadTipo ?? 'Actividad'} hace ${dias} día${dias === 1 ? '' : 's'} — sin visita fenológica formal`}
+          >
+            Actividad reciente
+          </span>
+        )
+      }
+    }
     return <span className="text-xs text-gray-400 dark:text-gray-500">Sin evaluar</span>
   }
   const estilo: Record<string, string> = {

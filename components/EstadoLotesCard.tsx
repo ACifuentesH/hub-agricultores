@@ -9,6 +9,14 @@ export interface ResumenEstados {
   lotes_sin_evaluar: number
 }
 
+export interface EstadoLotesCardProps {
+  r: ResumenEstados | null
+  // De los "sin evaluar", cuántos igual tienen actividad de campo reciente
+  // (actividades_registro) aunque no tengan visita fenológica formal — para
+  // no dar a entender que esos lotes están abandonados.
+  sinEvaluarConActividad?: number
+}
+
 /**
  * Distribución del estado general del cultivo por lote.
  *
@@ -16,7 +24,7 @@ export interface ResumenEstados {
  * los lotes "sin evaluar" no son un error: son lotes que todavía no ha visitado.
  * Se muestran aparte para no ensuciar la lectura de los que sí tienen dato.
  */
-export default function EstadoLotesCard({ r }: { r: ResumenEstados | null }) {
+export default function EstadoLotesCard({ r, sinEvaluarConActividad = 0 }: EstadoLotesCardProps) {
   if (!r || r.lotes === 0) return null
 
   const evaluados = r.lotes_muy_buenos + r.lotes_buenos + r.lotes_regulares + r.lotes_malos
@@ -71,6 +79,9 @@ export default function EstadoLotesCard({ r }: { r: ResumenEstados | null }) {
       {r.lotes_sin_evaluar > 0 && (
         <p className="mt-3 border-t border-gray-100 pt-2.5 text-[11px] text-gray-500 dark:border-gray-800 dark:text-gray-400">
           {r.lotes_sin_evaluar} lote{r.lotes_sin_evaluar === 1 ? '' : 's'} sin visita técnica aún
+          {sinEvaluarConActividad > 0 && (
+            <> — {sinEvaluarConActividad} con actividad de campo reciente igual (ver en Cultivo)</>
+          )}
         </p>
       )}
     </div>

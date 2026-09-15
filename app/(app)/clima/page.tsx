@@ -21,7 +21,6 @@ import {
 } from '@/lib/seguimiento-lluvia'
 import StatCardRow from '@/components/clima/StatCardRow'
 import LotesRainGrid from '@/components/clima/LotesRainGrid'
-import DocumentosClimaSection from '@/components/clima/DocumentosClimaSection'
 import TemperatureChart from '@/components/clima/TemperatureChart'
 import AgricultorRainMonthlyChart from '@/components/clima/AgricultorRainMonthlyChart'
 import ClimaVistaTabs from '@/components/clima/master/ClimaVistaTabs'
@@ -154,7 +153,11 @@ async function MiAgricultorContent({ agricultorKey }: { agricultorKey: string })
       <StatCardRow lotes={lotes} />
       <LotesRainGrid lotes={lotes} dailyByLote={dailyByLote} />
       <TemperatureChart series={climateSeries} />
-      <DocumentosClimaSection />
+      {/* Documentos/reporte meteorológico: oculto por ahora a pedido del
+          usuario (16-sep-2026) — la sección sigue siendo un placeholder sin
+          fuente de datos real todavía. Componente intacto en
+          components/clima/DocumentosClimaSection.tsx para reactivar cuando
+          haya de dónde sacar esos documentos. */}
     </div>
   )
 }

@@ -23,7 +23,7 @@ export async function POST(req: Request) {
   }
 
   if (wantsHtml) {
-    url.pathname = result.role === 'master' ? '/master' : '/cultivo'
+    url.pathname = result.role === 'master' ? '/master' : '/dashboard'
     url.search = ''
     return NextResponse.redirect(url, 303)
   }

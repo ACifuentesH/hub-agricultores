@@ -3,7 +3,7 @@
   "short_name": "Saturno",
   "description": "Plataforma digital del Programa de Agricultura por Contrato — clima, cultivo, finanzas y suelo en una sola app.",
   "lang": "es-VE",
-  "start_url": "/cultivo",
+  "start_url": "/dashboard",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait-primary",

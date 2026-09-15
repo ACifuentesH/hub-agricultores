@@ -38,6 +38,6 @@ export async function requireAuth() {
 export async function requireRole(role: UserRole) {
   const profile = await getUserProfile()
   if (!profile) redirect('/login')
-  if (profile.role !== role) redirect('/cultivo')
+  if (profile.role !== role) redirect('/dashboard')
   return profile
 }

@@ -40,6 +40,19 @@ export const MODULOS: {
   palabras: string[]
 }[] = [
   {
+    id: 'dashboard',
+    nombre: 'Dashboard',
+    ruta: 'Dashboard (la primera pantalla al entrar)',
+    resumen: 'Resumen de tu ciclo: cuántos lotes tienes, hectáreas sembradas y perdidas, salud de tu estación y la tabla completa de tus lotes.',
+    contiene: [
+      'Cantidad de lotes y hectáreas sembradas y perdidas',
+      'Condiciones actuales de tu estación: temperatura y humedad',
+      'Salud de tu estación: batería y wifi',
+      'La tabla de tus lotes: hectáreas, fecha de siembra, estado y hectáreas cosechadas',
+    ],
+    palabras: ['dashboard', 'panel', 'inicio', 'principal', 'resumen', 'tabla'],
+  },
+  {
     id: 'clima',
     nombre: 'Clima',
     ruta: 'Clima, en el menú de la izquierda',
@@ -56,8 +69,8 @@ export const MODULOS: {
   {
     id: 'cultivo',
     nombre: 'Cultivo',
-    ruta: 'Cultivo (la primera pantalla al entrar)',
-    resumen: 'Tu pantalla principal: el resumen del ciclo (sembrado, perdido, cosechado) y el detalle lote por lote.',
+    ruta: 'Cultivo, en el menú de la izquierda',
+    resumen: 'El detalle lote por lote: en qué etapa va, cuándo se sembró, la última acción agronómica y el rendimiento real cosechado.',
     contiene: [
       'Hectáreas sembradas, perdidas y el rendimiento real cosechado',
       'Línea de tiempo de cada lote, de siembra a cosecha',
@@ -65,7 +78,7 @@ export const MODULOS: {
       'La última acción agronómica registrada en cada lote, con técnico y comentario',
       'Condición del suelo e insumos aplicados por lote',
     ],
-    palabras: ['cultivo', 'lote', 'lotes', 'siembra', 'panel', 'inicio', 'principal', 'etapa', 'fase', 'visita', 'tecnico', 'insumo', 'suelo', 'rendimiento', 'cosecha'],
+    palabras: ['cultivo', 'lote', 'lotes', 'siembra', 'etapa', 'fase', 'visita', 'tecnico', 'insumo', 'suelo', 'rendimiento', 'cosecha'],
   },
   {
     id: 'documentacion',

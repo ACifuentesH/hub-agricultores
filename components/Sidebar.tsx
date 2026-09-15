@@ -4,11 +4,12 @@ import { useSyncExternalStore } from 'react'
 import Link from 'next/link'
 import { usePathname, useSearchParams } from 'next/navigation'
 import {
-  CloudSun, Sprout, FolderOpen,
+  LayoutDashboard, CloudSun, Sprout, FolderOpen,
   Users, Leaf, PanelLeftClose, PanelLeftOpen,
 } from 'lucide-react'
 
 const farmerLinks = [
+  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/cultivo', label: 'Cultivo', icon: Sprout },
   { href: '/clima', label: 'Clima', icon: CloudSun },
   { href: '/documentacion', label: 'Documentación', icon: FolderOpen },

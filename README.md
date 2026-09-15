@@ -73,8 +73,9 @@ y qué no debe romper. La documentación está repartida así:
 
 | Ruta | Módulo | Qué hace |
 |---|---|---|
-| `/cultivo` | Inicio | Pantalla de entrada (eliminado `/dashboard`, 15-sep-2026): indicadores del ciclo, salud de estación, centro de novedades y línea de tiempo por lote |
+| `/dashboard` | Inicio | Pantalla de entrada: KPIs del ciclo, salud de estación y tabla de lotes con estado |
 | `/clima` | Clima | Lectura actual, temperatura, lluvia por lote y zona, predicción, alertas, histórico exportable |
+| `/cultivo` | Cultivo | Línea de tiempo por lote, etapa fenológica del maíz, suelo e insumos |
 | `/documentacion` | Documentación | Análisis de suelo, convenios y estado de resultados (P&L) |
 | `/master` | Consola | Validación: qué ve cada usuario, con acceso directo a su vista |
 
@@ -385,6 +386,8 @@ Tres detalles de `v_lote_detalle` que sorprenden a todos:
 ### 6.3 Qué vista usa cada módulo
 
 ```
+/dashboard      → v_lote_detalle · estaciones_salud
+                  + v_clima_efectivo · weather_readings (vía lib/clima.ts)
 /clima          → vistas vista_* de lluvia · agricultor_lluvia_map
                   + v_clima_efectivo · weather_readings
 /cultivo        → lotes · v_lote_detalle · rendimiento_real · estaciones_salud · lote_eventos
@@ -432,11 +435,11 @@ Tres detalles de `v_lote_detalle` que sorprenden a todos:
 flowchart TD
     L["/login<br/>signInWithPassword"] --> P["lee user_profiles.role"]
     P -->|master| M["/master"]
-    P -->|farmer| D["/cultivo"]
+    P -->|farmer| D["/dashboard"]
     D --> MW["middleware.ts en cada request"]
     MW -->|"sin sesión + ruta /api/*"| J["401 JSON"]
     MW -->|"sin sesión + página"| RL["redirect /login"]
-    MW -->|"/master* y role ≠ master"| RD["redirect /cultivo"]
+    MW -->|"/master* y role ≠ master"| RD["redirect /dashboard"]
     MW -->|ok| RSC["Server Component<br/>resolveAgricultorScope()"]
 ```
 
@@ -513,6 +516,7 @@ tienen su `loading.tsx` con esqueleto.
 |---|---|---|
 | `/` | — | Redirige a `/login` |
 | `/login` | Pública | — |
+| `/dashboard` | Sesión | `agricultor`, `ciclo` |
 | `/cultivo` | Sesión | `agricultor`, `ciclo` |
 | `/clima` | Sesión | `agricultor`, `vista` (`mi-agricultor` \| `por-agricultor` \| `global` \| `zonas`) |
 | `/documentacion` | Sesión | `agricultor`, `ciclo`, `categoria` (`analisis_suelo` \| `convenios` \| `pnl`) |
@@ -550,7 +554,8 @@ Refresca la sesión en cada request, protege las rutas y verifica el rol para `/
 agri-platform/
 ├── app/
 │   ├── (app)/                  # área autenticada — comparte layout, sidebar y widgets
-│   │   ├── cultivo/            # pantalla de entrada — cada ruta: page.tsx + loading.tsx
+│   │   ├── dashboard/          # pantalla de entrada — cada ruta: page.tsx + loading.tsx
+│   │   ├── cultivo/
 │   │   ├── clima/
 │   │   ├── documentacion/
 │   │   ├── master/
@@ -664,7 +669,7 @@ campo.
 - **Estrategias de caché:** assets estáticos CacheFirst, imágenes StaleWhileRevalidate,
   navegación NetworkFirst. **Las llamadas a la API y a Supabase van siempre a red**: no se
   cachean datos vivos.
-- **Manifest:** `public/manifest.json`, `start_url: /cultivo`, `display: standalone`,
+- **Manifest:** `public/manifest.json`, `start_url: /dashboard`, `display: standalone`,
   con atajos a `/clima`, `/cultivo` y `/documentacion`.
 - **Actualización:** `ServiceWorkerRefresh` (en el layout raíz) fuerza `reg.update()` al
   abrir; cuando el worker nuevo toma control, se recarga una vez.

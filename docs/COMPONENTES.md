@@ -27,7 +27,7 @@ flowchart TB
     RL["app/layout.tsx<br/>fuentes · tema · ServiceWorkerRefresh"]
     RL --> AL["app/(app)/layout.tsx"]
     AL --> SB["Sidebar<br/>sticky, alto completo"]
-    AL --> HD["Cabecera fija<br/>ModuloTitulo · NotificacionesButton · UserMenu"]
+    AL --> HD["Cabecera fija<br/>ModuloTitulo · ThemeToggle · UserMenu"]
     AL --> MAIN["contenido de la página"]
     AL --> FLOT["Flotantes derecha:<br/>TicketsWidget (bottom-24)<br/>AsistenteWidget (bottom-6)"]
     AL --> CONN["ConnectionStatus"]
@@ -42,18 +42,21 @@ anclado abajo aunque la página sea larga.
 
 ### `/dashboard`
 
+Pantalla de entrada. Vuelta a introducir el 16-sep-2026 tras un intento de reemplazarla
+por `/cultivo` que no le gustó al usuario (los indicadores desaparecían y la tabla de
+lotes con la conexión a hectáreas cosechadas se perdía) — hoy conviven las dos: el
+dashboard da el resumen, `/cultivo` da el detalle por lote.
+
 | Componente | Qué muestra |
 |---|---|
-| `AvanceCultivoChart` | Avance del ciclo promediado **solo sobre lotes ya sembrados** (los sin sembrar no arrastran el promedio) + distribución por tramos |
-| `NotificacionesButton` | Centro de novedades. Cada novedad lleva **enlace al sitio donde se resuelve** (documento → Documentación, clima → Clima, cambio de siembra → Cultivo) |
-| `EstadoLotesCard` | Distribución del estado general por lote |
-| `FaseActualCard` | Fase fenológica dominante entre los lotes |
-| `MisComunicaciones` | Últimos documentos cargados |
-| `ClimateSparkline` | Miniserie de temperatura y humedad |
+| `KpiCard` (local a la página) | Lotes del ciclo, ha sembradas, ha perdidas (solo si el ciclo ya tuvo cierre) |
+| Barra "Condiciones actuales" | Temperatura y humedad de la estación asignada, ancho completo, respeta modo claro/oscuro |
+| `EstacionSaludCard` | Batería y wifi de la estación WeatherLink asignada |
+| Tabla "Mis lotes" (local a la página) | Ha plan, ha encaladas, inicio de siembra, ha sembradas/perdidas/cosechadas y estado por lote, con `EstadoChip` enlazando a la tarjeta del lote en `/cultivo` |
 
-> **Cuidado con la cosecha:** en el ciclo activo puede no haber ningún lote cosechado.
-> Por eso el dashboard grafica avance de ciclo y no cosecha — un gráfico de cosecha
-> saldría plano en cero.
+> **Cuidado con la cosecha:** en el ciclo activo puede no haber ningún lote cosechado —
+> la columna "Ha cosechadas" de la tabla puede salir en cero para todos sin que sea un
+> error.
 
 ### `/clima`
 
@@ -126,7 +129,7 @@ documentos) y acceso directo a la vista de cada uno.
 
 | Componente | Para qué |
 |---|---|
-| `Sidebar` | Navegación. Propaga `?agricultor=` entre pantallas. Retráctil: riel de iconos (64 px) o barra completa (224 px), recordado en `localStorage['saturno:sidebar']`. En el teléfono arranca en riel y, si se abre, flota sobre el contenido con fondo oscuro detrás |
+| `Sidebar` | Navegación. Propaga `?agricultor=` entre pantallas. En escritorio (`lg+`) es retráctil: riel de iconos (64 px) o barra completa (224 px), recordado en `localStorage['saturno:sidebar']`. En el teléfono es una barra fija abajo, con los mismos enlaces en horizontal (icono + etiqueta), como una app nativa — no colapsa |
 | `ModuloTitulo` | Título del módulo en la cabecera fija |
 | `UserMenu` | Menú de usuario del header |
 | `ThemeToggle` | Claro / oscuro |

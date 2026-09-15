@@ -23,10 +23,13 @@ const CLAVE = 'saturno:sidebar'
 const EVENTO = 'saturno:sidebar-cambio'
 
 /**
- * Estado de la barra. `auto` es el del servidor: todavía no se sabe qué
- * prefiere este usuario, así que el colapso lo decide el breakpoint en CSS.
+ * Colapso de la barra de escritorio (>= lg, riel de 64 px o panel de 224 px).
+ * En el teléfono la navegación vive en la barra inferior de más abajo, que
+ * no colapsa ni tiene marca — por eso ya no hace falta el estado `auto` que
+ * antes decidía el ancho por breakpoint antes de hidratar: la barra lateral
+ * ahora está `hidden` por debajo de `lg` sin importar este estado.
  */
-type Estado = 'auto' | 'si' | 'no'
+type Estado = 'si' | 'no'
 
 function suscribir(avisar: () => void) {
   window.addEventListener(EVENTO, avisar)
@@ -39,15 +42,12 @@ function suscribir(avisar: () => void) {
 }
 
 function leer(): Estado {
-  const guardado = localStorage.getItem(CLAVE)
-  if (guardado === 'si' || guardado === 'no') return guardado
-  // Sin preferencia guardada: colapsada en el teléfono, abierta en escritorio
-  return window.innerWidth < 1024 ? 'si' : 'no'
+  return localStorage.getItem(CLAVE) === 'si' ? 'si' : 'no'
 }
 
-const leerEnServidor = (): Estado => 'auto'
+const leerEnServidor = (): Estado => 'no'
 
-function guardar(valor: 'si' | 'no') {
+function guardar(valor: Estado) {
   localStorage.setItem(CLAVE, valor)
   window.dispatchEvent(new Event(EVENTO))
 }
@@ -57,58 +57,26 @@ export default function Sidebar({ role }: { role: string }) {
   const searchParams = useSearchParams()
   const links = role === 'master' ? masterLinks : farmerLinks
 
-  // En el primer render del cliente vale 'auto', igual que en el servidor, y
-  // recién después pasa al valor real: así el HTML que llega ya sale como riel
-  // en el teléfono y ancho en escritorio, sin el salto de 224 px a 64 px.
   const estado = useSyncExternalStore(suscribir, leer, leerEnServidor)
-  const auto = estado === 'auto'
   const colapsada = estado === 'si'
-
   const alternar = () => guardar(colapsada ? 'no' : 'si')
-
-  // En el teléfono la barra expandida flota sobre el contenido (ver más abajo);
-  // tras navegar hay que devolverla al riel o taparía la pantalla recién abierta.
-  function alNavegar() {
-    if (window.innerWidth < 1024) guardar('si')
-  }
 
   // Navegar entre secciones conserva ciclo y agricultor seleccionados; si no,
   // cambiar de pantalla reseteaba el filtro y "reaparecían" datos de otro año.
   const qs = searchParams.toString()
   const withParams = (href: string) => (qs ? `${href}?${qs}` : href)
 
-  // Antes de hidratar no se sabe el estado real, así que el colapso lo decide
-  // el breakpoint; después manda `colapsada`. Un único árbol de DOM en ambos
-  // casos: colapsar es solo estrechar y esconder los textos.
-  const ancho = auto ? 'w-16 lg:w-56' : colapsada ? 'w-16' : 'w-56'
-  const soloAncha = auto ? 'hidden lg:block' : colapsada ? 'hidden' : 'block'
-  const filaFlex = auto
-    ? 'justify-center px-2 lg:justify-start lg:px-3'
-    : colapsada ? 'justify-center px-2' : 'px-3'
-  const cabecera = auto
-    ? 'justify-center px-2 lg:justify-start lg:px-4'
-    : colapsada ? 'justify-center px-2' : 'px-4'
-  // Expandida en móvil flota sobre el contenido: a 390 px de ancho, 224 px de
-  // barra dejaban el panel inutilizable. En lg+ vuelve a ser sticky en flujo.
-  const flotante = !auto && !colapsada ? 'max-lg:fixed max-lg:inset-y-0 max-lg:left-0 max-lg:z-40 max-lg:shadow-2xl' : ''
+  const ancho = colapsada ? 'w-16' : 'w-56'
+  const soloAncha = colapsada ? 'hidden' : 'block'
+  const filaFlex = colapsada ? 'justify-center px-2' : 'px-3'
+  const cabecera = colapsada ? 'justify-center px-2' : 'px-4'
 
   return (
     <>
-      {/* Hueco del riel mientras la barra flota, para que el contenido no salte */}
-      {!auto && !colapsada && <div className="w-16 shrink-0 lg:hidden" aria-hidden />}
-
-      {!auto && !colapsada && (
-        <div
-          onClick={alternar}
-          className="fixed inset-0 z-30 bg-black/40 lg:hidden"
-          aria-hidden
-        />
-      )}
-
-      {/* sticky + h-screen: la barra queda fija al desplazar y el bloque de
-          "Cerrar sesión" (mt-auto) se ancla al borde inferior de la ventana. */}
+      {/* Barra lateral — solo en escritorio (>= lg). Sticky + h-screen para
+          que quede fija al desplazar. */}
       <aside
-        className={`sticky top-0 flex h-screen shrink-0 flex-col overflow-y-auto border-r border-black/10 bg-gradient-to-b from-[#15492c] to-[#0e3620] transition-[width] duration-200 dark:border-black/30 dark:from-[#123c24] dark:to-[#0a2b1a] ${ancho} ${flotante}`}
+        className={`sticky top-0 hidden h-screen shrink-0 flex-col overflow-y-auto border-r border-black/10 bg-gradient-to-b from-[#15492c] to-[#0e3620] transition-[width] duration-200 lg:flex dark:border-black/30 dark:from-[#123c24] dark:to-[#0a2b1a] ${ancho}`}
       >
         {/* Marca */}
         <div className={`flex items-center gap-2.5 py-5 ${cabecera}`}>
@@ -135,7 +103,6 @@ export default function Sidebar({ role }: { role: string }) {
                 <Link
                   key={href}
                   href={withParams(href)}
-                  onClick={alNavegar}
                   aria-current={active ? 'page' : undefined}
                   title={colapsada ? label : undefined}
                   className={`group flex items-center gap-3 rounded-lg py-2.5 text-sm transition-colors ${filaFlex} ${
@@ -160,23 +127,47 @@ export default function Sidebar({ role }: { role: string }) {
         </nav>
 
         {/* Colapso. Cerrar sesión y tema viven arriba, en el menú de usuario
-            de la cabecera — tenerlos duplicados acá abajo era ruido, sobre
-            todo en el teléfono donde la barra flota como un panel aparte. */}
+            de la cabecera. */}
         <div className="mt-auto border-t border-white/10 p-2">
           <button
             onClick={alternar}
-            aria-expanded={auto ? undefined : !colapsada}
+            aria-expanded={!colapsada}
             aria-label={colapsada ? 'Expandir el menú' : 'Contraer el menú'}
             title={colapsada ? 'Expandir el menú' : 'Contraer el menú'}
             className={`flex w-full items-center gap-3 rounded-lg py-2.5 text-sm text-emerald-100/70 transition-colors hover:bg-white/10 hover:text-white ${filaFlex}`}
           >
-            {/* Pre-hidratación el icono lo decide el breakpoint, igual que el ancho */}
-            <PanelLeftOpen size={18} className={`shrink-0 text-emerald-100/60 ${auto ? 'block lg:hidden' : colapsada ? 'block' : 'hidden'}`} />
-            <PanelLeftClose size={18} className={`shrink-0 text-emerald-100/60 ${auto ? 'hidden lg:block' : colapsada ? 'hidden' : 'block'}`} />
+            <PanelLeftOpen size={18} className={`shrink-0 text-emerald-100/60 ${colapsada ? 'block' : 'hidden'}`} />
+            <PanelLeftClose size={18} className={`shrink-0 text-emerald-100/60 ${colapsada ? 'hidden' : 'block'}`} />
             <span className={soloAncha}>Contraer menú</span>
           </button>
         </div>
       </aside>
+
+      {/* Barra inferior — solo en el teléfono, como una app normal: iconos +
+          etiqueta siempre visibles, sin marca ni colapso. Fixed para que no
+          se desplace con el contenido; el layout le reserva el hueco abajo
+          con padding en el <main>. */}
+      <nav
+        className="fixed inset-x-0 bottom-0 z-40 flex items-stretch border-t border-black/10 bg-gradient-to-t from-[#0e3620] to-[#15492c] pb-[env(safe-area-inset-bottom)] lg:hidden dark:border-black/30 dark:from-[#0a2b1a] dark:to-[#123c24]"
+        aria-label="Navegación principal"
+      >
+        {links.map(({ href, label, icon: Icon }) => {
+          const active = pathname === href
+          return (
+            <Link
+              key={href}
+              href={withParams(href)}
+              aria-current={active ? 'page' : undefined}
+              className={`flex flex-1 flex-col items-center gap-0.5 py-2.5 text-[10px] font-medium transition-colors ${
+                active ? 'text-white' : 'text-emerald-100/60'
+              }`}
+            >
+              <Icon size={20} className={active ? 'text-emerald-200' : 'text-emerald-100/50'} />
+              {label}
+            </Link>
+          )
+        })}
+      </nav>
     </>
   )
 }

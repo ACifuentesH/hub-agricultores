@@ -170,14 +170,16 @@ ciclo (es lo que hace `AvanceCultivoChart`).
 - Paleta oscura: la escala `gray` de Tailwind está redefinida bajo `.dark` en
   `globals.css` para dar un carbón cálido. Cambiar esas variables afecta toda la
   app en modo oscuro.
-- **La barra lateral es retráctil** (31-jul-2026): riel de iconos (64 px) o
-  completa (224 px), con la preferencia en `localStorage['saturno:sidebar']`. El
-  estado inicial lo decide el breakpoint **en CSS**, no en JS: con `w-16 lg:w-56`
-  antes de hidratar, el HTML del servidor ya sale correcto y no se ve el salto de
-  224 px a 64 px en el teléfono. Si se toca, mantener ese doble juego de clases.
-- **Un solo árbol de DOM para ambos estados** de la barra: colapsar es estrechar
-  y esconder los textos, nunca renderizar otra estructura — es lo que permite que
-  las clases previas a la hidratación sean simplemente responsive.
+- **Navegación: barra lateral en escritorio, barra inferior en el teléfono**
+  (15-sep-2026). `Sidebar.tsx` renderiza dos `<nav>` distintos con los mismos
+  links, uno `hidden lg:flex` (barra lateral retráctil, riel de 64 px o panel
+  de 224 px, preferencia en `localStorage['saturno:sidebar']`) y otro
+  `lg:hidden` (barra inferior fija, siempre expandida, sin marca ni colapso —
+  como una app nativa). Antes la barra lateral también existía en el teléfono
+  como riel/panel flotante; se quitó porque comía ancho de pantalla y
+  duplicaba cerrar sesión/tema, que ya viven en el menú de usuario de la
+  cabecera. El `<main>` reserva el hueco de la barra inferior con
+  `pb-20 lg:pb-6` porque es `fixed`.
 - **Tablas anchas: `overflow-x-auto` + `min-w-[…]` en la `<table>`.** Sin el
   `min-w` la tabla se comprime hasta el ancho del teléfono y parte cada celda en
   tres líneas; con él se desplaza y las filas siguen leyéndose.

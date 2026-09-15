@@ -47,7 +47,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             />
           </div>
         </header>
-        <main className="flex-1 p-4 sm:p-6">{children}</main>
+        {/* pb-20: en el teléfono la barra de navegación inferior es fixed y
+            tapa el borde del contenido si no se le reserva el hueco. */}
+        <main className="flex-1 p-4 pb-20 sm:p-6 lg:pb-6">{children}</main>
       </div>
     </div>
   )

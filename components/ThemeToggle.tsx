@@ -23,13 +23,13 @@ export default function ThemeToggle() {
     localStorage.setItem('theme', next ? 'dark' : 'light')
   }
 
-  if (!mounted) return <div className="w-9 h-9" />
+  if (!mounted) return <div className="h-9 w-9 shrink-0" />
 
   return (
     <button
       onClick={toggle}
       aria-label="Cambiar tema"
-      className="flex h-9 w-9 items-center justify-center rounded-lg text-emerald-100/80 transition-colors hover:bg-white/10 hover:text-white"
+      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200"
     >
       {dark ? <Sun size={17} /> : <Moon size={17} />}
     </button>

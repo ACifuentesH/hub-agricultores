@@ -32,8 +32,8 @@ function RealLoginForm() {
       data-anim={anim ? 'on' : 'off'}
       className="min-h-screen grid lg:grid-cols-5 bg-white dark:bg-gray-950"
     >
-      {/* Brand panel — left 60% on desktop */}
-      <div className="relative lg:col-span-3 hidden lg:flex flex-col justify-between p-12 text-white overflow-hidden isolate bg-green-950">
+      {/* Brand panel — banner compacto en el teléfono, panel izquierdo en escritorio */}
+      <div className="relative lg:col-span-3 flex h-40 shrink-0 flex-col justify-between p-6 text-white overflow-hidden isolate bg-green-950 sm:h-48 lg:h-auto lg:p-12">
         <div
           className="absolute -inset-[6%] z-0 bg-cover bg-center login-kenburns"
           style={{ backgroundImage: "url('/login-bg.jpg')" }}
@@ -91,7 +91,7 @@ function RealLoginForm() {
           <span className="font-semibold tracking-tight">Programa Saturno</span>
         </div>
 
-        <div className="relative z-10 max-w-lg space-y-6">
+        <div className="relative z-10 hidden max-w-lg space-y-6 lg:block">
           <p className="text-xs font-medium uppercase tracking-[0.2em] text-green-300">
             Programa Saturno
           </p>
@@ -100,7 +100,7 @@ function RealLoginForm() {
           </h1>
         </div>
 
-        <div className="relative z-10 text-xs text-green-200/60">
+        <div className="relative z-10 hidden text-xs text-green-200/60 lg:block">
           © {new Date().getFullYear()} Programa Saturno
         </div>
 
@@ -108,7 +108,7 @@ function RealLoginForm() {
           type="button"
           onClick={() => setAnim((v) => !v)}
           aria-pressed={anim}
-          className="absolute bottom-11 right-12 z-20 inline-flex items-center gap-[7px] rounded px-[9px] py-[5px] text-[10px] font-medium tracking-wide text-white/85 border border-white/20 bg-white/10 backdrop-blur-sm transition-colors hover:bg-white/20 hover:border-white/40"
+          className="absolute bottom-11 right-12 z-20 hidden items-center gap-[7px] rounded px-[9px] py-[5px] text-[10px] font-medium tracking-wide text-white/85 border border-white/20 bg-white/10 backdrop-blur-sm transition-colors hover:bg-white/20 hover:border-white/40 lg:inline-flex"
         >
           <span
             className="relative w-[22px] h-3 rounded-[3px] border border-white/30 shrink-0 transition-colors"
@@ -129,15 +129,6 @@ function RealLoginForm() {
       {/* Form panel */}
       <div className="lg:col-span-2 flex flex-col justify-center px-6 sm:px-12 py-12">
         <div className="w-full max-w-sm mx-auto">
-          <div className="lg:hidden flex items-center gap-2.5 mb-10">
-            <div className="w-9 h-9 rounded-lg bg-green-800 flex items-center justify-center text-white">
-              <Sprout size={18} />
-            </div>
-            <div>
-              <p className="font-semibold text-gray-900 dark:text-gray-100 leading-none">Programa Saturno</p>
-            </div>
-          </div>
-
           <div className="space-y-1.5 mb-8">
             <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 tracking-tight">
               Bienvenido de vuelta

@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import Sidebar from '@/components/Sidebar'
 import UserMenu from '@/components/UserMenu'
 import ModuloTitulo from '@/components/ModuloTitulo'
+import ThemeToggle from '@/components/ThemeToggle'
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient()
@@ -37,11 +38,14 @@ export default async function AppLayout({ children }: { children: React.ReactNod
               Programa Saturno
             </span>
           </div>
-          <UserMenu
-            email={user.email ?? '—'}
-            displayName={displayName}
-            role={(profile?.role ?? 'farmer') as 'master' | 'farmer'}
-          />
+          <div className="flex items-center gap-1">
+            <ThemeToggle />
+            <UserMenu
+              email={user.email ?? '—'}
+              displayName={displayName}
+              role={(profile?.role ?? 'farmer') as 'master' | 'farmer'}
+            />
+          </div>
         </header>
         <main className="flex-1 p-4 sm:p-6">{children}</main>
       </div>

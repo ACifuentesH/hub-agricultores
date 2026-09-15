@@ -2,13 +2,11 @@
 
 import { useSyncExternalStore } from 'react'
 import Link from 'next/link'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
+import { usePathname, useSearchParams } from 'next/navigation'
 import {
   CloudSun, Sprout, FolderOpen,
-  Users, LogOut, Leaf, PanelLeftClose, PanelLeftOpen,
+  Users, Leaf, PanelLeftClose, PanelLeftOpen,
 } from 'lucide-react'
-import ThemeToggle from './ThemeToggle'
 
 const farmerLinks = [
   { href: '/cultivo', label: 'Cultivo', icon: Sprout },
@@ -56,7 +54,6 @@ function guardar(valor: 'si' | 'no') {
 
 export default function Sidebar({ role }: { role: string }) {
   const pathname = usePathname()
-  const router = useRouter()
   const searchParams = useSearchParams()
   const links = role === 'master' ? masterLinks : farmerLinks
 
@@ -73,12 +70,6 @@ export default function Sidebar({ role }: { role: string }) {
   // tras navegar hay que devolverla al riel o taparía la pantalla recién abierta.
   function alNavegar() {
     if (window.innerWidth < 1024) guardar('si')
-  }
-
-  async function handleLogout() {
-    const supabase = createClient()
-    await supabase.auth.signOut()
-    router.push('/login')
   }
 
   // Navegar entre secciones conserva ciclo y agricultor seleccionados; si no,
@@ -168,33 +159,22 @@ export default function Sidebar({ role }: { role: string }) {
           </div>
         </nav>
 
-        {/* Cerrar sesión, tema y colapso */}
-        <div className="mt-auto space-y-1 border-t border-white/10 p-2">
+        {/* Colapso. Cerrar sesión y tema viven arriba, en el menú de usuario
+            de la cabecera — tenerlos duplicados acá abajo era ruido, sobre
+            todo en el teléfono donde la barra flota como un panel aparte. */}
+        <div className="mt-auto border-t border-white/10 p-2">
           <button
-            onClick={handleLogout}
-            title={colapsada ? 'Cerrar sesión' : undefined}
+            onClick={alternar}
+            aria-expanded={auto ? undefined : !colapsada}
+            aria-label={colapsada ? 'Expandir el menú' : 'Contraer el menú'}
+            title={colapsada ? 'Expandir el menú' : 'Contraer el menú'}
             className={`flex w-full items-center gap-3 rounded-lg py-2.5 text-sm text-emerald-100/70 transition-colors hover:bg-white/10 hover:text-white ${filaFlex}`}
           >
-            <LogOut size={18} className="shrink-0 text-emerald-100/60" />
-            <span className={soloAncha}>Cerrar sesión</span>
+            {/* Pre-hidratación el icono lo decide el breakpoint, igual que el ancho */}
+            <PanelLeftOpen size={18} className={`shrink-0 text-emerald-100/60 ${auto ? 'block lg:hidden' : colapsada ? 'block' : 'hidden'}`} />
+            <PanelLeftClose size={18} className={`shrink-0 text-emerald-100/60 ${auto ? 'hidden lg:block' : colapsada ? 'hidden' : 'block'}`} />
+            <span className={soloAncha}>Contraer menú</span>
           </button>
-
-          {/* flex-wrap: en el riel de 64 px los dos botones de 36 px no caben
-              en una línea y bajan solos, sin necesidad de otra rama de clases. */}
-          <div className="flex flex-wrap items-center justify-center gap-1">
-            <ThemeToggle />
-            <button
-              onClick={alternar}
-              aria-expanded={auto ? undefined : !colapsada}
-              aria-label={colapsada ? 'Expandir el menú' : 'Contraer el menú'}
-              title={colapsada ? 'Expandir el menú' : 'Contraer el menú'}
-              className="flex h-9 w-9 items-center justify-center rounded-lg text-emerald-100/80 transition-colors hover:bg-white/10 hover:text-white"
-            >
-              {/* Pre-hidratación el icono lo decide el breakpoint, igual que el ancho */}
-              <PanelLeftOpen size={17} className={auto ? 'block lg:hidden' : colapsada ? 'block' : 'hidden'} />
-              <PanelLeftClose size={17} className={auto ? 'hidden lg:block' : colapsada ? 'hidden' : 'block'} />
-            </button>
-          </div>
         </div>
       </aside>
     </>

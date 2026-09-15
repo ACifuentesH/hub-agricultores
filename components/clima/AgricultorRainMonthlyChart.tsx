@@ -2,10 +2,10 @@
 
 /**
  * Lluvia mensual del agricultor (promedio entre sus lotes), un año por
- * línea, con el año actual partido en tramo sólido (real) + punteado
- * (pronóstico). Portado de la sección "mensual" de `GraficasView` en
- * `seguimiento-lluvia-saturno/src/routes/index.tsx` (líneas ~2055-2154);
- * la agregación real/pronóstico vive en `./prediccionMensual.ts`.
+ * línea. El año en curso grafica lo real acumulado hasta hoy — ya no hay
+ * proyección a futuro (se quitó el 16-sep-2026: para algunos agricultores el
+ * pronóstico calculaba 0 mm mientras la lluvia real ya iba en 131 mm). La
+ * agregación vive en `./prediccionMensual.ts`.
  */
 
 import { ComposedChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
@@ -115,27 +115,13 @@ export default function AgricultorRainMonthlyChart({ mensual, prediccion, diaria
                     isAnimationActive={false}
                   />
                 )}
-                {tieneAnioActual && (
-                  <Line
-                    type="monotone"
-                    dataKey="actual_pronostico"
-                    name={`${ANIO_ACTUAL} (pronóstico)`}
-                    stroke={colorForYear(ANIO_ACTUAL, 0)}
-                    strokeWidth={2}
-                    strokeDasharray="6 4"
-                    dot={renderPrediccionDot}
-                    connectNulls
-                    isAnimationActive={false}
-                  />
-                )}
               </ComposedChart>
             </ResponsiveContainer>
           </div>
           {tieneAnioActual && (
             <p className="mt-1 text-[10px] leading-snug text-gray-400 dark:text-gray-500">
-              Línea sólida: dato real. Línea punteada: pronóstico de {ANIO_ACTUAL}. Punto rojo con
-              &quot;!&quot;: mes con hueco de datos. Pasa el mouse sobre un punto para ver el
-              desglose semanal.
+              {ANIO_ACTUAL} graficado hasta hoy. Punto rojo con &quot;!&quot;: mes con hueco de
+              datos. Pasa el mouse sobre un punto para ver el desglose semanal.
             </p>
           )}
         </>
@@ -185,17 +171,7 @@ export function PrediccionTooltip({
   label?: string | number
 }) {
   if (!active || !payload || payload.length === 0) return null
-  const items = payload.filter(p => {
-    if (p.value === null || p.value === undefined) return false
-    // El ancla de "actual_pronostico" en el último mes real repite el mismo
-    // valor que "actual_real" — no hace falta mostrarlo dos veces.
-    const key = String(p.dataKey ?? p.name ?? '')
-    if (key === 'actual_pronostico') {
-      const real = (p.payload ?? {})['actual_real']
-      if (real !== null && real !== undefined && Number(real) === Number(p.value)) return false
-    }
-    return true
-  })
+  const items = payload.filter(p => p.value !== null && p.value !== undefined)
   if (items.length === 0) return null
   return (
     <div className="max-w-xs rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs shadow-lg dark:border-gray-700 dark:bg-gray-900">
@@ -204,17 +180,8 @@ export function PrediccionTooltip({
         {items.map(p => {
           const key = String(p.dataKey ?? p.name ?? '')
           const row = p.payload ?? {}
-          const esPronostico = key === 'actual_pronostico'
-          const esActual = key === 'actual_real' || esPronostico
-          // El mes en curso se grafica como "actual_real" (línea sólida, sin
-          // alarma — ver prediccionMensual.ts) pero el valor que muestra sigue
-          // siendo el pronóstico; `actual_real_parcial` (abajo) es lo medido
-          // de verdad. Se etiqueta "(pronóstico)" también acá para que no se
-          // confunda con un mes ya cerrado.
-          const esMesEnCursoConParcial = key === 'actual_real' && typeof row.actual_real_parcial === 'number'
-          const nombre = esActual
-            ? (esPronostico || esMesEnCursoConParcial ? `${ANIO_ACTUAL} (pronóstico)` : ANIO_ACTUAL)
-            : p.name
+          const esActual = key === 'actual_real'
+          const nombre = esActual ? ANIO_ACTUAL : p.name
           const semanas = (row.semanas as Record<string, DesgloseSemanal> | undefined)?.[key]
           // Solo tiene sentido mostrar el desglose si al menos una semana
           // intermedia (S1–S3) tiene dato — si no, las 4 caerían en el mismo
@@ -223,14 +190,7 @@ export function PrediccionTooltip({
           return (
             <div key={key} className="space-y-0.5">
               <div className="flex items-center gap-2">
-                <span
-                  className={
-                    esPronostico
-                      ? 'h-2 w-2 shrink-0 rounded-full border border-dashed'
-                      : 'h-2 w-2 shrink-0 rounded-full'
-                  }
-                  style={esPronostico ? { borderColor: p.color } : { backgroundColor: p.color }}
-                />
+                <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: p.color }} />
                 <span className="text-gray-500 dark:text-gray-400">{nombre}</span>
                 <span className="ml-auto pl-3 font-medium tabular-nums text-gray-800 dark:text-gray-100">
                   {fmtNum(Number(p.value), 1)} mm
@@ -238,17 +198,8 @@ export function PrediccionTooltip({
               </div>
               {esActual && row.actual_es_excluido === true && (
                 <p className="text-[10px] leading-snug text-red-600 dark:text-red-400">
-                  Dato de sensor no confiable este mes — se usó pronóstico en su lugar.
+                  Pocos días de dato este mes — el total puede cambiar.
                 </p>
-              )}
-              {esActual && typeof row.actual_real_parcial === 'number' && (
-                <div className="flex items-center gap-2 pl-4">
-                  <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-blue-500" />
-                  <span className="text-[11px] text-gray-500 dark:text-gray-400">Real hasta hoy</span>
-                  <span className="ml-auto pl-3 text-[11px] font-medium tabular-nums text-blue-700 dark:text-blue-400">
-                    {fmtNum(row.actual_real_parcial, 1)} mm
-                  </span>
-                </div>
               )}
               {hayDesglose && semanas && (
                 <div className="ml-4 border-t border-gray-100 pt-1 dark:border-gray-800">

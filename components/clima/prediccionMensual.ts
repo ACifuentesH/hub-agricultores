@@ -1,9 +1,17 @@
 /**
- * Lógica pura de clasificación real/pronóstico y solapamiento de años para
- * la gráfica mensual de lluvia por agricultor, portada de
- * `seguimiento-lluvia-saturno/src/routes/index.tsx` (líneas ~1097-1420).
+ * Lógica pura de agregación real (sin proyección) para la gráfica mensual de
+ * lluvia por agricultor.
  *
- * Sin JSX a propósito — mismo criterio que `lib/seguimiento-lluvia-calc.ts`.
+ * Hasta el 16-sep-2026 el mes en curso se graficaba con el pronóstico
+ * (histórico × factor) en vez del dato real, y los meses futuros se
+ * proyectaban con línea punteada. Reportado por el usuario: para algunos
+ * agricultores el pronóstico calculaba 0 mm mientras la lluvia real
+ * acumulada del mes ya iba en 131 mm — el gráfico mentía por confiar en un
+ * cálculo que podía fallar en vez de en el dato medido que sí existía. Se
+ * elimina la proyección por completo: el mes en curso grafica lo acumulado
+ * real hasta hoy (recalculado del dato diario de las estaciones, igual que
+ * ya se hacía para el "Real hasta hoy" del tooltip), y los meses futuros ya
+ * no se grafican.
  */
 
 import type { PrediccionLluviaLoteRow } from '@/lib/seguimiento-lluvia'
@@ -13,73 +21,45 @@ export const MESES_ES = [
   'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
 ]
 
-/** Año que se pronostica — el pronóstico ya viene calculado desde Supabase. */
 export const ANIO_ACTUAL = String(new Date().getFullYear())
 
-// Número de mes (1-12) de "hoy" — distingue meses ya pasados/en curso de
-// meses genuinamente futuros, independiente de lo que marque es_pronostico.
+// Número de mes (1-12) de "hoy" — más allá de este mes ya no se grafica nada
+// (se quitó la proyección a meses futuros).
 const MES_ACTUAL_NUMERO = new Date().getMonth() + 1
 
 // Mínimo de días con lectura para considerar "completo" el dato real de un
-// mes. Por debajo de esto se grafica igual el valor real (nunca se sustituye
-// por el pronóstico) pero se marca como excluido por calidad.
+// mes. Por debajo de esto se grafica igual el valor real (nunca se oculta)
+// pero se marca como excluido por calidad.
 const UMBRAL_DIAS_MINIMO = 15
 
 export interface PrediccionMes {
   mes: number
   valor: number | null
-  esPronostico: boolean
   esExcluidoPorCalidad: boolean
   metodoUsado: string | null
   factorUsado: number | null
 }
 
 /**
- * Clasifica un mes usando la realidad medida cuando existe, en vez de
- * confiar ciegamente en es_pronostico — EXCEPTO en el mes en curso mientras
- * todavía no acumula suficientes días de dato (`UMBRAL_DIAS_MINIMO`, mismo
- * umbral que ya usa la vista para decidir `es_pronostico`): recién empezado
- * el mes, `valor_real` es casi siempre 0 o casi 0 porque apenas pasaron uno o
- * dos días, y mostrar eso como "dato real" se lee como "no llovió nada este
- * mes" en vez de "todavía no hay mes que mostrar". Ahí se usa el pronóstico
- * (histórico × factor) que la vista ya calculó, igual que para meses
- * genuinamente futuros — y a medida que se acumulan días reales (la vista
- * pasa `es_pronostico` a false) vuelve a graficarse el dato medido.
- *
- * Para meses ya cerrados, en cambio, sigue prefiriendo el valor_real así sea
- * de pocos días (nunca sustituido por el pronóstico) — ahí sí es un dato
- * real, aunque incompleto, y se marca esExcluidoPorCalidad en vez de ocultarlo.
+ * Clasifica un mes usando siempre la realidad medida. Meses futuros (más
+ * allá del mes en curso) no se grafican — ya no hay proyección.
  */
 function clasificarMes(
   mes: number,
   valorReal: number | null,
-  valorPronostico: number,
   diasConDato: number | null,
-  esPronosticoVista: boolean,
-): { valor: number | null; esPronostico: boolean; esExcluidoPorCalidad: boolean } {
+): { valor: number | null; esExcluidoPorCalidad: boolean } {
   if (mes > MES_ACTUAL_NUMERO) {
-    return { valor: valorPronostico, esPronostico: true, esExcluidoPorCalidad: false }
-  }
-  if (mes === MES_ACTUAL_NUMERO && esPronosticoVista) {
-    // El mes en curso ya es "presente", no futuro — el tramo que lo conecta
-    // con el mes anterior tiene que verse sólido aunque todavía no acumule
-    // suficientes días de dato real (el punteado es solo para meses
-    // genuinamente futuros). Se grafica el pronóstico (histórico × factor)
-    // como si fuera el dato real, SIN marcador de alerta — no es un hueco de
-    // calidad, es simplemente el mes en curso; en cuanto la vista acumule
-    // suficientes días (`es_pronostico` pasa a false) este mismo punto se
-    // reemplaza solo por el valor medido real, sin intervención acá.
-    return { valor: valorPronostico, esPronostico: false, esExcluidoPorCalidad: false }
+    return { valor: null, esExcluidoPorCalidad: false }
   }
   if (valorReal !== null) {
     return {
       valor: valorReal,
-      esPronostico: false,
       esExcluidoPorCalidad: diasConDato !== null && diasConDato < UMBRAL_DIAS_MINIMO,
     }
   }
-  // Mes ya pasado sin ningún dato real: no hay nada que graficar.
-  return { valor: null, esPronostico: false, esExcluidoPorCalidad: false }
+  // Mes ya pasado (o en curso) sin ningún dato real: no hay nada que graficar.
+  return { valor: null, esExcluidoPorCalidad: false }
 }
 
 /**
@@ -90,9 +70,7 @@ function clasificarMes(
  *
  * Excepción: el PRIMER mes con algún dato real de cada lote nunca se marca
  * como "hueco de calidad", así tenga pocos días — es el mes de instalación
- * de la estación a medias, no una falla. Confirmado con datos reales: varias
- * estaciones instaladas fines de mayo 2026 mostraban ese mes con el marcador
- * de alerta solo por haber arrancado a mitad de mes.
+ * de la estación a medias, no una falla.
  */
 export function agregarPrediccionLotesPorMes(rows: PrediccionLluviaLoteRow[]): PrediccionMes[] {
   const primerMesConDatoPorLote = new Map<string, number>()
@@ -113,7 +91,7 @@ export function agregarPrediccionLotesPorMes(rows: PrediccionLluviaLoteRow[]): P
     const clasificados = group.map(g => {
       const valorReal = g.valor_real === null || g.valor_real === undefined ? null : Number(g.valor_real)
       const diasConDato = g.dias_con_dato === null || g.dias_con_dato === undefined ? null : Number(g.dias_con_dato)
-      const clasificado = clasificarMes(mes, valorReal, Number(g.valor), diasConDato, g.es_pronostico === true)
+      const clasificado = clasificarMes(mes, valorReal, diasConDato)
       const esPrimerMesDelLote = primerMesConDatoPorLote.get(g.lote_id) === mes
       return esPrimerMesDelLote ? { ...clasificado, esExcluidoPorCalidad: false } : clasificado
     })
@@ -121,7 +99,6 @@ export function agregarPrediccionLotesPorMes(rows: PrediccionLluviaLoteRow[]): P
     out.push({
       mes,
       valor: valores.length > 0 ? valores.reduce((a, b) => a + b, 0) / valores.length : null,
-      esPronostico: clasificados.some(c => c.esPronostico),
       esExcluidoPorCalidad: clasificados.some(c => c.esExcluidoPorCalidad),
       metodoUsado: group[0]?.metodo_usado ?? null,
       factorUsado:
@@ -137,7 +114,7 @@ export function agregarPrediccionLotesPorMes(rows: PrediccionLluviaLoteRow[]): P
 export function esBajaConfianza(actual: PrediccionMes[]): boolean {
   if (actual.length === 0) return false
   if (actual.every(r => r.metodoUsado === 'sin_datos')) return true
-  const mesesReales = actual.filter(r => !r.esPronostico).length
+  const mesesReales = actual.filter(r => r.valor !== null).length
   return mesesReales <= 2
 }
 
@@ -155,7 +132,7 @@ export type DesgloseSemanal = [number | null, number | null, number | null, numb
 export type PrediccionOverlayRow = {
   monthIndex: number
   month: string
-  /** Desglose semanal por serie (clave = 'actual_real' | 'actual_pronostico' | año) — solo para el tooltip. */
+  /** Desglose semanal por serie (clave = 'actual_real' | año) — solo para el tooltip. */
   semanas: Record<string, DesgloseSemanal>
 } & Record<string, unknown>
 
@@ -171,24 +148,29 @@ function fechaISO(anio: number, monthIndex: number, dia: number): string {
  * [cierre semana 1, cierre semana 2, cierre semana 3, cierre semana 4] de
  * lluvia acumulada DENTRO del mes, sumando el dato diario disponible (semanas
  * fijas por día-del-mes: 1–7, 8–14, 15–21, 22–fin — no ISO, alcanza para
- * ubicar el punto). `null` si no hay ningún dato diario ese mes.
+ * ubicar el punto). Para el mes en curso, los días futuros dentro del mes
+ * simplemente no aportan (quedan en el último acumulado real). `null` si no
+ * hay ningún dato diario ese mes.
  */
 function acumuladoSemanalCrudo(
   dailyByDate: Map<string, number>,
   anio: number,
   monthIndex: number,
+  hastaDia: number,
 ): [number, number, number, number] | null {
-  const ultimoDia = ultimoDiaDelMes(anio, monthIndex)
-  const cortes = [7, 14, 21, ultimoDia]
+  const ultimoDia = Math.min(ultimoDiaDelMes(anio, monthIndex), hastaDia)
+  const cortes = [7, 14, 21, ultimoDiaDelMes(anio, monthIndex)]
   const marcas: number[] = []
   let acumulado = 0
   let huboDato = false
   let corteIdx = 0
-  for (let dia = 1; dia <= ultimoDia; dia++) {
-    const v = dailyByDate.get(fechaISO(anio, monthIndex, dia))
-    if (v !== undefined) {
-      acumulado += v
-      huboDato = true
+  for (let dia = 1; dia <= ultimoDiaDelMes(anio, monthIndex); dia++) {
+    if (dia <= ultimoDia) {
+      const v = dailyByDate.get(fechaISO(anio, monthIndex, dia))
+      if (v !== undefined) {
+        acumulado += v
+        huboDato = true
+      }
     }
     while (corteIdx < cortes.length && dia === cortes[corteIdx]) {
       marcas.push(acumulado)
@@ -204,16 +186,17 @@ function acumuladoSemanalCrudo(
  * calculado — nunca se recalcula desde el dato diario, solo se usa para
  * repartir la forma de la acumulación dentro del mes). Sin dato diario ese
  * mes, devuelve `[null, null, null, total]` — el tooltip entonces no muestra
- * desglose (ver `hayDesglose` en el componente).
+ * desglose.
  */
 function desgloseSemanal(
   dailyByDate: Map<string, number>,
   anio: number,
   monthIndex: number,
   total: number | null,
+  hastaDia: number,
 ): DesgloseSemanal {
   if (total === null) return [null, null, null, null]
-  const crudo = acumuladoSemanalCrudo(dailyByDate, anio, monthIndex)
+  const crudo = acumuladoSemanalCrudo(dailyByDate, anio, monthIndex, hastaDia)
   if (!crudo || crudo[3] <= 0) return [null, null, null, total]
   const factor = total / crudo[3]
   return [crudo[0] * factor, crudo[1] * factor, crudo[2] * factor, total]
@@ -221,15 +204,12 @@ function desgloseSemanal(
 
 /**
  * Convierte lluvia mensual histórica ({mes: "YYYY-MM-01", value}, años
- * anteriores al actual) + el pronóstico ya resuelto del año actual (12
- * filas, una por mes) en filas por mes con una columna por año — un punto
- * por mes en el gráfico, igual que siempre. Cada fila lleva además
- * `semanas`, el desglose de esa lluvia dentro del mes (S1..S4, a partir del
- * dato diario de las estaciones del agricultor — `diaria`,
- * `vista_lluvia_diaria_estacion`), que el tooltip muestra al pararse en el
- * punto sin cambiar el gráfico en sí. El año actual se parte en dos series
- * (actual_real / actual_pronostico) para poder dibujar un tramo sólido y uno
- * punteado en la misma línea.
+ * anteriores al actual) + lo real del año en curso (agregarPrediccionLotesPorMes)
+ * en filas por mes con una columna por año. El mes en curso usa el
+ * acumulado real recalculado del dato diario de las estaciones (`diaria`,
+ * `vista_lluvia_diaria_estacion`) hasta hoy — más confiable que esperar a
+ * que la vista mensual lo cierre, y evita el bug de mostrar 0 cuando sí hay
+ * lluvia real cargada. Meses futuros no se grafican.
  */
 export function buildPrediccionOverlay(
   historicalPoints: Array<{ mes: string; value: number }>,
@@ -251,13 +231,12 @@ export function buildPrediccionOverlay(
   const dailyByDate = new Map<string, number>()
   for (const [dia, e] of sumByDate) dailyByDate.set(dia, e.count > 0 ? e.sum / e.count : 0)
 
-  // Mes en curso: el punto graficado sigue siendo el pronóstico (histórico ×
-  // factor) — no se reemplaza en la línea. Lo real acumulado a la fecha, si
-  // ya hay algún día de dato, se calcula acá para mostrarlo aparte en el
-  // tooltip (diferenciado del pronóstico), sin tocar lo que se dibuja.
+  const diaHoy = new Date().getDate()
+
+  // Mes en curso: recalcular lo acumulado real hasta hoy directo del dato
+  // diario — no depender de que la vista mensual ya lo haya cerrado.
   let realAcumuladoMesActual: number | null = null
   {
-    const diaHoy = new Date().getDate()
     let acumulado = 0
     let huboDato = false
     for (let dia = 1; dia <= diaHoy; dia++) {
@@ -276,42 +255,30 @@ export function buildPrediccionOverlay(
     yearsSet.add(parsed.year)
     const row = rows[parsed.monthIndex]
     row[parsed.year] = p.value
-    row.semanas[parsed.year] = desgloseSemanal(dailyByDate, Number(parsed.year), parsed.monthIndex, p.value)
-  }
-
-  let lastRealMonthIndex = -1
-  for (const r of actual) {
-    if (!r.esPronostico && r.valor !== null) {
-      lastRealMonthIndex = Math.max(lastRealMonthIndex, r.mes - 1)
-    }
+    row.semanas[parsed.year] = desgloseSemanal(
+      dailyByDate, Number(parsed.year), parsed.monthIndex, p.value, 31,
+    )
   }
 
   const anioActualNum = Number(ANIO_ACTUAL)
   for (const r of actual) {
     const monthIndex = r.mes - 1
     if (monthIndex < 0 || monthIndex > 11) continue
+    if (r.valor === null) continue
     const row = rows[monthIndex]
-    const campo = r.esPronostico ? 'actual_pronostico' : 'actual_real'
-    row[campo] = r.valor
+    const esMesEnCurso = r.mes === MES_ACTUAL_NUMERO
+    // El mes en curso usa el acumulado real recalculado (si hay dato diario);
+    // si no hay dato diario todavía, se cae al valor que ya trae la vista.
+    const valorFinal = esMesEnCurso && realAcumuladoMesActual !== null
+      ? realAcumuladoMesActual
+      : r.valor
+    row.actual_real = valorFinal
     row.actual_es_excluido = r.esExcluidoPorCalidad
-    row.semanas[campo] = desgloseSemanal(dailyByDate, anioActualNum, monthIndex, r.valor)
-    // Solo el mes en curso lleva lo real acumulado a la fecha, aparte del
-    // valor graficado (que sigue siendo el pronóstico) — ver PrediccionTooltip.
-    if (r.mes === MES_ACTUAL_NUMERO && realAcumuladoMesActual !== null) {
-      row.actual_real_parcial = realAcumuladoMesActual
-    }
+    row.semanas.actual_real = desgloseSemanal(
+      dailyByDate, anioActualNum, monthIndex, valorFinal, esMesEnCurso ? diaHoy : 31,
+    )
   }
 
-  // Ancla: el último mes real repite su valor en la serie de pronóstico
-  // para que el tramo punteado arranque pegado al sólido, sin hueco.
-  if (lastRealMonthIndex !== -1) {
-    const anchorRow = rows[lastRealMonthIndex]
-    if (anchorRow.actual_pronostico === undefined) {
-      anchorRow.actual_pronostico = anchorRow.actual_real
-      if (anchorRow.semanas.actual_real) anchorRow.semanas.actual_pronostico = anchorRow.semanas.actual_real
-    }
-  }
-
-  if (actual.length > 0) yearsSet.add(ANIO_ACTUAL)
+  if (actual.some(r => r.valor !== null)) yearsSet.add(ANIO_ACTUAL)
   return { data: rows, years: Array.from(yearsSet).sort() }
 }

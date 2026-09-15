@@ -30,16 +30,25 @@ interface ZonaInput {
 type OverlayRow = Record<string, string | number | null | undefined> & { xLabel: string }
 
 /**
- * Pivotea lluvia mensual histórica (una fila por zona/mes/año) más el
- * pronóstico ya resuelto del año en curso en filas por mes con una columna
- * por año. El año en curso se parte en `actual_real` / `actual_pronostico`
- * para poder dibujar un tramo sólido y uno punteado en la misma línea —
- * misma idea que `buildPrediccionOverlay` en
- * `seguimiento-lluvia-saturno/src/routes/index.tsx` (líneas ~1370-1419),
- * reescrita acá sin sus dependencias de tooltip/metadata de calidad de dato.
+ * Pivotea lluvia mensual histórica (una fila por zona/mes/año) más lo real
+ * del año en curso en filas por mes con una columna por año.
+ *
+ * Hasta el 16-sep-2026 el mes en curso graficaba el pronóstico
+ * (`es_pronostico`) y los meses futuros se proyectaban con línea punteada —
+ * quitado por el mismo motivo que en `prediccionMensual.ts` (el pronóstico
+ * podía calcular 0 mm mientras la lluvia real ya iba muy por encima). El mes
+ * en curso ahora recalcula lo acumulado real del dato diario de la zona
+ * (`diaria`) hasta hoy, igual que hace el gráfico por agricultor; los meses
+ * futuros ya no se grafican.
  */
-function buildMensualOverlay(mensual: LluviaMensualZonaRow[], prediccion: PrediccionLluviaZonaRow[]) {
+function buildMensualOverlay(
+  mensual: LluviaMensualZonaRow[],
+  prediccion: PrediccionLluviaZonaRow[],
+  diaria: LluviaDiariaEstacionRow[],
+) {
   const anioActual = String(new Date().getFullYear())
+  const mesActualNumero = new Date().getMonth() + 1
+  const diaHoy = new Date().getDate()
   const rows: OverlayRow[] = MESES_ES.map(mes => ({ xLabel: mes }))
   const years = new Set<string>()
 
@@ -54,24 +63,43 @@ function buildMensualOverlay(mensual: LluviaMensualZonaRow[], prediccion: Predic
       : Number(r.lluvia_mm_promedio)
   }
 
-  let lastRealMonthIndex = -1
-  for (const r of prediccion) {
-    const mi = r.mes - 1
-    if (mi < 0 || mi > 11) continue
-    if (!r.es_pronostico && r.valor !== null && r.valor !== undefined) {
-      lastRealMonthIndex = Math.max(lastRealMonthIndex, mi)
+  // Acumulado real del mes en curso, recalculado del dato diario — no
+  // depende de que la vista mensual ya lo haya cerrado.
+  const dailyByDate = new Map<string, number>()
+  for (const r of diaria) {
+    if (!r.dia || r.lluvia_mm === null || r.lluvia_mm === undefined) continue
+    const e = dailyByDate.get(r.dia)
+    dailyByDate.set(r.dia, (e ?? 0) + Number(r.lluvia_mm))
+  }
+  let realAcumuladoMesActual: number | null = null
+  {
+    let acumulado = 0
+    let huboDato = false
+    for (let dia = 1; dia <= diaHoy; dia++) {
+      const fecha = `${anioActual}-${String(mesActualNumero).padStart(2, '0')}-${String(dia).padStart(2, '0')}`
+      const v = dailyByDate.get(fecha)
+      if (v !== undefined) {
+        acumulado += v
+        huboDato = true
+      }
     }
+    if (huboDato) realAcumuladoMesActual = acumulado
   }
+
+  let huboAlgunDatoReal = false
   for (const r of prediccion) {
     const mi = r.mes - 1
     if (mi < 0 || mi > 11) continue
-    if (r.es_pronostico) rows[mi].actual_pronostico = r.valor
-    else rows[mi].actual_real = r.valor
+    if (mi + 1 > mesActualNumero) continue // meses futuros: ya no se grafican
+    const esMesEnCurso = mi + 1 === mesActualNumero
+    const valor = esMesEnCurso && realAcumuladoMesActual !== null
+      ? realAcumuladoMesActual
+      : (r.valor === null || r.valor === undefined ? null : Number(r.valor))
+    if (valor === null) continue
+    rows[mi].actual_real = valor
+    huboAlgunDatoReal = true
   }
-  if (lastRealMonthIndex !== -1 && rows[lastRealMonthIndex].actual_pronostico === undefined) {
-    rows[lastRealMonthIndex].actual_pronostico = rows[lastRealMonthIndex].actual_real
-  }
-  if (prediccion.length > 0) years.add(anioActual)
+  if (huboAlgunDatoReal) years.add(anioActual)
 
   return { data: rows, years: Array.from(years).sort() }
 }
@@ -128,7 +156,7 @@ function ZonaChart({ zona, vista, mensual, prediccion, diaria }: {
   const anioActual = String(new Date().getFullYear())
 
   const overlay = useMemo(() => {
-    if (vista === 'mensual') return buildMensualOverlay(mensual, prediccion)
+    if (vista === 'mensual') return buildMensualOverlay(mensual, prediccion, diaria)
     return buildDiariaOverlay(diaria, vista)
   }, [vista, mensual, prediccion, diaria])
 
@@ -192,19 +220,6 @@ function ZonaChart({ zona, vista, mensual, prediccion, diaria }: {
                   stroke={colorForYear(anioActual, 0)}
                   strokeWidth={2}
                   dot
-                  connectNulls
-                  isAnimationActive={false}
-                />
-              )}
-              {vista === 'mensual' && tieneActual && (
-                <Line
-                  type="monotone"
-                  dataKey="actual_pronostico"
-                  name={`${anioActual} (pronóstico)`}
-                  stroke={colorForYear(anioActual, 0)}
-                  strokeWidth={2}
-                  strokeDasharray="6 4"
-                  dot={false}
                   connectNulls
                   isAnimationActive={false}
                 />

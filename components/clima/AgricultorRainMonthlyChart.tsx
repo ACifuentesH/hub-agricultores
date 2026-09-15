@@ -120,8 +120,8 @@ export default function AgricultorRainMonthlyChart({ mensual, prediccion, diaria
           </div>
           {tieneAnioActual && (
             <p className="mt-1 text-[10px] leading-snug text-gray-400 dark:text-gray-500">
-              {ANIO_ACTUAL} graficado hasta hoy. Punto rojo con &quot;!&quot;: mes con hueco de
-              datos. Pasa el mouse sobre un punto para ver el desglose semanal.
+              {ANIO_ACTUAL} graficado hasta hoy. Toca un punto de la gráfica para ver el
+              detalle de la lluvia por semana.
             </p>
           )}
         </>

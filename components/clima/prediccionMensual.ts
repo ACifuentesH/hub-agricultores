@@ -43,6 +43,12 @@ export interface PrediccionMes {
 /**
  * Clasifica un mes usando siempre la realidad medida. Meses futuros (más
  * allá del mes en curso) no se grafican — ya no hay proyección.
+ *
+ * El mes EN CURSO nunca se marca como "hueco de calidad": todavía no
+ * transcurrieron sus 30 días, así que por definición tiene menos días con
+ * dato que `UMBRAL_DIAS_MINIMO` — no es una falla de la estación, es que el
+ * mes no ha terminado. Marcarlo disparaba la alerta roja en el punto actual
+ * de la gráfica todos los meses, sin que hubiera ningún problema real.
  */
 function clasificarMes(
   mes: number,
@@ -53,9 +59,10 @@ function clasificarMes(
     return { valor: null, esExcluidoPorCalidad: false }
   }
   if (valorReal !== null) {
+    const esMesEnCurso = mes === MES_ACTUAL_NUMERO
     return {
       valor: valorReal,
-      esExcluidoPorCalidad: diasConDato !== null && diasConDato < UMBRAL_DIAS_MINIMO,
+      esExcluidoPorCalidad: !esMesEnCurso && diasConDato !== null && diasConDato < UMBRAL_DIAS_MINIMO,
     }
   }
   // Mes ya pasado (o en curso) sin ningún dato real: no hay nada que graficar.

@@ -61,9 +61,7 @@ export default function CultivoTimeline({ fechaSiembra, diasCiclo = 120 }: Props
 
   return (
     <div
-      className="relative rounded-2xl bg-white border border-gray-200 p-4 shadow-[0_0_40px_rgba(34,197,94,0.05)] sm:p-6
-        dark:bg-gradient-to-b dark:from-gray-950 dark:to-gray-900 dark:border-green-500/20
-        dark:shadow-[0_0_40px_rgba(34,197,94,0.08),inset_0_0_30px_rgba(0,0,0,0.3)]"
+      className="relative rounded-2xl bg-white border border-gray-200 p-4 shadow-[0_0_40px_rgba(34,197,94,0.05)] sm:p-6 dark:bg-gradient-to-b dark:from-gray-950 dark:to-gray-900 dark:border-green-500/20 dark:shadow-[0_0_40px_rgba(34,197,94,0.08),inset_0_0_30px_rgba(0,0,0,0.3)]"
     >
       {/* Panel label */}
       <div className="flex items-center justify-between mb-4">

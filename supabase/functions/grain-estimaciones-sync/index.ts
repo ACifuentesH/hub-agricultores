@@ -221,13 +221,30 @@ Deno.serve(async (req) => {
   //      reciente evaluación por lote) ─────────────────────────────────────
   const resumenFilas = await grainFetchAll<ResumenRow>("resumen", ciclo);
 
+  // fecha_evaluacion es la que escribe el técnico a mano en la planilla —
+  // puede tener errores de tipeo. Caso real visto: "El galpón" (Y01) con
+  // fecha_evaluacion 2026-09-26, 11 días DESPUÉS de que el archivo se subió
+  // (cargado_at 2026-09-07). Un técnico no puede evaluar un lote antes de
+  // subir el archivo con esa evaluación, así que si fecha_evaluacion es
+  // posterior a cargado_at, la fecha está mal — se usa cargado_at en su
+  // lugar (dato duro: sabemos con certeza cuándo se subió el archivo).
+  function fechaEvaluacionValida(r: ResumenRow): string | null {
+    const evalD = r.fecha_evaluacion ? new Date(r.fecha_evaluacion) : null;
+    const cargaD = r.cargado_at ? new Date(r.cargado_at) : null;
+    if (evalD && cargaD && evalD.getTime() > cargaD.getTime()) {
+      return cargaD.toISOString().slice(0, 10);
+    }
+    return r.fecha_evaluacion ?? (cargaD ? cargaD.toISOString().slice(0, 10) : null);
+  }
+
   // Quedarnos con la evaluación más reciente por lote (puede haber varias
-  // cargas del mismo lote a lo largo del ciclo).
-  const masRecientePorLote = new Map<string, ResumenRow>();
-  for (const r of resumenFilas) {
-    if (!r.lote_id) continue;
+  // cargas del mismo lote a lo largo del ciclo), ya con la fecha corregida.
+  const masRecientePorLote = new Map<string, ResumenRow & { _fechaValida: string | null }>();
+  for (const r0 of resumenFilas) {
+    if (!r0.lote_id) continue;
+    const r = { ...r0, _fechaValida: fechaEvaluacionValida(r0) };
     const prev = masRecientePorLote.get(r.lote_id);
-    if (!prev || (r.fecha_evaluacion ?? "") > (prev.fecha_evaluacion ?? "")) {
+    if (!prev || (r._fechaValida ?? "") > (prev._fechaValida ?? "")) {
       masRecientePorLote.set(r.lote_id, r);
     }
   }
@@ -241,7 +258,7 @@ Deno.serve(async (req) => {
       lote_texto: r.lote_texto ?? null,
       hibrido_texto: r.hibrido_texto ?? null,
       estado_fenologico_texto: r.estado_fenologico_texto ?? null,
-      fecha_evaluacion: r.fecha_evaluacion ?? null,
+      fecha_evaluacion: r._fechaValida,
       tecnico_correo: r.tecnico_correo ?? null,
       codigo_up: r.archivo_codigo_up ?? null,
       nombre_agricultor: r.archivo_agricultor ?? null,

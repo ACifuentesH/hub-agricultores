@@ -98,25 +98,6 @@ function RealLoginForm() {
           <h1 className="text-4xl xl:text-5xl font-semibold leading-[1.1] tracking-tight">
             Gestión integral del programa agrícola.
           </h1>
-          <p className="text-base text-green-100/80 leading-relaxed max-w-md">
-            Monitoreo de clima, siembra, cosecha y rentabilidad por lote — toda la operación de tus
-            agricultores en un solo lugar.
-          </p>
-
-          <div className="flex items-center gap-8 pt-4 border-t border-white/15">
-            <div>
-              <p className="text-2xl font-semibold">50+</p>
-              <p className="text-xs text-green-200/70 mt-0.5">Agricultores</p>
-            </div>
-            <div>
-              <p className="text-2xl font-semibold">10K+</p>
-              <p className="text-xs text-green-200/70 mt-0.5">Hectáreas</p>
-            </div>
-            <div>
-              <p className="text-2xl font-semibold">44</p>
-              <p className="text-xs text-green-200/70 mt-0.5">Estaciones en vivo</p>
-            </div>
-          </div>
         </div>
 
         <div className="relative z-10 text-xs text-green-200/60">
@@ -154,7 +135,6 @@ function RealLoginForm() {
             </div>
             <div>
               <p className="font-semibold text-gray-900 dark:text-gray-100 leading-none">Programa Saturno</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Agricultura por contrato</p>
             </div>
           </div>
 
@@ -203,10 +183,6 @@ function RealLoginForm() {
               <ArrowRight size={16} className="transition-transform group-hover:translate-x-0.5" />
             </button>
           </form>
-
-          <p className="text-xs text-gray-400 dark:text-gray-500 text-center mt-10">
-            Acceso restringido · Programa Saturno
-          </p>
         </div>
       </div>
     </div>

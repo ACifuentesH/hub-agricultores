@@ -104,12 +104,6 @@ export default async function CultivoPage({
   const cicloTieneCierre = todosLotes.some(
     l => (Number(l.ha_cosechadas) || 0) > 0 || (Number(l.ha_perdidas) || 0) > 0,
   )
-  const rendimientosReales = [...visitaPorLote.values()]
-    .map(v => v.rendimiento_kg_ha)
-    .filter((v): v is number => v != null)
-  const rendimientoPromedio = rendimientosReales.length > 0
-    ? rendimientosReales.reduce((s, v) => s + v, 0) / rendimientosReales.length
-    : null
 
   // ── Novedades para la campana ──
   const novedades: Novedad[] = []
@@ -210,13 +204,6 @@ export default async function CultivoPage({
               icon={<AlertTriangle className="text-red-500" size={24} />}
               label="Ha perdidas"
               value={`${totalHaPerdidas.toFixed(1)} ha`}
-            />
-          )}
-          {rendimientoPromedio != null && (
-            <KpiCard
-              icon={<Wheat className="text-amber-600" size={24} />}
-              label="Rendimiento real promedio"
-              value={`${rendimientoPromedio.toLocaleString('es-VE', { maximumFractionDigits: 0 })} kg/ha`}
             />
           )}
         </div>

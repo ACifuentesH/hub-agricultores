@@ -61,12 +61,13 @@ export default function CultivoTimeline({ fechaSiembra, diasCiclo = 120 }: Props
 
   return (
     <div
-      className="relative rounded-2xl bg-gradient-to-b from-gray-950 to-gray-900 border border-green-500/20 p-4 sm:p-6"
-      style={{ boxShadow: '0 0 40px rgba(34, 197, 94, 0.08), inset 0 0 30px rgba(0, 0, 0, 0.3)' }}
+      className="relative rounded-2xl bg-white border border-gray-200 p-4 shadow-[0_0_40px_rgba(34,197,94,0.05)] sm:p-6
+        dark:bg-gradient-to-b dark:from-gray-950 dark:to-gray-900 dark:border-green-500/20
+        dark:shadow-[0_0_40px_rgba(34,197,94,0.08),inset_0_0_30px_rgba(0,0,0,0.3)]"
     >
       {/* Panel label */}
       <div className="flex items-center justify-between mb-4">
-        <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">
+        <p className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
           Ciclo del maíz
         </p>
       </div>
@@ -151,18 +152,18 @@ export default function CultivoTimeline({ fechaSiembra, diasCiclo = 120 }: Props
         </div>
 
         {/* Month bar */}
-        <div className="relative grid grid-cols-12 border-t border-b border-gray-700">
+        <div className="relative grid grid-cols-12 border-t border-b border-gray-200 dark:border-gray-700">
           {months.map((m, i) => (
             <div
               key={i}
-              className="relative text-center py-2 sm:py-3 text-[10px] sm:text-xs font-medium text-gray-500 border-r border-gray-800 last:border-r-0"
+              className="relative text-center py-2 sm:py-3 text-[10px] sm:text-xs font-medium text-gray-500 dark:text-gray-500 border-r border-gray-100 dark:border-gray-800 last:border-r-0"
             >
               {/* Doce celdas sobre 280 px dan 23 px cada una: no cabe "Ene".
                   En el teléfono queda la inicial, que basta para ubicarse. */}
               <span className="sm:hidden">{m.charAt(0)}</span>
               <span className="hidden sm:inline">{m}</span>
               {/* Tick on top */}
-              <span className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-1.5 bg-gray-600" />
+              <span className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-1.5 bg-gray-300 dark:bg-gray-600" />
             </div>
           ))}
         </div>
@@ -188,7 +189,7 @@ export default function CultivoTimeline({ fechaSiembra, diasCiclo = 120 }: Props
               title="Cosecha estimada"
             />
             <div
-              className="absolute -translate-x-1/2 mt-3 text-[10px] font-medium uppercase tracking-wider text-gray-400"
+              className="absolute -translate-x-1/2 mt-3 text-[10px] font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400"
               style={{ left: `${((siembraPct + cosechaPct) / 2) * 100}%`, top: '100%' }}
             >
               Ciclo {getCicloName(siembraDate!)}

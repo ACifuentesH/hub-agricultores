@@ -9,7 +9,6 @@ import { usePathname } from 'next/navigation'
  * Por eso las páginas ya no repiten su <h1>: sería un título duplicado.
  */
 const TITULOS: { prefijo: string; titulo: string }[] = [
-  { prefijo: '/dashboard', titulo: 'Dashboard' },
   { prefijo: '/clima', titulo: 'Clima' },
   { prefijo: '/cultivo', titulo: 'Cultivo' },
   { prefijo: '/documentacion', titulo: 'Documentación' },

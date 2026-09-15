@@ -18,7 +18,7 @@ export interface Novedad {
 }
 
 /**
- * Centro de novedades del dashboard.
+ * Centro de novedades (en la cabecera de /cultivo, la pantalla de entrada).
  *
  * Las novedades se calculan en el servidor y llegan como prop; aquí solo se
  * decide cuáles son "no leídas" comparando su fecha contra la última visita,

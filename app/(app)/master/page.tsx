@@ -181,9 +181,8 @@ export default async function MasterPage({
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex flex-wrap items-center justify-end gap-1">
-                      <VerComo href={`/dashboard?agricultor=${encodeURIComponent(f.key)}&ciclo=${ciclo}`} label="Panel" />
-                      <VerComo href={`/clima?agricultor=${encodeURIComponent(f.key)}&ciclo=${ciclo}`} label="Clima" />
                       <VerComo href={`/cultivo?agricultor=${encodeURIComponent(f.key)}&ciclo=${ciclo}`} label="Cultivo" />
+                      <VerComo href={`/clima?agricultor=${encodeURIComponent(f.key)}&ciclo=${ciclo}`} label="Clima" />
                     </div>
                   </td>
                 </tr>

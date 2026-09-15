@@ -5,15 +5,14 @@ import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import {
-  LayoutDashboard, CloudSun, Sprout, FolderOpen,
+  CloudSun, Sprout, FolderOpen,
   Users, LogOut, Leaf, PanelLeftClose, PanelLeftOpen,
 } from 'lucide-react'
 import ThemeToggle from './ThemeToggle'
 
 const farmerLinks = [
-  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/clima', label: 'Clima', icon: CloudSun },
   { href: '/cultivo', label: 'Cultivo', icon: Sprout },
+  { href: '/clima', label: 'Clima', icon: CloudSun },
   { href: '/documentacion', label: 'Documentación', icon: FolderOpen },
 ]
 

@@ -31,7 +31,7 @@ export async function POST(req: Request) {
   }
 
   if (wantsHtml) {
-    url.pathname = result.role === 'master' ? '/master' : '/dashboard'
+    url.pathname = result.role === 'master' ? '/master' : '/cultivo'
     url.search = ''
     return NextResponse.redirect(url, 303)
   }

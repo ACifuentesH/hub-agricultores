@@ -76,6 +76,17 @@ export default function UltimaVisitaCard({ v }: { v: Visita | null }) {
               </p>
             </div>
           )}
+
+          {(v?.avance_pct != null || v?.rendimiento_kg_ha != null) && (
+            <div className="flex flex-wrap gap-x-4 gap-y-1 border-t border-gray-100 pt-2 text-xs text-gray-500 dark:border-gray-800 dark:text-gray-400">
+              {v?.avance_pct != null && (
+                <span>Avance del ciclo: <span className="font-medium text-gray-700 dark:text-gray-200">{v.avance_pct}%</span></span>
+              )}
+              {v?.rendimiento_kg_ha != null && (
+                <span>Rendimiento real: <span className="font-medium text-gray-700 dark:text-gray-200">{v.rendimiento_kg_ha.toLocaleString('es-VE')} kg/ha</span></span>
+              )}
+            </div>
+          )}
         </div>
       )}
     </div>

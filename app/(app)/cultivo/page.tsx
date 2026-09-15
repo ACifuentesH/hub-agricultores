@@ -3,17 +3,18 @@ import { getUserProfile } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import CultivoTimeline from '@/components/CultivoTimeline'
 import { getCurrentStageInfo } from '@/lib/corn-stages'
-import { getCurrentConditions, getClimateSeries } from '@/lib/clima'
+import { getCurrentConditions, getClimateSeries, getForecast, computeAlerts, getEstacionSalud } from '@/lib/clima'
 import { resolveAgricultorScope, listAgricultores } from '@/lib/access'
 import UltimaVisitaCard from '@/components/UltimaVisitaCard'
 import MasterAgricultorSelector from '@/components/MasterAgricultorSelector'
 import MasterEmptyState from '@/components/MasterEmptyState'
 import ClimateSparkline from '@/components/ClimateSparkline'
 import DataSourceBadge from '@/components/DataSourceBadge'
-import { CloudSun, CloudRain, Sun, Cloud, Sprout, AlertCircle, CalendarOff } from 'lucide-react'
+import EstacionSaludCard from '@/components/EstacionSaludCard'
+import NotificacionesButton, { type Novedad } from '@/components/NotificacionesButton'
+import { CloudSun, CloudRain, Sun, Cloud, Sprout, Wheat, AlertTriangle, AlertCircle, CalendarOff } from 'lucide-react'
 import { freshnessLevel, freshnessTextClass, formatDateShort } from '@/lib/freshness'
 import { resolveCiclo } from '@/lib/ciclo'
-import { describirFaseDetallada } from '@/lib/agro-glosario'
 import FechaSiembraEditor from '@/components/FechaSiembraEditor'
 
 // Datos vivos: nunca cachear (lotes/clima/condiciones cambian frecuentemente)
@@ -48,7 +49,10 @@ export default async function CultivoPage({
 
   const agricultorKey = scope.agricultorKey ?? ''
   const supabase = await createClient()
-  const [{ data: lotes }, conditions, series, agricultores, { data: visitas }] = await Promise.all([
+  const [
+    { data: lotes }, conditions, series, agricultores, { data: visitas },
+    forecast, { data: eventos }, estacionSalud,
+  ] = await Promise.all([
     supabase
       .from('lotes')
       .select('lote_id, nombre_lote, hectareas, cultivo, fecha_siembra, fecha_cosecha_estimada, fecha_cosecha_real, ha_sembradas, ha_perdidas, ha_cosechadas, estado_lote')
@@ -64,6 +68,15 @@ export default async function CultivoPage({
       .select('lote_id, fecha_visita, tecnico, fase, fase_fecha, fase_fuente, observaciones, acuerdos, estado_experto, ultima_actividad_fecha, ultima_actividad_tipo, ultima_actividad_comentario, ultima_actividad_tecnico, avance_pct, rendimiento_kg_ha')
       .eq('agricultor_id', agricultorKey)
       .eq('ciclo', ciclo),
+    getForecast(agricultorKey, 7),
+    supabase
+      .from('lote_eventos')
+      .select('id, lote_id, lote_nombre, tipo, valor_anterior, valor_nuevo, created_at')
+      .eq('agricultor_id', agricultorKey)
+      .eq('ciclo', ciclo)
+      .order('created_at', { ascending: false })
+      .limit(10),
+    getEstacionSalud(agricultorKey),
   ])
 
   // Índice de visitas por lote, para no recorrer el array en cada tarjeta
@@ -83,6 +96,60 @@ export default async function CultivoPage({
   const lotesConFecha = (lotes ?? []).filter(l => l.fecha_siembra != null)
   const lotesSinFecha = (lotes ?? []).filter(l => l.fecha_siembra == null)
 
+  // ── Indicadores del ciclo (antes vivían en el dashboard, eliminado
+  // 15-sep-2026: /cultivo pasa a ser la pantalla de entrada) ──
+  const todosLotes = lotes ?? []
+  const totalHaSembradas = todosLotes.reduce((s, l) => s + (Number(l.ha_sembradas) || 0), 0)
+  const totalHaPerdidas = todosLotes.reduce((s, l) => s + (Number(l.ha_perdidas) || 0), 0)
+  const cicloTieneCierre = todosLotes.some(
+    l => (Number(l.ha_cosechadas) || 0) > 0 || (Number(l.ha_perdidas) || 0) > 0,
+  )
+  const rendimientosReales = [...visitaPorLote.values()]
+    .map(v => v.rendimiento_kg_ha)
+    .filter((v): v is number => v != null)
+  const rendimientoPromedio = rendimientosReales.length > 0
+    ? rendimientosReales.reduce((s, v) => s + v, 0) / rendimientosReales.length
+    : null
+
+  // ── Novedades para la campana ──
+  const novedades: Novedad[] = []
+  const qsAgricultor = scope.isMaster && scope.agricultorKey
+    ? `&agricultor=${encodeURIComponent(scope.agricultorKey)}`
+    : ''
+  for (const a of computeAlerts(forecast.rows).slice(0, 5)) {
+    novedades.push({
+      id: `clima-${a.id}`, tipo: 'clima', titulo: a.title, detalle: a.detail, fecha: a.fecha,
+      enlace: `/clima?x=1${qsAgricultor}`,
+      enlaceTexto: 'Ver pronóstico',
+    })
+  }
+  for (const ev of eventos ?? []) {
+    const nombre = (ev.lote_nombre as string | null) ?? 'un lote'
+    novedades.push({
+      id: `evt-${ev.id}`,
+      tipo: 'cambio',
+      titulo: `Fecha de siembra actualizada · ${nombre}`,
+      detalle: ev.valor_anterior
+        ? `Cambió de ${ev.valor_anterior} a ${ev.valor_nuevo ?? 'sin fecha'}.`
+        : `Se registró la siembra el ${ev.valor_nuevo ?? '—'}.`,
+      fecha: ev.created_at as string,
+      enlace: ev.lote_id ? `/cultivo?x=1${qsAgricultor}#lote-${ev.lote_id}` : `/cultivo?x=1${qsAgricultor}`,
+      enlaceTexto: 'Ver el lote',
+    })
+  }
+  if (tempIsStale && conditions.fecha) {
+    novedades.push({
+      id: 'clima-viejo',
+      tipo: 'dato_viejo',
+      titulo: 'Lectura de clima desactualizada',
+      detalle: `La última lectura de tu estación es del ${formatDateShort(conditions.fecha)}.`,
+      fecha: conditions.fecha,
+      enlace: `/clima?x=1${qsAgricultor}`,
+      enlaceTexto: 'Revisar la estación',
+    })
+  }
+  novedades.sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime())
+
   return (
     <div className="space-y-6">
       {/* Header with title + current conditions chip */}
@@ -101,6 +168,7 @@ export default async function CultivoPage({
           {scope.isMaster && (
             <MasterAgricultorSelector agricultores={agricultores} selected={scope.agricultorKey} />
           )}
+          <NotificacionesButton novedades={novedades} agricultorKey={agricultorKey} />
           <div className="flex flex-col items-end gap-1.5">
             <div
               className={`inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-gradient-to-r from-gray-900 to-gray-800 text-white text-sm shadow-lg ${
@@ -122,6 +190,37 @@ export default async function CultivoPage({
             <DataSourceBadge source={conditions.source} fecha={conditions.fecha} size="sm" />
           </div>
         </div>
+      </div>
+
+      {/* Indicadores del ciclo + salud de la estación */}
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:col-span-2">
+          <KpiCard
+            icon={<Sprout className="text-green-600" size={24} />}
+            label={`Lotes del ciclo ${ciclo}`}
+            value={String(todosLotes.length)}
+          />
+          <KpiCard
+            icon={<Wheat className="text-yellow-600" size={24} />}
+            label="Ha sembradas"
+            value={`${totalHaSembradas.toFixed(1)} ha`}
+          />
+          {cicloTieneCierre && (
+            <KpiCard
+              icon={<AlertTriangle className="text-red-500" size={24} />}
+              label="Ha perdidas"
+              value={`${totalHaPerdidas.toFixed(1)} ha`}
+            />
+          )}
+          {rendimientoPromedio != null && (
+            <KpiCard
+              icon={<Wheat className="text-amber-600" size={24} />}
+              label="Rendimiento real promedio"
+              value={`${rendimientoPromedio.toLocaleString('es-VE', { maximumFractionDigits: 0 })} kg/ha`}
+            />
+          )}
+        </div>
+        <EstacionSaludCard salud={estacionSalud} />
       </div>
 
       {/* Índice navegable de lotes (chips clicables que saltan al ancla) */}
@@ -161,7 +260,6 @@ export default async function CultivoPage({
           const stageInfo = getCurrentStageInfo(fechaReal)
           const diasDesde = stageInfo?.dias ?? 0
           const visita = visitaDe(l.lote_id)
-          const faseDetalle = describirFaseDetallada(visita?.fase)
 
           return (
             <div key={l.lote_id} id={`lote-${l.lote_id}`} className="space-y-4 scroll-mt-20">
@@ -191,7 +289,7 @@ export default async function CultivoPage({
               <CultivoTimeline fechaSiembra={fechaReal} diasCiclo={DIAS_CICLO} />
 
               {/* Fila de indicadores del lote (incluye la última visita técnica) */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 <StatCard title="Días desde siembra">
                   <div className="flex items-baseline gap-2">
                     <span className="text-5xl font-bold text-gray-900 dark:text-gray-100 tabular-nums">
@@ -217,62 +315,6 @@ export default async function CultivoPage({
                       <DataSourceBadge source={conditions.source} fecha={conditions.fecha} size="sm" />
                       <p className="text-xs text-gray-400 dark:text-gray-500 py-6 text-center">Sin datos de clima.</p>
                     </>
-                  )}
-                </StatCard>
-
-                <StatCard title="Resumen de fase">
-                  {visita?.fase === 'COSECHA' ? (
-                    <>
-                      <span className="text-3xl font-bold text-gray-900 dark:text-gray-100">Cosecha</span>
-                      <p className="mt-1.5 text-[11px] text-gray-400 dark:text-gray-500">
-                        Ya hay hectáreas cosechadas registradas en este lote
-                      </p>
-                    </>
-                  ) : visita?.fase ? (
-                    <>
-                      <div className="flex items-baseline gap-2">
-                        <span className="text-3xl font-bold tabular-nums text-gray-900 dark:text-gray-100">
-                          {visita.fase}
-                        </span>
-                        {faseDetalle && (
-                          <span className="text-sm text-gray-600 dark:text-gray-300">{faseDetalle}</span>
-                        )}
-                      </div>
-                      {(visita.fase_fuente === 'actividad' || visita.fase_fuente === 'plantabilidad') && (
-                        <p className="mt-1.5 text-[11px] text-gray-400 dark:text-gray-500">
-                          {visita.fase_fuente === 'actividad' ? 'Registrada en actividad de campo' : 'Registrada en visita de plantabilidad'}
-                        </p>
-                      )}
-                    </>
-                  ) : stageInfo ? (
-                    <>
-                      <div className="flex items-baseline gap-2">
-                        <span className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-                          {stageInfo.meta.label}
-                        </span>
-                        <span className="text-sm text-gray-600 dark:text-gray-300">{stageInfo.meta.phase}</span>
-                      </div>
-                      <p className="mt-1.5 text-[11px] text-gray-400 dark:text-gray-500">
-                        Estimado por calendario ({stageInfo.dias} días desde la siembra) — sin visita ni actividad registrada todavía
-                      </p>
-                    </>
-                  ) : (
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Lote sin fecha de siembra registrada.</p>
-                  )}
-                  {visita?.avance_pct != null && (
-                    <p className="mt-2.5 border-t border-gray-100 pt-2 text-xs text-gray-500 dark:border-gray-800 dark:text-gray-400">
-                      Avance del ciclo: <span className="font-medium text-gray-700 dark:text-gray-200">{visita.avance_pct}%</span>
-                    </p>
-                  )}
-                  {visita?.rendimiento_kg_ha != null && (
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                      Rendimiento real: <span className="font-medium text-gray-700 dark:text-gray-200">{visita.rendimiento_kg_ha.toLocaleString('es-VE')} kg/ha</span>
-                    </p>
-                  )}
-                  {visita?.estado_experto && (
-                    <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                      Valoración del técnico: <span className="font-medium text-gray-700 dark:text-gray-200">{visita.estado_experto}</span>
-                    </p>
                   )}
                 </StatCard>
 
@@ -353,6 +395,18 @@ function StatCard({ title, children }: { title: string; children: React.ReactNod
         {title}
       </p>
       {children}
+    </div>
+  )
+}
+
+function KpiCard({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
+  return (
+    <div className="flex items-start gap-4 rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900">
+      <div className="shrink-0 rounded-lg bg-gray-50 p-2.5 dark:bg-gray-800">{icon}</div>
+      <div className="min-w-0">
+        <p className="text-xs text-gray-500 dark:text-gray-400">{label}</p>
+        <p className="truncate text-xl font-bold text-gray-800 dark:text-gray-100">{value}</p>
+      </div>
     </div>
   )
 }

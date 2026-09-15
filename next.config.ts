@@ -16,6 +16,11 @@ const nextConfig: NextConfig = {
       // El modulo Suelo paso a llamarse Documentacion. Quien tenga un marcador
       // viejo —o la PWA instalada con el atajo anterior— llegaria a un 404.
       { source: '/suelo', destination: '/documentacion', permanent: true },
+      // /dashboard se elimino (15-sep-2026): /cultivo pasa a ser la pantalla
+      // de entrada. start_url del manifest ya apunta ahi, pero quien tenga la
+      // PWA instalada de antes (o un marcador viejo) sigue guardando
+      // /dashboard hasta que este redirect lo corrija.
+      { source: '/dashboard', destination: '/cultivo', permanent: true },
     ]
   },
   async headers() {

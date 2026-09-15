@@ -40,22 +40,6 @@ export const MODULOS: {
   palabras: string[]
 }[] = [
   {
-    id: 'dashboard',
-    nombre: 'Panel',
-    ruta: 'Panel (la primera pantalla)',
-    resumen: 'Resumen de tu ciclo: cuántos lotes tienes, hectáreas sembradas, cómo va el cultivo y las novedades.',
-    contiene: [
-      'Cantidad de lotes y hectáreas sembradas',
-      'Estado de tus lotes (bueno, regular, malo)',
-      'La fase en la que está tu cultivo',
-      'El avance del ciclo, de siembra a cosecha',
-      'La tabla de tus lotes con hectáreas y estado',
-      'Tus últimos documentos, al final de la pantalla',
-      'La campana de novedades, arriba a la derecha',
-    ],
-    palabras: ['panel', 'dashboard', 'inicio', 'principal', 'resumen', 'avance', 'novedades', 'campana'],
-  },
-  {
     id: 'clima',
     nombre: 'Clima',
     ruta: 'Clima, en el menú de la izquierda',
@@ -72,15 +56,16 @@ export const MODULOS: {
   {
     id: 'cultivo',
     nombre: 'Cultivo',
-    ruta: 'Cultivo, en el menú de la izquierda',
-    resumen: 'El detalle lote por lote: en qué etapa va, cuándo se sembró y qué dijo el técnico en su visita.',
+    ruta: 'Cultivo (la primera pantalla al entrar)',
+    resumen: 'Tu pantalla principal: el resumen del ciclo (sembrado, perdido, cosechado) y el detalle lote por lote.',
     contiene: [
+      'Hectáreas sembradas, perdidas y el rendimiento real cosechado',
       'Línea de tiempo de cada lote, de siembra a cosecha',
-      'Días desde la siembra y qué significa la fase fenológica en la que está, con la valoración del técnico',
-      'La última visita del técnico con sus observaciones y acuerdos',
+      'Días desde la siembra',
+      'La última acción agronómica registrada en cada lote, con técnico y comentario',
       'Condición del suelo e insumos aplicados por lote',
     ],
-    palabras: ['cultivo', 'lote', 'lotes', 'siembra', 'etapa', 'fase', 'visita', 'tecnico', 'insumo', 'suelo'],
+    palabras: ['cultivo', 'lote', 'lotes', 'siembra', 'panel', 'inicio', 'principal', 'etapa', 'fase', 'visita', 'tecnico', 'insumo', 'suelo', 'rendimiento', 'cosecha'],
   },
   {
     id: 'documentacion',
@@ -100,9 +85,7 @@ export const MODULOS: {
 
 /** Cómo pedir ayuda humana, cuando el asistente no alcanza. */
 export const CANALES_AYUDA =
-  'Si necesitas hablar con el equipo tienes dos botones abajo a la izquierda: ' +
-  'el verde abre WhatsApp para algo urgente, y el morado te deja dejar una pregunta ' +
-  'por escrito que respondemos después y queda guardada.'
+  'Si necesitas hablar con el equipo, contacta directamente a tu técnico o a Programa Saturno.'
 
 /** Descripción corta de la fase — usada en las tarjetas de Cultivo. */
 export const FASE_CORTA: Record<Stage, string> = {

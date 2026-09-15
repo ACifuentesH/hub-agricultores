@@ -2,23 +2,33 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "jsr:@supabase/supabase-js@2";
 
 /**
- * Trae el rendimiento REAL por lote desde el servicio "grAIn"
- * (proyecto nwouogywyofnvxsgjttd, función estimaciones-export) y lo guarda en
- * public.rendimiento_real. La API key vive solo como secreto de Edge
- * Functions (GRAIN_ESTIMACIONES_API_KEY) — nunca en el repo ni en .env.
+ * Trae dos cosas del servicio "grAIn" (estimaciones-export, proyecto
+ * nwouogywyofnvxsgjttd) y las guarda en tablas separadas, a propósito:
  *
- * Reglas de calidad de dato, tal como las documentó el usuario (aprendidas
- * "a las malas" en este mismo proyecto):
+ * 1) cosecha_lote -> public.rendimiento_real — REAL (cosecha ya pesada).
+ * 2) resumen -> public.fase_estimacion_grain — fase medida por el técnico
+ *    (estado_fenologico_texto, ej. "R4") vía las planillas de estimación de
+ *    rendimiento. Es estructurado (no hay que parsear texto libre como con
+ *    actividades_registro) pero su propio rendimiento_kg_ha es un ESTIMADO
+ *    (método PMG, recalculado por grAIn) — NUNCA se guarda en
+ *    rendimiento_real ni se muestra como si fuera cosecha real. Ver el
+ *    recurso=info: "ESTIMADO — rendimiento_kg_ha es el valor recalculado
+ *    por grAIn" vs "REAL — cosecha_lote".
+ *
+ * La API key vive solo como secreto de Edge Functions
+ * (GRAIN_ESTIMACIONES_API_KEY) — nunca en el repo ni en .env.
+ *
+ * Reglas de calidad de dato en cosecha_lote, documentadas por el usuario
+ * ("aprendidas a las malas" en este proyecto):
  *   - toneladas 0/null => el lote no tiene cosecha cargada todavía. Es
  *     "sin dato", NO "rendimiento cero" — se guarda como null, no como 0.
  *   - grAIn expone el dato crudo, sin conciliar contra SAP. Un
  *     rendimiento_kg_ha por encima de ~12.000 kg/ha (12 t/ha, tope realista
  *     para maíz) es sospechoso (caso real visto: 238 t/ha por una guía mal
- *     capturada) — se guarda pero marcado `rendimiento_sospechoso = true`,
- *     para que el front lo pueda ocultar en vez de mostrar un disparate.
+ *     capturada) — se guarda pero marcado `rendimiento_sospechoso = true`.
  *
- * Sin body: descubre el ciclo activo vía recurso=info y trae cosecha_lote
- * completo (pagina de a 2000, el máximo que acepta el endpoint).
+ * Sin body: descubre el ciclo activo vía recurso=info y trae ambos recursos
+ * completos (pagina de a 2000, el máximo que acepta el endpoint).
  */
 
 const SB_URL = Deno.env.get("SUPABASE_URL")!;
@@ -56,6 +66,27 @@ interface CosechaLoteRow {
   actualizado_at?: string | null;
 }
 
+interface ResumenRow {
+  estimacion_id: string;
+  lote_id: string;
+  unidad_produccion_id?: string;
+  lote_texto?: string;
+  hibrido_texto?: string;
+  estado_fenologico_texto?: string | null;
+  fecha_evaluacion?: string | null;
+  tecnico_correo?: string | null;
+  archivo_codigo_up?: string | null;
+  archivo_agricultor?: string | null;
+  superficie_ha?: number | string | null;
+  muestras_validas?: number | string | null;
+  mazorcas_promedio?: number | string | null;
+  granos_promedio?: number | string | null;
+  pmg_promedio?: number | string | null;
+  rendimiento_kg_ha?: number | string | null; // ESTIMADO — no confundir con rendimiento_real
+  produccion_estimada_t?: number | string | null;
+  cargado_at?: string | null;
+}
+
 async function grainFetch(params: Record<string, string>) {
   const url = new URL(GRAIN_BASE);
   for (const [k, v] of Object.entries(params)) url.searchParams.set(k, v);
@@ -64,6 +95,19 @@ async function grainFetch(params: Record<string, string>) {
     throw new Error(`grAIn ${url.pathname}${url.search} -> ${res.status} ${await res.text()}`);
   }
   return res.json();
+}
+
+async function grainFetchAll<T>(recurso: string, ciclo: string): Promise<T[]> {
+  const filas: T[] = [];
+  let offset = 0;
+  for (;;) {
+    const page = await grainFetch({ recurso, ciclo, limit: String(PAGE_SIZE), offset: String(offset) });
+    const rows: T[] = Array.isArray(page) ? page : (page as { data?: T[] }).data ?? [];
+    filas.push(...rows);
+    if (rows.length < PAGE_SIZE) break;
+    offset += PAGE_SIZE;
+  }
+  return filas;
 }
 
 function num(v: number | string | null | undefined): number | null {
@@ -84,11 +128,27 @@ Deno.serve(async (req) => {
 
   const supabase = createClient(SB_URL, SB_KEY);
 
-  let body: { ciclo?: string } = {};
+  let body: { ciclo?: string; debugRecurso?: string; debugParams?: Record<string, string> } = {};
   try {
     body = await req.json();
   } catch {
     // sin body — descubrir el ciclo activo
+  }
+
+  // Modo diagnóstico: devuelve la respuesta cruda de grAIn sin tocar la
+  // base, para explorar recursos que todavía no se ingieren.
+  if (body.debugRecurso) {
+    try {
+      const data = await grainFetch({ recurso: body.debugRecurso, ...(body.debugParams ?? {}) });
+      return new Response(JSON.stringify({ ok: true, recurso: body.debugRecurso, data }), {
+        headers: { ...CORS, "Content-Type": "application/json" },
+      });
+    } catch (e) {
+      return new Response(JSON.stringify({ ok: false, error: (e as Error).message }), {
+        status: 502,
+        headers: { ...CORS, "Content-Type": "application/json" },
+      });
+    }
   }
 
   let ciclo = body.ciclo ?? null;
@@ -111,26 +171,14 @@ Deno.serve(async (req) => {
     );
   }
 
-  const filas: CosechaLoteRow[] = [];
-  let offset = 0;
-  for (;;) {
-    const page = await grainFetch({
-      recurso: "cosecha_lote",
-      ciclo,
-      limit: String(PAGE_SIZE),
-      offset: String(offset),
-    });
-    const rows: CosechaLoteRow[] = Array.isArray(page) ? page : (page as { data?: CosechaLoteRow[] }).data ?? [];
-    filas.push(...rows);
-    if (rows.length < PAGE_SIZE) break;
-    offset += PAGE_SIZE;
-  }
+  // ── 1) cosecha_lote -> rendimiento_real (REAL) ──────────────────────────
+  const cosechaFilas = await grainFetchAll<CosechaLoteRow>("cosecha_lote", ciclo);
 
   let sospechosos = 0;
   let sinCosecha = 0;
 
-  for (let i = 0; i < filas.length; i += 500) {
-    const lote = filas.slice(i, i + 500).map((r) => {
+  for (let i = 0; i < cosechaFilas.length; i += 500) {
+    const lote = cosechaFilas.slice(i, i + 500).map((r) => {
       const toneladas = num(r.toneladas);
       const tieneToneladas = toneladas !== null && toneladas > 0;
       if (!tieneToneladas) sinCosecha++;
@@ -163,24 +211,71 @@ Deno.serve(async (req) => {
     const { error } = await supabase.from("rendimiento_real").upsert(lote, { onConflict: "lote_id_raw" });
     if (error) {
       return new Response(
-        JSON.stringify({ ok: false, error: error.message, procesados: i }),
+        JSON.stringify({ ok: false, etapa: "rendimiento_real", error: error.message, procesados: i }),
+        { status: 500, headers: { ...CORS, "Content-Type": "application/json" } },
+      );
+    }
+  }
+
+  // ── 2) resumen -> fase_estimacion_grain (fase estructurada, la más
+  //      reciente evaluación por lote) ─────────────────────────────────────
+  const resumenFilas = await grainFetchAll<ResumenRow>("resumen", ciclo);
+
+  // Quedarnos con la evaluación más reciente por lote (puede haber varias
+  // cargas del mismo lote a lo largo del ciclo).
+  const masRecientePorLote = new Map<string, ResumenRow>();
+  for (const r of resumenFilas) {
+    if (!r.lote_id) continue;
+    const prev = masRecientePorLote.get(r.lote_id);
+    if (!prev || (r.fecha_evaluacion ?? "") > (prev.fecha_evaluacion ?? "")) {
+      masRecientePorLote.set(r.lote_id, r);
+    }
+  }
+  const resumenUnicos = [...masRecientePorLote.values()];
+
+  for (let i = 0; i < resumenUnicos.length; i += 500) {
+    const lote = resumenUnicos.slice(i, i + 500).map((r) => ({
+      lote_id_raw: r.lote_id,
+      ciclo,
+      estimacion_id: r.estimacion_id,
+      lote_texto: r.lote_texto ?? null,
+      hibrido_texto: r.hibrido_texto ?? null,
+      estado_fenologico_texto: r.estado_fenologico_texto ?? null,
+      fecha_evaluacion: r.fecha_evaluacion ?? null,
+      tecnico_correo: r.tecnico_correo ?? null,
+      codigo_up: r.archivo_codigo_up ?? null,
+      nombre_agricultor: r.archivo_agricultor ?? null,
+      superficie_ha: num(r.superficie_ha),
+      muestras_validas: num(r.muestras_validas),
+      mazorcas_promedio: num(r.mazorcas_promedio),
+      granos_promedio: num(r.granos_promedio),
+      pmg_promedio: num(r.pmg_promedio),
+      rendimiento_estimado_kg_ha: num(r.rendimiento_kg_ha),
+      produccion_estimada_t: num(r.produccion_estimada_t),
+      cargado_at_origen: r.cargado_at ?? null,
+      synced_at: new Date().toISOString(),
+    }));
+    const { error } = await supabase.from("fase_estimacion_grain").upsert(lote, { onConflict: "lote_id_raw" });
+    if (error) {
+      return new Response(
+        JSON.stringify({ ok: false, etapa: "fase_estimacion_grain", error: error.message, procesados: i }),
         { status: 500, headers: { ...CORS, "Content-Type": "application/json" } },
       );
     }
   }
 
   // Encadenar el refresco de derivados acá (no en el cron con un pg_sleep de
-  // por medio) para que avance_pct/rendimiento_kg_ha queden al día apenas
-  // termina esta sincronización, igual que saturno-sync con promover:true.
+  // por medio) para que avance_pct/fase/rendimiento_kg_ha queden al día
+  // apenas termina esta sincronización, igual que saturno-sync con
+  // promover:true.
   const { error: refrescarErr } = await supabase.rpc("saturno_refrescar_derivados");
 
   return new Response(
     JSON.stringify({
       ok: true,
       ciclo,
-      total: filas.length,
-      sin_cosecha_aun: sinCosecha,
-      rendimiento_sospechoso: sospechosos,
+      cosecha_lote: { total: cosechaFilas.length, sin_cosecha_aun: sinCosecha, rendimiento_sospechoso: sospechosos },
+      resumen: { total: resumenFilas.length, lotes_distintos: resumenUnicos.length },
       derivados_refrescados: !refrescarErr,
       error_refrescar: refrescarErr?.message,
     }),

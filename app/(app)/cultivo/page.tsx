@@ -221,7 +221,14 @@ export default async function CultivoPage({
                 </StatCard>
 
                 <StatCard title="Resumen de fase">
-                  {visita?.fase ? (
+                  {visita?.fase === 'COSECHA' ? (
+                    <>
+                      <span className="text-3xl font-bold text-gray-900 dark:text-gray-100">Cosecha</span>
+                      <p className="mt-1.5 text-[11px] text-gray-400 dark:text-gray-500">
+                        Ya hay hectáreas cosechadas registradas en este lote
+                      </p>
+                    </>
+                  ) : visita?.fase ? (
                     <>
                       <div className="flex items-baseline gap-2">
                         <span className="text-3xl font-bold tabular-nums text-gray-900 dark:text-gray-100">
@@ -237,12 +244,20 @@ export default async function CultivoPage({
                         </p>
                       )}
                     </>
+                  ) : stageInfo ? (
+                    <>
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+                          {stageInfo.meta.label}
+                        </span>
+                        <span className="text-sm text-gray-600 dark:text-gray-300">{stageInfo.meta.phase}</span>
+                      </div>
+                      <p className="mt-1.5 text-[11px] text-gray-400 dark:text-gray-500">
+                        Estimado por calendario ({stageInfo.dias} días desde la siembra) — sin visita ni actividad registrada todavía
+                      </p>
+                    </>
                   ) : (
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                      {stageInfo
-                        ? `Sin fase registrada todavía. Lleva ${stageInfo.dias} días desde la siembra.`
-                        : 'Lote sin fecha de siembra registrada.'}
-                    </p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Lote sin fecha de siembra registrada.</p>
                   )}
                   {visita?.avance_pct != null && (
                     <p className="mt-2.5 border-t border-gray-100 pt-2 text-xs text-gray-500 dark:border-gray-800 dark:text-gray-400">

@@ -45,9 +45,12 @@ export default function FaseActualCard({
   lotesTotales: number
   fecha?: string | null
 }) {
-  const stage = faseAStage(fase)
+  const esCosecha = fase === 'COSECHA'
+  const stage = esCosecha ? null : faseAStage(fase)
   const tipo = fase?.trim().toUpperCase().charAt(0) ?? ''
-  const descripcion = describirFaseDetallada(fase) ?? (stage !== null ? FASE_EXPLICACION[stage] : null)
+  const descripcion = esCosecha
+    ? null
+    : describirFaseDetallada(fase) ?? (stage !== null ? FASE_EXPLICACION[stage] : null)
 
   return (
     <div className="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900">
@@ -62,6 +65,17 @@ export default function FaseActualCard({
         <p className="text-sm text-gray-500 dark:text-gray-400">
           Sin fase registrada. El técnico la anota durante la visita al lote.
         </p>
+      ) : esCosecha ? (
+        <>
+          <div className="flex items-baseline gap-2.5">
+            <span className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+              Cosecha
+            </span>
+          </div>
+          <p className="mt-2.5 text-xs leading-relaxed text-gray-600 dark:text-gray-400">
+            Ya hay hectáreas cosechadas registradas — el ciclo está cerrando.
+          </p>
+        </>
       ) : (
         <>
           <div className="flex items-baseline gap-2.5">

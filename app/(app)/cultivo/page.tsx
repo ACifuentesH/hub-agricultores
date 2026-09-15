@@ -3,15 +3,13 @@ import { getUserProfile } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import CultivoTimeline from '@/components/CultivoTimeline'
 import { getCurrentStageInfo } from '@/lib/corn-stages'
-import { getCurrentConditions, getClimateSeries, getForecast, computeAlerts, getEstacionSalud } from '@/lib/clima'
+import { getCurrentConditions, getClimateSeries, getEstacionSalud } from '@/lib/clima'
 import { resolveAgricultorScope, listAgricultores } from '@/lib/access'
 import UltimaVisitaCard from '@/components/UltimaVisitaCard'
 import MasterAgricultorSelector from '@/components/MasterAgricultorSelector'
 import MasterEmptyState from '@/components/MasterEmptyState'
 import ClimateSparkline from '@/components/ClimateSparkline'
-import DataSourceBadge from '@/components/DataSourceBadge'
 import EstacionSaludCard from '@/components/EstacionSaludCard'
-import NotificacionesButton, { type Novedad } from '@/components/NotificacionesButton'
 import { CloudSun, CloudRain, Sun, Cloud, Sprout, Wheat, AlertTriangle, AlertCircle, CalendarOff } from 'lucide-react'
 import { freshnessLevel, freshnessTextClass, formatDateShort } from '@/lib/freshness'
 import { resolveCiclo } from '@/lib/ciclo'
@@ -50,8 +48,7 @@ export default async function CultivoPage({
   const agricultorKey = scope.agricultorKey ?? ''
   const supabase = await createClient()
   const [
-    { data: lotes }, conditions, series, agricultores, { data: visitas },
-    forecast, { data: eventos }, estacionSalud,
+    { data: lotes }, conditions, series, agricultores, { data: visitas }, estacionSalud,
   ] = await Promise.all([
     supabase
       .from('lotes')
@@ -68,14 +65,6 @@ export default async function CultivoPage({
       .select('lote_id, fecha_visita, tecnico, fase, fase_fecha, fase_fuente, observaciones, acuerdos, estado_experto, ultima_actividad_fecha, ultima_actividad_tipo, ultima_actividad_comentario, ultima_actividad_tecnico, avance_pct, rendimiento_kg_ha')
       .eq('agricultor_id', agricultorKey)
       .eq('ciclo', ciclo),
-    getForecast(agricultorKey, 7),
-    supabase
-      .from('lote_eventos')
-      .select('id, lote_id, lote_nombre, tipo, valor_anterior, valor_nuevo, created_at')
-      .eq('agricultor_id', agricultorKey)
-      .eq('ciclo', ciclo)
-      .order('created_at', { ascending: false })
-      .limit(10),
     getEstacionSalud(agricultorKey),
   ])
 
@@ -105,84 +94,28 @@ export default async function CultivoPage({
     l => (Number(l.ha_cosechadas) || 0) > 0 || (Number(l.ha_perdidas) || 0) > 0,
   )
 
-  // ── Novedades para la campana ──
-  const novedades: Novedad[] = []
-  const qsAgricultor = scope.isMaster && scope.agricultorKey
-    ? `&agricultor=${encodeURIComponent(scope.agricultorKey)}`
-    : ''
-  for (const a of computeAlerts(forecast.rows).slice(0, 5)) {
-    novedades.push({
-      id: `clima-${a.id}`, tipo: 'clima', titulo: a.title, detalle: a.detail, fecha: a.fecha,
-      enlace: `/clima?x=1${qsAgricultor}`,
-      enlaceTexto: 'Ver pronóstico',
-    })
-  }
-  for (const ev of eventos ?? []) {
-    const nombre = (ev.lote_nombre as string | null) ?? 'un lote'
-    novedades.push({
-      id: `evt-${ev.id}`,
-      tipo: 'cambio',
-      titulo: `Fecha de siembra actualizada · ${nombre}`,
-      detalle: ev.valor_anterior
-        ? `Cambió de ${ev.valor_anterior} a ${ev.valor_nuevo ?? 'sin fecha'}.`
-        : `Se registró la siembra el ${ev.valor_nuevo ?? '—'}.`,
-      fecha: ev.created_at as string,
-      enlace: ev.lote_id ? `/cultivo?x=1${qsAgricultor}#lote-${ev.lote_id}` : `/cultivo?x=1${qsAgricultor}`,
-      enlaceTexto: 'Ver el lote',
-    })
-  }
-  if (tempIsStale && conditions.fecha) {
-    novedades.push({
-      id: 'clima-viejo',
-      tipo: 'dato_viejo',
-      titulo: 'Lectura de clima desactualizada',
-      detalle: `La última lectura de tu estación es del ${formatDateShort(conditions.fecha)}.`,
-      fecha: conditions.fecha,
-      enlace: `/clima?x=1${qsAgricultor}`,
-      enlaceTexto: 'Revisar la estación',
-    })
-  }
-  novedades.sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime())
-
   return (
     <div className="space-y-6">
-      {/* Header with title + current conditions chip */}
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <p className="text-gray-500 dark:text-gray-400 text-sm">
-            Ciclo completo del maíz — desde siembra hasta cosecha — por lote.
-            {scope.isMaster && scope.agropecuariaName && (
-              <span className="ml-2 text-green-700 dark:text-green-400 font-medium">
-                · {scope.agropecuariaName}
-              </span>
-            )}
-          </p>
-        </div>
-        <div className="flex flex-wrap items-center gap-3">
-          {scope.isMaster && (
-            <MasterAgricultorSelector agricultores={agricultores} selected={scope.agricultorKey} />
+      {/* Header: selector (master) + chip de condiciones actuales */}
+      <div className="flex flex-wrap items-start justify-end gap-3">
+        {scope.isMaster && (
+          <MasterAgricultorSelector agricultores={agricultores} selected={scope.agricultorKey} />
+        )}
+        <div
+          className={`inline-flex items-center gap-2.5 rounded-full border bg-white px-4 py-2 text-sm text-gray-800 shadow-sm dark:bg-gradient-to-r dark:from-gray-900 dark:to-gray-800 dark:text-white dark:shadow-lg ${
+            tempLevel === 'stale' ? 'border-red-300 dark:border-red-500/40' : tempLevel === 'warn' ? 'border-amber-300 dark:border-amber-500/40' : 'border-green-300 dark:border-green-500/30'
+          }`}
+          title={conditions.fecha ? `Última lectura: ${new Date(conditions.fecha).toLocaleString('es-VE')}` : 'Sin estación asignada'}
+        >
+          <span className="text-gray-500 text-xs dark:text-gray-400">Condiciones {tempIsStale ? 'registradas:' : 'actuales:'}</span>
+          <span className={`font-semibold ${tempIsStale ? freshnessTextClass(tempLevel) : 'text-gray-900 dark:text-white'}`}>{tempDisplay}</span>
+          {tempIsStale && conditions.fecha && (
+            <span className="text-amber-600 text-[11px] dark:text-amber-300">({formatDateShort(conditions.fecha)})</span>
           )}
-          <NotificacionesButton novedades={novedades} agricultorKey={agricultorKey} />
-          <div className="flex flex-col items-end gap-1.5">
-            <div
-              className={`inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-gradient-to-r from-gray-900 to-gray-800 text-white text-sm shadow-lg ${
-                tempLevel === 'stale' ? 'border border-red-500/40' : tempLevel === 'warn' ? 'border border-amber-500/40' : 'border border-green-500/30'
-              }`}
-              style={{ boxShadow: tempIsStale ? '0 0 20px rgba(245, 158, 11, 0.18)' : '0 0 20px rgba(34, 197, 94, 0.15)' }}
-              title={conditions.fecha ? `Última lectura: ${new Date(conditions.fecha).toLocaleString('es-VE')}` : 'Sin estación asignada'}
-            >
-              <span className="text-gray-400 text-xs">Condiciones {tempIsStale ? 'registradas:' : 'actuales:'}</span>
-              <span className={`font-semibold ${tempIsStale ? freshnessTextClass(tempLevel) : ''}`}>{tempDisplay}</span>
-              {tempIsStale && conditions.fecha && (
-                <span className="text-amber-300 text-[11px]">({formatDateShort(conditions.fecha)})</span>
-              )}
-              {conditions.humPct != null && (
-                <span className="text-gray-400 text-xs">· {conditions.humPct.toFixed(0)}% HR</span>
-              )}
-              <WeatherIcon size={16} className={tempIsStale ? 'text-amber-400' : 'text-green-400'} />
-            </div>
-            <DataSourceBadge source={conditions.source} fecha={conditions.fecha} size="sm" />
-          </div>
+          {conditions.humPct != null && (
+            <span className="text-gray-500 text-xs dark:text-gray-400">· {conditions.humPct.toFixed(0)}% HR</span>
+          )}
+          <WeatherIcon size={16} className={tempIsStale ? 'text-amber-500 dark:text-amber-400' : 'text-green-600 dark:text-green-400'} />
         </div>
       </div>
 
@@ -289,19 +222,13 @@ export default async function CultivoPage({
                 <StatCard title="Clima del lote">
                   {series.tempSeries.length > 0 ? (
                     <>
-                      <div className="mb-1.5">
-                        <DataSourceBadge source={conditions.source} fecha={conditions.fecha} size="sm" />
-                      </div>
                       <ClimateSparkline series1={series.tempSeries} series2={series.humSeries} label1="Temp" label2="Humedad" />
                       <p className="text-[10px] text-gray-400 mt-1">
                         Rango: {series.tempMin.toFixed(1)}° → {series.tempMax.toFixed(1)}° (14d)
                       </p>
                     </>
                   ) : (
-                    <>
-                      <DataSourceBadge source={conditions.source} fecha={conditions.fecha} size="sm" />
-                      <p className="text-xs text-gray-400 dark:text-gray-500 py-6 text-center">Sin datos de clima.</p>
-                    </>
+                    <p className="text-xs text-gray-400 dark:text-gray-500 py-6 text-center">Sin datos de clima.</p>
                   )}
                 </StatCard>
 

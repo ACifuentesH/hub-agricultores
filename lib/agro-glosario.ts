@@ -48,7 +48,7 @@ export const MODULOS: {
       'Cantidad de lotes y hectáreas sembradas y perdidas',
       'Condiciones actuales de tu estación: temperatura y humedad',
       'Salud de tu estación: batería y wifi',
-      'La tabla de tus lotes: hectáreas, fecha de siembra, estado y hectáreas cosechadas',
+      'La tabla de tus lotes: hectáreas, fecha de siembra y hectáreas cosechadas',
     ],
     palabras: ['dashboard', 'panel', 'inicio', 'principal', 'resumen', 'tabla'],
   },

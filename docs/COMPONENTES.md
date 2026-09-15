@@ -52,7 +52,7 @@ dashboard da el resumen, `/cultivo` da el detalle por lote.
 | `KpiCard` (local a la página) | Lotes del ciclo, ha sembradas, ha perdidas (solo si el ciclo ya tuvo cierre) |
 | Barra "Condiciones actuales" | Temperatura y humedad de la estación asignada, ancho completo, respeta modo claro/oscuro |
 | `EstacionSaludCard` | Batería y wifi de la estación WeatherLink asignada |
-| Tabla "Mis lotes" (local a la página) | Ha plan, ha encaladas, inicio de siembra, ha sembradas/perdidas/cosechadas y estado por lote, con `EstadoChip` enlazando a la tarjeta del lote en `/cultivo` |
+| Tabla "Mis lotes" (local a la página) | Ha plan, ha encaladas, inicio de siembra y ha sembradas/perdidas/cosechadas por lote (sin columna de estado, se quitó el 16-sep-2026) |
 
 > **Cuidado con la cosecha:** en el ciclo activo puede no haber ningún lote cosechado —
 > la columna "Ha cosechadas" de la tabla puede salir en cero para todos sin que sea un

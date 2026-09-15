@@ -1,7 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { getUserProfile } from '@/lib/auth'
 import { redirect } from 'next/navigation'
-import Link from 'next/link'
 import { CloudSun, CloudRain, Sun, Cloud, Sprout, Wheat, AlertTriangle } from 'lucide-react'
 import { resolveAgricultorScope, listAgricultores } from '@/lib/access'
 import MasterAgricultorSelector from '@/components/MasterAgricultorSelector'
@@ -42,10 +41,10 @@ export default async function DashboardPage({
   const supabase = await createClient()
 
   const [{ data: lotes }, conditions, agricultores, estacionSalud] = await Promise.all([
-    // v_lote_detalle ya trae ha plan, encaladas, estado y estado de la última actividad
+    // v_lote_detalle ya trae ha plan y encaladas
     supabase
       .from('v_lote_detalle')
-      .select('lote_id, nombre, ha_plan, ha_encaladas, inicio_siembra, ha_sembradas, ha_perdidas, ha_cosechadas, estado_lote, ultima_actividad_fecha, ultima_actividad_tipo')
+      .select('lote_id, nombre, ha_plan, ha_encaladas, inicio_siembra, ha_sembradas, ha_perdidas, ha_cosechadas')
       .eq('agricultor_id', agricultorKey)
       .eq('ciclo', ciclo)
       .order('nombre'),
@@ -67,10 +66,6 @@ export default async function DashboardPage({
   const tempDisplay = conditions.tempC != null ? `${conditions.tempC.toFixed(1)}°C` : '—'
   const tempLevel = freshnessLevel(conditions.fecha)
   const tempIsStale = tempLevel === 'warn' || tempLevel === 'stale'
-
-  const qsAgricultor = scope.isMaster && scope.agricultorKey
-    ? `&agricultor=${encodeURIComponent(scope.agricultorKey)}`
-    : ''
 
   return (
     <div className="space-y-6">
@@ -129,7 +124,7 @@ export default async function DashboardPage({
           <h2 className="font-semibold text-gray-700 dark:text-gray-200">Mis lotes</h2>
         </div>
         {/* min-w + overflow-x: en el teléfono la tabla se desplaza en lugar de
-            comprimirse; sin él, ocho columnas en 326 px partían cada celda en
+            comprimirse; sin él, siete columnas en 326 px partían cada celda en
             tres líneas y no había forma de leer una fila. */}
         <div className="overflow-x-auto">
           <table className="w-full min-w-[820px] text-sm">
@@ -142,7 +137,6 @@ export default async function DashboardPage({
                 <th scope="col" className="px-4 py-3 text-right">Ha sembradas</th>
                 <th scope="col" className="px-4 py-3 text-right">Ha perdidas</th>
                 <th scope="col" className="px-4 py-3 text-right">Ha cosechadas</th>
-                <th scope="col" className="px-4 py-3 text-left">Estado</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
@@ -157,19 +151,11 @@ export default async function DashboardPage({
                   <td className="px-4 py-3 text-right tabular-nums text-gray-600 dark:text-gray-300">{num(l.ha_sembradas)}</td>
                   <td className="px-4 py-3 text-right tabular-nums text-gray-600 dark:text-gray-300">{num(l.ha_perdidas)}</td>
                   <td className="px-4 py-3 text-right tabular-nums text-gray-600 dark:text-gray-300">{num(l.ha_cosechadas)}</td>
-                  <td className="px-4 py-3">
-                    <EstadoChip
-                      estado={l.estado_lote as string | null}
-                      ultimaActividadFecha={l.ultima_actividad_fecha as string | null}
-                      ultimaActividadTipo={l.ultima_actividad_tipo as string | null}
-                      enlaceLote={`/cultivo?x=1${qsAgricultor}#lote-${l.lote_id}`}
-                    />
-                  </td>
                 </tr>
               ))}
               {filas.length === 0 && (
                 <tr>
-                  <td colSpan={8} className="px-4 py-6 text-center text-sm text-gray-500 dark:text-gray-400">
+                  <td colSpan={7} className="px-4 py-6 text-center text-sm text-gray-500 dark:text-gray-400">
                     No tienes lotes registrados en el ciclo {ciclo}.
                   </td>
                 </tr>
@@ -192,47 +178,6 @@ function num(v: unknown) {
 
 function SinDato() {
   return <span className="text-gray-300 dark:text-gray-600" title="Sin dato registrado">—</span>
-}
-
-function EstadoChip({
-  estado, ultimaActividadFecha, ultimaActividadTipo, enlaceLote,
-}: {
-  estado: string | null
-  ultimaActividadFecha?: string | null
-  ultimaActividadTipo?: string | null
-  enlaceLote?: string
-}) {
-  if (!estado) {
-    // Sin visita fenológica formal, pero puede que igual haya trabajo de
-    // campo reciente (control de plagas, fertilización, estimación de
-    // rendimiento...) cargado en Saturno por otra vía — mostrar "Sin
-    // evaluar" a secas ahí hacía ver el lote abandonado sin estarlo. Se
-    // linkea a la tarjeta del lote en Cultivo (no un title, que no se ve en
-    // el teléfono) porque ahí sí sale técnico + comentario completos.
-    if (ultimaActividadFecha) {
-      const chip = (
-        <span className="inline-flex items-center gap-1 rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-800 hover:bg-blue-200 dark:bg-blue-900/40 dark:text-blue-300 dark:hover:bg-blue-900/60">
-          {ultimaActividadTipo ?? 'Actividad registrada'}
-        </span>
-      )
-      return enlaceLote
-        ? <Link href={enlaceLote} title="Ver técnico y detalle en Cultivo">{chip}</Link>
-        : chip
-    }
-    return <span className="text-xs text-gray-400 dark:text-gray-500">Sin evaluar</span>
-  }
-  const estilo: Record<string, string> = {
-    'Excelente': 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300',
-    'Muy bueno': 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300',
-    'Bueno': 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300',
-    'Regular': 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300',
-    'Malo': 'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300',
-  }
-  return (
-    <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${estilo[estado] ?? 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300'}`}>
-      {estado}
-    </span>
-  )
 }
 
 function KpiCard({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {

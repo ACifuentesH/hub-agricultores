@@ -3,15 +3,13 @@ import { getUserProfile } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import CultivoTimeline from '@/components/CultivoTimeline'
 import { getCurrentStageInfo } from '@/lib/corn-stages'
-import { getCurrentConditions, getClimateSeries, getEstacionSalud } from '@/lib/clima'
+import { getClimateSeries } from '@/lib/clima'
 import { resolveAgricultorScope, listAgricultores } from '@/lib/access'
 import UltimaVisitaCard from '@/components/UltimaVisitaCard'
 import MasterAgricultorSelector from '@/components/MasterAgricultorSelector'
 import MasterEmptyState from '@/components/MasterEmptyState'
 import ClimateSparkline from '@/components/ClimateSparkline'
-import EstacionSaludCard from '@/components/EstacionSaludCard'
-import { CloudSun, CloudRain, Sun, Cloud, Sprout, Wheat, AlertTriangle, AlertCircle, CalendarOff } from 'lucide-react'
-import { freshnessLevel, freshnessTextClass, formatDateShort } from '@/lib/freshness'
+import { Sprout, AlertCircle, CalendarOff } from 'lucide-react'
 import { resolveCiclo } from '@/lib/ciclo'
 import FechaSiembraEditor from '@/components/FechaSiembraEditor'
 
@@ -48,7 +46,7 @@ export default async function CultivoPage({
   const agricultorKey = scope.agricultorKey ?? ''
   const supabase = await createClient()
   const [
-    { data: lotes }, conditions, series, agricultores, { data: visitas }, estacionSalud,
+    { data: lotes }, series, agricultores, { data: visitas },
   ] = await Promise.all([
     supabase
       .from('lotes')
@@ -56,7 +54,6 @@ export default async function CultivoPage({
       .eq('agricultor_id', agricultorKey)
       .eq('ciclo', ciclo)
       .order('fecha_siembra', { ascending: true }),
-    getCurrentConditions(agricultorKey),
     getClimateSeries(agricultorKey, 14),
     scope.isMaster ? listAgricultores() : Promise.resolve([]),
     // Última visita técnica por lote — mismo origen que la fase del cultivo
@@ -65,7 +62,6 @@ export default async function CultivoPage({
       .select('lote_id, fecha_visita, tecnico, fase, fase_fecha, fase_fuente, observaciones, acuerdos, estado_experto, ultima_actividad_fecha, ultima_actividad_tipo, ultima_actividad_comentario, ultima_actividad_tecnico, avance_pct, rendimiento_kg_ha')
       .eq('agricultor_id', agricultorKey)
       .eq('ciclo', ciclo),
-    getEstacionSalud(agricultorKey),
   ])
 
   // Índice de visitas por lote, para no recorrer el array en cada tarjeta
@@ -74,76 +70,22 @@ export default async function CultivoPage({
   )
   const visitaDe = (loteId: string) => visitaPorLote.get(loteId)
 
-  const WeatherIcon = pickWeatherIcon(conditions.descripcion)
-  const tempDisplay = conditions.tempC != null ? `${conditions.tempC.toFixed(1)}°C` : '—'
-  const tempLevel = freshnessLevel(conditions.fecha)
-  const tempIsStale = tempLevel === 'warn' || tempLevel === 'stale'
-
   // Separar lotes con / sin fecha de siembra (el schema nuevo tiene un único
   // campo `fecha_siembra`, no distingue "planeada" de "confirmada" como en
   // producción)
   const lotesConFecha = (lotes ?? []).filter(l => l.fecha_siembra != null)
   const lotesSinFecha = (lotes ?? []).filter(l => l.fecha_siembra == null)
 
-  // ── Indicadores del ciclo (antes vivían en el dashboard, eliminado
-  // 15-sep-2026: /cultivo pasa a ser la pantalla de entrada) ──
-  const todosLotes = lotes ?? []
-  const totalHaSembradas = todosLotes.reduce((s, l) => s + (Number(l.ha_sembradas) || 0), 0)
-  const totalHaPerdidas = todosLotes.reduce((s, l) => s + (Number(l.ha_perdidas) || 0), 0)
-  const cicloTieneCierre = todosLotes.some(
-    l => (Number(l.ha_cosechadas) || 0) > 0 || (Number(l.ha_perdidas) || 0) > 0,
-  )
-
   return (
     <div className="space-y-6">
-      {/* Header: selector (master) + barra de condiciones actuales */}
-      <div className="space-y-3">
-        {scope.isMaster && (
-          <div className="flex justify-end">
-            <MasterAgricultorSelector agricultores={agricultores} selected={scope.agricultorKey} />
-          </div>
-        )}
-        <div
-          className={`flex w-full items-center justify-center gap-2.5 rounded-full border bg-white px-4 py-2.5 text-sm text-gray-800 shadow-sm dark:bg-gradient-to-r dark:from-gray-900 dark:to-gray-800 dark:text-white dark:shadow-lg ${
-            tempLevel === 'stale' ? 'border-red-300 dark:border-red-500/40' : tempLevel === 'warn' ? 'border-amber-300 dark:border-amber-500/40' : 'border-green-300 dark:border-green-500/30'
-          }`}
-          title={conditions.fecha ? `Última lectura: ${new Date(conditions.fecha).toLocaleString('es-VE')}` : 'Sin estación asignada'}
-        >
-          <span className="text-gray-500 text-xs dark:text-gray-400">Condiciones {tempIsStale ? 'registradas:' : 'actuales:'}</span>
-          <span className={`font-semibold ${tempIsStale ? freshnessTextClass(tempLevel) : 'text-gray-900 dark:text-white'}`}>{tempDisplay}</span>
-          {tempIsStale && conditions.fecha && (
-            <span className="text-amber-600 text-[11px] dark:text-amber-300">({formatDateShort(conditions.fecha)})</span>
-          )}
-          {conditions.humPct != null && (
-            <span className="text-gray-500 text-xs dark:text-gray-400">· {conditions.humPct.toFixed(0)}% HR</span>
-          )}
-          <WeatherIcon size={16} className={tempIsStale ? 'text-amber-500 dark:text-amber-400' : 'text-green-600 dark:text-green-400'} />
+      {/* Los indicadores del ciclo (KPIs, condiciones actuales, salud de la
+          estación) viven en /dashboard, no acá — se sacaron de /cultivo el
+          16-sep-2026 para no duplicarlos entre las dos pantallas. */}
+      {scope.isMaster && (
+        <div className="flex justify-end">
+          <MasterAgricultorSelector agricultores={agricultores} selected={scope.agricultorKey} />
         </div>
-      </div>
-
-      {/* Indicadores del ciclo + salud de la estación */}
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:col-span-2">
-          <KpiCard
-            icon={<Sprout className="text-green-600" size={24} />}
-            label={`Lotes del ciclo ${ciclo}`}
-            value={String(todosLotes.length)}
-          />
-          <KpiCard
-            icon={<Wheat className="text-yellow-600" size={24} />}
-            label="Ha sembradas"
-            value={`${totalHaSembradas.toFixed(1)} ha`}
-          />
-          {cicloTieneCierre && (
-            <KpiCard
-              icon={<AlertTriangle className="text-red-500" size={24} />}
-              label="Ha perdidas"
-              value={`${totalHaPerdidas.toFixed(1)} ha`}
-            />
-          )}
-        </div>
-        <EstacionSaludCard salud={estacionSalud} />
-      </div>
+      )}
 
       {/* Índice navegable de lotes (chips clicables que saltan al ancla) */}
       {(lotes?.length ?? 0) > 0 && (
@@ -315,23 +257,3 @@ function StatCard({ title, children }: { title: string; children: React.ReactNod
   )
 }
 
-function KpiCard({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
-  return (
-    <div className="flex items-start gap-4 rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900">
-      <div className="shrink-0 rounded-lg bg-gray-50 p-2.5 dark:bg-gray-800">{icon}</div>
-      <div className="min-w-0">
-        <p className="text-xs text-gray-500 dark:text-gray-400">{label}</p>
-        <p className="truncate text-xl font-bold text-gray-800 dark:text-gray-100">{value}</p>
-      </div>
-    </div>
-  )
-}
-
-function pickWeatherIcon(descripcion: string) {
-  switch (descripcion) {
-    case 'Lluvioso': return CloudRain
-    case 'Soleado':  return Sun
-    case 'Nublado':  return Cloud
-    default:         return CloudSun
-  }
-}

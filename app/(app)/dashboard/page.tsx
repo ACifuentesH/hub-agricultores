@@ -7,13 +7,12 @@ import { resolveAgricultorScope, listAgricultores } from '@/lib/access'
 import MasterAgricultorSelector from '@/components/MasterAgricultorSelector'
 import MasterEmptyState from '@/components/MasterEmptyState'
 import { valueWithFreshness, freshnessTextClass, formatDateShort } from '@/lib/freshness'
-import { getCurrentConditions, getForecast, computeAlerts } from '@/lib/clima'
+import { getCurrentConditions, getForecast, computeAlerts, getEstacionSalud } from '@/lib/clima'
 import DataSourceBadge from '@/components/DataSourceBadge'
 import { resolveCiclo } from '@/lib/ciclo'
 import NotificacionesButton, { type Novedad } from '@/components/NotificacionesButton'
-import EstadoLotesCard from '@/components/EstadoLotesCard'
 import FaseActualCard from '@/components/FaseActualCard'
-import AvanceCultivoChart from '@/components/AvanceCultivoChart'
+import EstacionSaludCard from '@/components/EstacionSaludCard'
 
 // Datos vivos: nunca cachear
 export const dynamic = 'force-dynamic'
@@ -52,6 +51,7 @@ export default async function DashboardPage({
     agricultores,
     forecast,
     { data: eventos },
+    estacionSalud,
   ] = await Promise.all([
     // v_lote_detalle ya trae ha plan, encaladas, estado, fase y avance
     supabase
@@ -80,10 +80,10 @@ export default async function DashboardPage({
       .eq('ciclo', ciclo)
       .order('created_at', { ascending: false })
       .limit(10),
+    getEstacionSalud(agricultorKey),
   ])
 
   const filas = lotes ?? []
-  const sinEvaluarConActividad = filas.filter(l => !l.estado_lote && l.ultima_actividad_fecha).length
   const totalHa = filas.reduce((s, l) => s + (Number(l.ha_sembradas) || 0), 0)
   const totalPerdidas = filas.reduce((s, l) => s + (Number(l.ha_perdidas) || 0), 0)
   const lotesConSiembra = filas.filter(l => l.inicio_siembra != null).length
@@ -194,27 +194,15 @@ export default async function DashboardPage({
         </div>
 
         <div className="space-y-4">
-          <EstadoLotesCard r={resumen as never} sinEvaluarConActividad={sinEvaluarConActividad} />
           <FaseActualCard
             fase={(resumen?.fase_dominante as string | null) ?? null}
             lotesConFase={(resumen?.lotes_con_fase as number) ?? 0}
             lotesTotales={filas.length}
             fecha={(resumen?.fase_dominante_fecha as string | null) ?? null}
           />
+          <EstacionSaludCard salud={estacionSalud} />
         </div>
       </div>
-
-      {/* Avance del ciclo, justo debajo de los KPIs */}
-      <AvanceCultivoChart
-        lotes={filas.map(l => ({
-          nombre: l.nombre as string,
-          avance_pct: l.avance_pct as number | null,
-          fase: l.fase as string | null,
-          estado_lote: l.estado_lote as string | null,
-          sembrado: l.inicio_siembra != null,
-        }))}
-        avancePromedio={(resumen?.avance_promedio as number | null) ?? null}
-      />
 
       {/* Lotes */}
       <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">

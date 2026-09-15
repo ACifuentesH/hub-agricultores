@@ -104,6 +104,62 @@ export async function resolveStationId(agricultorKey: string): Promise<string | 
   return resolveEstacionAgricultor(agricultorKey)
 }
 
+export type NivelSalud = 'buena' | 'media' | 'baja' | 'mala' | 'sin_dato'
+
+export interface EstacionSalud {
+  codigoEstacion: string
+  wifiRssi: number | null
+  wifiNivel: NivelSalud
+  bateriaBaja: boolean | null
+  bateriaNivel: NivelSalud
+  sincronizadoEn: string | null
+}
+
+function nivelWifi(rssi: number | null): NivelSalud {
+  if (rssi == null) return 'sin_dato'
+  if (rssi >= -60) return 'buena'
+  if (rssi >= -75) return 'media'
+  if (rssi >= -85) return 'baja'
+  return 'mala'
+}
+
+function nivelBateria(flag: number | null): NivelSalud {
+  if (flag == null) return 'sin_dato'
+  return flag === 0 ? 'buena' : 'baja'
+}
+
+/**
+ * Salud física de la estación de un agricultor (batería del transmisor +
+ * señal wifi de la consola), vía public.estaciones_salud
+ * (weatherlink-salud-sync). No todas las consolas reportan wifi — las de
+ * generación vieja (solo datalogger, sin WeatherLink Live) no tienen ese
+ * dato y quedan en 'sin_dato', no es un error.
+ */
+export async function getEstacionSalud(agricultorKey: string): Promise<EstacionSalud | null> {
+  const codigoEstacion = await resolveEstacionAgricultor(agricultorKey)
+  if (!codigoEstacion) return null
+
+  const supabase = await createClient()
+  const { data } = await supabase
+    .from('estaciones_salud')
+    .select('codigo_estacion, wifi_rssi, trans_battery_flag, synced_at')
+    .eq('codigo_estacion', codigoEstacion)
+    .maybeSingle()
+  if (!data) return null
+
+  const wifiRssi = data.wifi_rssi as number | null
+  const bateriaFlag = data.trans_battery_flag as number | null
+
+  return {
+    codigoEstacion,
+    wifiRssi,
+    wifiNivel: nivelWifi(wifiRssi),
+    bateriaBaja: bateriaFlag == null ? null : bateriaFlag === 1,
+    bateriaNivel: nivelBateria(bateriaFlag),
+    sincronizadoEn: data.synced_at as string | null,
+  }
+}
+
 const SIN_DATOS: CurrentConditions = {
   tempC: null,
   humPct: null,

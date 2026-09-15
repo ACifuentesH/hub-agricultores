@@ -96,13 +96,15 @@ export default async function CultivoPage({
 
   return (
     <div className="space-y-6">
-      {/* Header: selector (master) + chip de condiciones actuales */}
-      <div className="flex flex-wrap items-start justify-end gap-3">
+      {/* Header: selector (master) + barra de condiciones actuales */}
+      <div className="space-y-3">
         {scope.isMaster && (
-          <MasterAgricultorSelector agricultores={agricultores} selected={scope.agricultorKey} />
+          <div className="flex justify-end">
+            <MasterAgricultorSelector agricultores={agricultores} selected={scope.agricultorKey} />
+          </div>
         )}
         <div
-          className={`inline-flex items-center gap-2.5 rounded-full border bg-white px-4 py-2 text-sm text-gray-800 shadow-sm dark:bg-gradient-to-r dark:from-gray-900 dark:to-gray-800 dark:text-white dark:shadow-lg ${
+          className={`flex w-full items-center justify-center gap-2.5 rounded-full border bg-white px-4 py-2.5 text-sm text-gray-800 shadow-sm dark:bg-gradient-to-r dark:from-gray-900 dark:to-gray-800 dark:text-white dark:shadow-lg ${
             tempLevel === 'stale' ? 'border-red-300 dark:border-red-500/40' : tempLevel === 'warn' ? 'border-amber-300 dark:border-amber-500/40' : 'border-green-300 dark:border-green-500/30'
           }`}
           title={conditions.fecha ? `Última lectura: ${new Date(conditions.fecha).toLocaleString('es-VE')}` : 'Sin estación asignada'}

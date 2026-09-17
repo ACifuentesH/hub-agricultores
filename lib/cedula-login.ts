@@ -10,7 +10,10 @@ export type CedulaLoginResult =
   | { ok: true; role: string }
   | { ok: false; error: string; status: number }
 
-async function sesionConEmail(email: string): Promise<CedulaLoginResult> {
+async function sesionConEmail(
+  email: string,
+  agricultorId?: string,
+): Promise<CedulaLoginResult> {
   const svc = createServiceClient()
   const { data: link, error: linkErr } = await svc.auth.admin.generateLink({
     type: 'magiclink',
@@ -36,11 +39,31 @@ async function sesionConEmail(email: string): Promise<CedulaLoginResult> {
   }
 
   const { data: { user } } = await supabase.auth.getUser()
-  const { data: profile } = await supabase
+  if (!user) {
+    return { ok: false, error: 'No se pudo iniciar sesión.', status: 500 }
+  }
+
+  let { data: profile } = await supabase
     .from('user_profiles')
     .select('role')
-    .eq('user_id', user?.id ?? '')
+    .eq('user_id', user.id)
     .maybeSingle()
+
+  // Si este agricultor nunca pasó por scripts/crear_usuarios_cedula.py (p.ej.
+  // se cargó después de la última corrida), la sesión queda válida pero sin
+  // fila en user_profiles: el dashboard la trata como no-auth y redirige a
+  // /login, que a su vez redirige de vuelta a /dashboard porque sí hay sesión
+  // — loop infinito. Crearla acá evita depender de que alguien haya corrido
+  // el script a mano para cada agricultor nuevo.
+  if (!profile && agricultorId) {
+    await svc
+      .from('user_profiles')
+      .upsert(
+        { user_id: user.id, role: 'farmer', agricultor_id: agricultorId },
+        { onConflict: 'user_id', ignoreDuplicates: true },
+      )
+    profile = { role: 'farmer' }
+  }
 
   return { ok: true, role: profile?.role ?? 'farmer' }
 }
@@ -111,7 +134,8 @@ export async function loginConCedula(rawCedula: string): Promise<CedulaLoginResu
     return { ok: false, error: `${etiqueta} no registrada.`, status: 404 }
   }
 
-  return sesionConEmail(syntheticEmailForAgricultor(agricultor.agricultor_id as string))
+  const agricultorId = agricultor.agricultor_id as string
+  return sesionConEmail(syntheticEmailForAgricultor(agricultorId), agricultorId)
 }
 
 export async function readCedulaFromRequest(

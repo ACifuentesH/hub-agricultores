@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import ConnectionStatus from "@/components/ConnectionStatus";
 import ServiceWorkerRefresh from "@/components/ServiceWorkerRefresh";
@@ -66,6 +67,7 @@ export default function RootLayout({
         <ConnectionStatus />
         <ServiceWorkerRefresh />
         {children}
+        <Analytics />
       </body>
     </html>
   );

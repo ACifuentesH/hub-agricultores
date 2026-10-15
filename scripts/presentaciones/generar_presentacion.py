@@ -33,6 +33,7 @@ from pptx.util import Emu, Inches, Pt
 AQUI = os.path.dirname(os.path.abspath(__file__))
 PLANTILLA = os.path.join(AQUI, "..", "..", "docs", "presentaciones", "plantilla_agricultores.pptx")
 PENDIENTE = "PENDIENTE"
+ESTADO_INCIDENCIA = "Atendida"  # el tag de la plantilla de Lorena
 
 VERDE_OSC, VERDE, VERDE_CLARO, CREMA = "1F2E18", "4C6A35", "88A85E", "EDF0E2"
 DORADO, OXIDO, AZUL, GRIS = "C9962E", "B4533A", "34506B", "6B7560"
@@ -617,7 +618,7 @@ def lamina_labores(sl, d):
 def lamina_incidencias(sl, d):
     inc = d["incidencias"][:14]
     n = len(inc)
-    colores = {"plagas": VERDE_CLARO, "maleza": DORADO, "mazorca": OXIDO}
+    colores = {"plagas": VERDE_CLARO, "maleza": VERDE_CLARO, "mazorca": VERDE_CLARO}
     oval, fecha, fase, etq = (forma(sl, "Oval 12"), forma(sl, "TextBox 13"), forma(sl, "TextBox 14"),
                              forma(sl, "TextBox 15"))
     eje = forma(sl, "Rectangle 10")
@@ -658,23 +659,17 @@ def lamina_incidencias(sl, d):
     texto(forma(sl, "TextBox 4"), "TU TEMPORADA DE INCIDENCIAS · LÍNEA DE TIEMPO")
 
     # Leyenda y reto por categoría
-    # Leyenda: el color del punto es la categoría (reto), no la gravedad.
-    leyenda_oval, leyenda_txt = forma(sl, "Oval 46"), forma(sl, "TextBox 47")
-    cuenta = {k: sum(1 for it in inc if it["reto"] == k) for k in colores}
-    x = 0.6
-    for k, nombre in [("plagas", "Plagas"), ("maleza", "Malezas"), ("mazorca", "Mazorca")]:
-        o = clonar(sl, leyenda_oval, x)
-        relleno(o, colores[k])
-        texto(clonar(sl, leyenda_txt, x + 0.27, None, 1.2), f"{nombre} ({cuenta[k]})")
-        x += 1.35
-    borrar(leyenda_oval, leyenda_txt)
+    # Mismo tag que la plantilla de Lorena: todas las incidencias están revisadas/atendidas,
+    # así que van todas del mismo color y la leyenda es una sola. La categoría la dan los retos.
+    texto(forma(sl, "TextBox 47"), f"{ESTADO_INCIDENCIA} ({n})")
+    x = 2.42
     por_mes = {}
     for it in inc:
         m = date.fromisoformat(it["fecha"]).month
         por_mes[m] = por_mes.get(m, 0) + 1
     if por_mes:
         mm = max(por_mes, key=por_mes.get)
-        texto(forma(sl, "TextBox 48"), f"{MESES[mm].capitalize()} concentró {por_mes[mm]} de {n}  ·  "
+        texto(forma(sl, "TextBox 48"), f"{MESES[mm].capitalize()} concentró {por_mes[mm]} de {n} reportes  ·  "
                                        "DDS: días tras la siembra")
         mover(forma(sl, "TextBox 48"), x=x + 0.1, w=8.5 - x)
     retos = [("plagas", "PLAGAS EN PLÁNTULA"), ("maleza", "MALEZAS"), ("mazorca", "MAZORCA AL CIERRE")]
@@ -684,9 +679,6 @@ def lamina_incidencias(sl, d):
         items = [it for it in inc if it["reto"] == clave]
         tit = forma(sl, a)
         texto(tit, f"RETO {j + 1} · {titulo}")
-        punto = clonar(sl, o, Emu(tit.left).inches, Emu(tit.top).inches + 0.02)
-        relleno(punto, colores[clave])
-        tit.left = tit.left + Inches(0.28)
         texto(forma(sl, b), f"{len(items)} de {n}")
         if items:
             dds = [it["dds"] for it in items if it["dds"] is not None]

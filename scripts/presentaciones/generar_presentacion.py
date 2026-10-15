@@ -349,40 +349,30 @@ def lamina_suelo_mapa(sl, d):
     conv = mapa_convenio(d["codigo_up"])
 
     if conv:
-        # Mapa del convenio, vertical a toda la altura; la tabla va a su lado.
+        # Mapa del convenio a la izquierda; al lado, qué sub-lotes del mapa forman cada lote.
         blob, meta = conv
         from PIL import Image
         w_px, h_px = Image.open(io.BytesIO(blob)).size
-        alto = 6.22
-        ancho = min(alto * w_px / h_px, 3.6)
-        reemplazar_imagen(sl, pic, blob)
-        mover(pic, 0.45, 0.75, ancho, ancho * h_px / w_px)
-        runs(pill, ["FINCA", f"  {d['finca'].replace('Finca ', '')}"])
+        ancho = min(4.9, 5.2 * w_px / h_px)
         alto_mapa = ancho * h_px / w_px
-        # Abajo a la derecha: arriba taparía los lotes del norte.
-        mover(pill, 0.45 + ancho - 2.35, 0.75 + alto_mapa - 0.55, 2.2)
-        x0 = 0.45 + ancho + 0.2
+        reemplazar_imagen(sl, pic, blob)
+        mover(pic, 0.45, 0.75, ancho, alto_mapa)
+        x0 = 0.45 + ancho + 0.15
         ancho_t = 6.75 - x0
-        paso = min(0.55, (alto_mapa - 1.05) / max(len(filas), 1))
-        alto_card = alto_mapa
-        clonar(sl, forma(sl, "Rounded Rectangle 56"), x0, 0.75, ancho_t, alto_card)
-        cols = [("Nº", x0 + 0.12, 0.5, "l"), ("LOTE", x0 + 0.62, 1.05, "l"),
-                ("HA", x0 + 1.6, 0.52, "r"), ("pH", x0 + 2.14, 0.42, "r")]
-        for t, x, w, al in cols:
-            texto(clonar(sl, cab, x, 0.9, w, 0.22), t, sz=8, align=al)
+        clonar(sl, forma(sl, "Rounded Rectangle 56"), x0, 0.75, ancho_t, alto_mapa)
+        texto(clonar(sl, cab, x0 + 0.12, 0.88, ancho_t - 0.2, 0.22), "Nº EN EL MAPA", sz=7.5)
+        paso = min(0.5, (alto_mapa - 0.75) / max(len(filas), 1))
         for i, l in enumerate(filas):
-            y = 1.22 + i * paso
-            s_ = suelo.get(l["lote_id"])
-            vals = [meta["ids"].get(l["nombre"], "—"), l["nombre"], es(l["ha"]), es(s_["ph"]) if s_ else "s/d"]
-            for (t, x, w, al), v in zip(cols, vals):
-                texto(clonar(sl, cuerpo, x, y, w, paso), v, sz=9.5,
-                      bold=t in ("LOTE", "Nº"), align=al,
-                      color={"LOTE": VERDE_OSC, "Nº": DORADO}.get(t, "475569"))
-        texto(clonar(sl, cuerpo, x0 + 0.15, 0.75 + alto_mapa - 0.55, ancho_t - 0.3, 0.45),
-              "Nº = sub-lotes del mapa del convenio que forman cada lote.", sz=8, color=GRIS)
+            y = 1.2 + i * paso
+            texto(clonar(sl, cuerpo, x0 + 0.12, y, ancho_t - 0.2, paso),
+                  [[(meta["ids"].get(l["nombre"], "—"), {"color": DORADO, "b": True, "sz": 9.5})],
+                   [(l["nombre"], {"color": VERDE_OSC, "b": True, "sz": 9})]])
+        # Etiqueta de la finca bajo el mapa, como cinta.
+        runs(pill, ["FINCA", f"  {d['finca'].replace('Finca ', '')}  ·  {len(lotes)} lotes  ·  {es(ha)} ha"])
+        mover(pill, 0.45, 0.75 + alto_mapa + 0.15, 6.3, 0.42)
         texto(forma(sl, "TextBox 26"), f"{d['estado']} · Imagen satelital con delimitación de lotes "
                                        f"(Anexo B del convenio · Datum WGS 1984, UTM 19N)")
-        mover(forma(sl, "TextBox 26"), y=7.03, w=6.2)
+        mover(forma(sl, "TextBox 26"), y=0.75 + alto_mapa + 0.65, w=6.3)
     else:
         lat, lng = d.get("lat"), d.get("lng")
         if lat and lng:
@@ -627,7 +617,7 @@ def lamina_labores(sl, d):
 def lamina_incidencias(sl, d):
     inc = d["incidencias"][:14]
     n = len(inc)
-    colores = {"plagas": VERDE, "maleza": DORADO, "mazorca": OXIDO}
+    colores = {"plagas": VERDE_CLARO, "maleza": DORADO, "mazorca": OXIDO}
     oval, fecha, fase, etq = (forma(sl, "Oval 12"), forma(sl, "TextBox 13"), forma(sl, "TextBox 14"),
                              forma(sl, "TextBox 15"))
     eje = forma(sl, "Rectangle 10")
@@ -668,23 +658,35 @@ def lamina_incidencias(sl, d):
     texto(forma(sl, "TextBox 4"), "TU TEMPORADA DE INCIDENCIAS · LÍNEA DE TIEMPO")
 
     # Leyenda y reto por categoría
+    # Leyenda: el color del punto es la categoría (reto), no la gravedad.
     leyenda_oval, leyenda_txt = forma(sl, "Oval 46"), forma(sl, "TextBox 47")
-    texto(leyenda_txt, f"Atendida ({n})")
+    cuenta = {k: sum(1 for it in inc if it["reto"] == k) for k in colores}
+    x = 0.6
+    for k, nombre in [("plagas", "Plagas"), ("maleza", "Malezas"), ("mazorca", "Mazorca")]:
+        o = clonar(sl, leyenda_oval, x)
+        relleno(o, colores[k])
+        texto(clonar(sl, leyenda_txt, x + 0.27, None, 1.2), f"{nombre} ({cuenta[k]})")
+        x += 1.35
+    borrar(leyenda_oval, leyenda_txt)
     por_mes = {}
     for it in inc:
         m = date.fromisoformat(it["fecha"]).month
         por_mes[m] = por_mes.get(m, 0) + 1
     if por_mes:
         mm = max(por_mes, key=por_mes.get)
-        texto(forma(sl, "TextBox 48"), f"{MESES[mm].capitalize()} concentró {por_mes[mm]} de {n} reportes  ·  "
-                                       "DDS = días después de la siembra")
-        mover(forma(sl, "TextBox 48"), w=6.0)
+        texto(forma(sl, "TextBox 48"), f"{MESES[mm].capitalize()} concentró {por_mes[mm]} de {n}  ·  "
+                                       "DDS: días tras la siembra")
+        mover(forma(sl, "TextBox 48"), x=x + 0.1, w=8.5 - x)
     retos = [("plagas", "PLAGAS EN PLÁNTULA"), ("maleza", "MALEZAS"), ("mazorca", "MAZORCA AL CIERRE")]
     tarjetas = [("TextBox 51", "TextBox 52", "TextBox 53"), ("TextBox 55", "TextBox 56", "TextBox 57"),
                 ("TextBox 59", "TextBox 60", "TextBox 61")]
     for j, ((clave, titulo), (a, b, c)) in enumerate(zip(retos, tarjetas)):
         items = [it for it in inc if it["reto"] == clave]
-        texto(forma(sl, a), f"RETO {j + 1} · {titulo}")
+        tit = forma(sl, a)
+        texto(tit, f"RETO {j + 1} · {titulo}")
+        punto = clonar(sl, o, Emu(tit.left).inches, Emu(tit.top).inches + 0.02)
+        relleno(punto, colores[clave])
+        tit.left = tit.left + Inches(0.28)
         texto(forma(sl, b), f"{len(items)} de {n}")
         if items:
             dds = [it["dds"] for it in items if it["dds"] is not None]
@@ -766,7 +768,11 @@ def lamina_pl(sl, d):
     runs(forma(sl, "TextBox 14"), [es(pl["rend_t_ha"]), " ton/ha"])
     texto(forma(sl, "TextBox 15"), f"{pl['rend_t_ha'] / pl['meta_t_ha'] * 100:.0f}% del plan "
                                    f"({es(pl['meta_t_ha'], 0)} ton/ha)")
-    runs(forma(sl, "TextBox 18"), [es(pl["toneladas"], 1), " ton"])
+    ton = forma(sl, "TextBox 18")
+    runs(ton, [es(pl["toneladas"], 1), " ton"])
+    cifra = ton.text_frame.paragraphs[0].runs[0]
+    if len(cifra.text) > 5 and cifra.font.size:  # "2.269,2" no cabe al tamaño de "322,7"
+        cifra.font.size = Pt(cifra.font.size.pt * 5.5 / len(cifra.text))
     texto(forma(sl, "TextBox 19"), f"de {es(pl['ton_plan'], 0)} ton planificadas")
 
 

@@ -17,7 +17,7 @@ para la imagen satelital (Esri World Imagery).
 | Lámina | Contenido | Fuente |
 |---|---|---|
 | 2 · Agricultor | nombre + estado | `saturno.unidades_de_produccion` |
-| 3 · Radiografía | mapa satelital, tabla de lotes, pH por lote, cal | `analisis_suelo` (2026), coordenadas de la UP |
+| 3 · Radiografía | mapa del convenio con los lotes, tabla de lotes, pH por lote, cal | `docs/presentaciones/mapas/<UP>.jpg/.json`, `analisis_suelo` (2026) |
 | 4 · Resultados | Ca/Mg, Ca/K por lote, prescripción | `analisis_suelo`, `costos_lote_detalle` (KMAG / MagniPlus / Cal) |
 | 6 · Labores | ha por labor y lote | `saturno.mecanizacion_registro`, `v_costos_lote` (cosecha) |
 | 7 · Incidencias | línea de tiempo y 3 retos | `saturno.seguimiento` + comentarios de `saturno.actividades_registro` (reglas en `RETOS`) |
@@ -32,8 +32,12 @@ Sale como `—` y con el aviso `PENDIENTE` en el subtítulo (`markitdown salida.
 
 - **Lámina 14 · Mecanización, pago por pago** (pagos 1–3, tasa, comisiones, ajustes): liquidación de APC/banco.
 - **Lámina 16 · Flujo de caja** (facturación Polar, notas de crédito, reconocimiento): liquidación.
-- **Linderos de los lotes**: `saturno.lotes.poligonos_wkt` está vacío, así que el mapa muestra la finca sin
-  delimitar los lotes. La imagen de la plantilla se hizo a mano en un SIG.
+- **Mapa con los lotes delimitados**: `saturno.lotes.poligonos_wkt` está vacío. El mapa sale del
+  **Anexo B del convenio firmado** (módulo Documentos, categoría `convenios`, bucket `documentos`),
+  que es un escaneo: hay que recortarlo una vez por agricultor y guardarlo como
+  `docs/presentaciones/mapas/<UP>.jpg`, con `<UP>.json` indicando qué números del mapa forman cada
+  lote de Saturno (el convenio numera sub-lotes; ver `B01.json`). Sin esos archivos, la lámina usa una
+  imagen satelital de Esri centrada en la finca, sin linderos.
 
 Las toneladas de la lámina 15 son las de cosecha en Saturno (peso de campo). En la plantilla de
 Lorena eran 322,7 t frente a 336,4 t en la base: si la cifra oficial es la facturada, hay que

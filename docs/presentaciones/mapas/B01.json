@@ -1,0 +1,15 @@
+{
+  "fuente": "Convenio firmado Julio Colmenarez, Anexo B (pág. 13) · Datum WGS 1984, UTM 19N · digitalizó Ing. Ángel Mujica",
+  "nota": "Saturno agrupa los 18 sub-lotes del convenio en 9 lotes. Agrupación por superficie: Revilla 1 = 8+9+10 (55,76 ha), Revilla 2 = 11–15 (66,31 ha). Ojo: 'Los Pepes 3' del convenio es 'Los Pepes 2' en Saturno.",
+  "ids": {
+    "La Mariera": "1 · 2",
+    "La Ceiba": "3",
+    "El Guasimo": "4",
+    "El Tanque": "5",
+    "Pelo e Mula": "6 · 7",
+    "Revilla 1": "8 – 10",
+    "Revilla 2": "11 – 15",
+    "Los Pepes 1": "16 · 17",
+    "Los Pepes 2": "18"
+  }
+}

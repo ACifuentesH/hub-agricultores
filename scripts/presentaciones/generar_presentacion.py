@@ -326,37 +326,86 @@ def lamina_portada_agricultor(sl, d, corto):
     texto(forma(sl, "TextBox 8"), d["estado"].upper())
 
 
+MAPAS = os.path.join(AQUI, "..", "..", "docs", "presentaciones", "mapas")
+
+
+def mapa_convenio(codigo_up):
+    """Mapa del Anexo B del convenio (recortado a mano) y su tabla sub-lote → lote de Saturno."""
+    img, meta = os.path.join(MAPAS, f"{codigo_up}.jpg"), os.path.join(MAPAS, f"{codigo_up}.json")
+    if not (os.path.exists(img) and os.path.exists(meta)):
+        return None
+    return open(img, "rb").read(), json.load(open(meta, encoding="utf-8"))
+
+
 def lamina_suelo_mapa(sl, d):
     lotes, suelo = d["lotes"], d["suelo"]
     ha = sum(l["ha"] for l in lotes)
     pic = forma(sl, "Picture 22")
-    lat, lng = d.get("lat"), d.get("lng")
-    if lat and lng:
-        reemplazar_imagen(sl, pic, satelital(lat, lng))
-    runs(forma(sl, "Rounded Rectangle 23"), ["FINCA", f"  {d['finca'].replace('Finca ', '')}  ·  {len(lotes)} lotes"])
-    mover(forma(sl, "Rounded Rectangle 23"), w=4.2)
-    texto(forma(sl, "TextBox 26"),
-          f"{d['estado']} · {d['municipio']} · Imagen satelital de la finca (Esri World Imagery)")
-
-    # El hueco del segundo mapa pasa a ser la tabla de lotes.
-    borrar(forma(sl, "Picture 24"), forma(sl, "Rounded Rectangle 25"))
-    card = clonar(sl, forma(sl, "Rounded Rectangle 56"), 0.45, 3.96, 6.0, 3.01)
+    pill = forma(sl, "Rounded Rectangle 23")
     cab = forma(sl, "TextBox 39")
     cuerpo = forma(sl, "TextBox 57")
-    cols = [("LOTE", 0.7, 2.0, "l"), ("HA", 2.75, 0.9, "r"), ("SIEMBRA", 3.85, 0.9, "ctr"),
-            ("pH", 4.85, 0.6, "ctr"), ("CAL", 5.5, 0.75, "ctr")]
-    for t, x, w, al in cols:
-        texto(clonar(sl, cab, x, 4.1, w, 0.25), t, sz=9, align=al)
     filas = sorted(lotes, key=lambda l: -l["ha"])
-    paso = min(0.27, 2.45 / max(len(filas), 1))
-    for i, l in enumerate(filas):
-        y = 4.42 + i * paso
-        s = suelo.get(l["lote_id"])
-        vals = [l["nombre"], es(l["ha"]), ddmm(l["fecha_siembra"]) if l["fecha_siembra"] else "—",
-                es(s["ph"]) if s else "s/d", "No" if s and not s["dosis_cal_kg_ha"] else ("Sí" if s else "s/d")]
-        for (t, x, w, al), v in zip(cols, vals):
-            texto(clonar(sl, cuerpo, x, y, w, paso), v, sz=10.5, bold=(t == "LOTE"), align=al,
-                  color=VERDE_OSC if t == "LOTE" else "475569")
+    borrar(forma(sl, "Picture 24"), forma(sl, "Rounded Rectangle 25"))
+    conv = mapa_convenio(d["codigo_up"])
+
+    if conv:
+        # Mapa del convenio, vertical a toda la altura; la tabla va a su lado.
+        blob, meta = conv
+        from PIL import Image
+        w_px, h_px = Image.open(io.BytesIO(blob)).size
+        alto = 6.22
+        ancho = min(alto * w_px / h_px, 3.6)
+        reemplazar_imagen(sl, pic, blob)
+        mover(pic, 0.45, 0.75, ancho, ancho * h_px / w_px)
+        runs(pill, ["FINCA", f"  {d['finca'].replace('Finca ', '')}"])
+        alto_mapa = ancho * h_px / w_px
+        # Abajo a la derecha: arriba taparía los lotes del norte.
+        mover(pill, 0.45 + ancho - 2.35, 0.75 + alto_mapa - 0.55, 2.2)
+        x0 = 0.45 + ancho + 0.2
+        ancho_t = 6.75 - x0
+        paso = min(0.55, (alto_mapa - 1.05) / max(len(filas), 1))
+        alto_card = alto_mapa
+        clonar(sl, forma(sl, "Rounded Rectangle 56"), x0, 0.75, ancho_t, alto_card)
+        cols = [("Nº", x0 + 0.12, 0.5, "l"), ("LOTE", x0 + 0.62, 1.05, "l"),
+                ("HA", x0 + 1.6, 0.52, "r"), ("pH", x0 + 2.14, 0.42, "r")]
+        for t, x, w, al in cols:
+            texto(clonar(sl, cab, x, 0.9, w, 0.22), t, sz=8, align=al)
+        for i, l in enumerate(filas):
+            y = 1.22 + i * paso
+            s_ = suelo.get(l["lote_id"])
+            vals = [meta["ids"].get(l["nombre"], "—"), l["nombre"], es(l["ha"]), es(s_["ph"]) if s_ else "s/d"]
+            for (t, x, w, al), v in zip(cols, vals):
+                texto(clonar(sl, cuerpo, x, y, w, paso), v, sz=9.5,
+                      bold=t in ("LOTE", "Nº"), align=al,
+                      color={"LOTE": VERDE_OSC, "Nº": DORADO}.get(t, "475569"))
+        texto(clonar(sl, cuerpo, x0 + 0.15, 0.75 + alto_mapa - 0.55, ancho_t - 0.3, 0.45),
+              "Nº = sub-lotes del mapa del convenio que forman cada lote.", sz=8, color=GRIS)
+        texto(forma(sl, "TextBox 26"), f"{d['estado']} · Imagen satelital con delimitación de lotes "
+                                       f"(Anexo B del convenio · Datum WGS 1984, UTM 19N)")
+        mover(forma(sl, "TextBox 26"), y=7.03, w=6.2)
+    else:
+        lat, lng = d.get("lat"), d.get("lng")
+        if lat and lng:
+            reemplazar_imagen(sl, pic, satelital(lat, lng))
+        runs(pill, ["FINCA", f"  {d['finca'].replace('Finca ', '')}  ·  {len(lotes)} lotes"])
+        mover(pill, w=4.2)
+        texto(forma(sl, "TextBox 26"),
+              f"{d['estado']} · {d['municipio']} · Imagen satelital de la finca (Esri World Imagery)")
+        # El hueco del segundo mapa pasa a ser la tabla de lotes.
+        clonar(sl, forma(sl, "Rounded Rectangle 56"), 0.45, 3.96, 6.0, 3.01)
+        cols = [("LOTE", 0.7, 2.0, "l"), ("HA", 2.75, 0.9, "r"), ("SIEMBRA", 3.85, 0.9, "ctr"),
+                ("pH", 4.85, 0.6, "ctr"), ("CAL", 5.5, 0.75, "ctr")]
+        for t, x, w, al in cols:
+            texto(clonar(sl, cab, x, 4.1, w, 0.25), t, sz=9, align=al)
+        paso = min(0.27, 2.45 / max(len(filas), 1))
+        for i, l in enumerate(filas):
+            y = 4.42 + i * paso
+            s_ = suelo.get(l["lote_id"])
+            vals = [l["nombre"], es(l["ha"]), ddmm(l["fecha_siembra"]) if l["fecha_siembra"] else "—",
+                    es(s_["ph"]) if s_ else "s/d", "No" if s_ and not s_["dosis_cal_kg_ha"] else ("Sí" if s_ else "s/d")]
+            for (t, x, w, al), v in zip(cols, vals):
+                texto(clonar(sl, cuerpo, x, y, w, paso), v, sz=10.5, bold=(t == "LOTE"), align=al,
+                      color=VERDE_OSC if t == "LOTE" else "475569")
 
     runs(forma(sl, "TextBox 31"), [str(len(lotes))])
     runs(forma(sl, "TextBox 34"), [es(ha, 2 if len(lotes) > 3 else 1)])

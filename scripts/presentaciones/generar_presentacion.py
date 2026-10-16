@@ -21,6 +21,7 @@ import json
 import math
 import os
 import re
+import sys
 import urllib.request
 from datetime import date
 
@@ -363,7 +364,11 @@ def lamina_suelo_mapa(sl, d):
         clonar(sl, forma(sl, "Rounded Rectangle 56"), x0, 0.75, ancho_t, alto_mapa)
         texto(clonar(sl, cab, x0 + 0.12, 0.88, ancho_t - 0.2, 0.22), "Nº EN EL MAPA", sz=7.5)
         paso = min(0.5, (alto_mapa - 0.75) / max(len(filas), 1))
-        for i, l in enumerate(filas):
+        # En el orden de los números del mapa, para buscarlos de un vistazo.
+        def orden(l):
+            m = re.match(r"\d+", meta["ids"].get(l["nombre"], ""))
+            return int(m[0]) if m else 999
+        for i, l in enumerate(sorted(filas, key=orden)):
             y = 1.2 + i * paso
             texto(clonar(sl, cuerpo, x0 + 0.12, y, ancho_t - 0.2, paso),
                   [[(meta["ids"].get(l["nombre"], "—"), {"color": DORADO, "b": True, "sz": 9.5})],
@@ -400,9 +405,14 @@ def lamina_suelo_mapa(sl, d):
 
     runs(forma(sl, "TextBox 31"), [str(len(lotes))])
     runs(forma(sl, "TextBox 34"), [es(ha, 2 if len(lotes) > 3 else 1)])
-    t_cal = sum((suelo.get(l["lote_id"]) or {}).get("dosis_cal_kg_ha", 0) * l["ha"] for l in lotes) / 1000
+    cal = cal_aplicada(d)
+    if cal:
+        t_cal = sum(cal["por_lote"].values())
+        texto(forma(sl, "TextBox 38"), "de cal aplicada")
+    else:
+        t_cal = sum((suelo.get(l["lote_id"]) or {}).get("dosis_cal_kg_ha", 0) * l["ha"] for l in lotes) / 1000
+        texto(forma(sl, "TextBox 38"), "de cal recomendada")
     runs(forma(sl, "TextBox 37"), [f"{es(t_cal, 0 if t_cal == 0 else 1)} t"])
-    texto(forma(sl, "TextBox 38"), "de cal recomendada")
 
     # pH: una marca fina por lote y una sola etiqueta con el rango.
     phs = [s["ph"] for s in suelo.values()]
@@ -426,7 +436,11 @@ def lamina_suelo_mapa(sl, d):
         rango = f"pH de {es(min(phs), 1)} a {es(max(phs), 1)}"
         clases = sorted({clase(p) for p in phs}, key=["ácido", "ligeramente ácido", "neutro", "ligeramente alcalino"].index)
         msg = f"Tus lotes están en rango {' a '.join(clases)} ({rango}). "
-        if con_cal:
+        if cal:
+            msg += (f"Aplicamos {cal['producto'].lower()} en {len(cal['por_lote'])} lotes "
+                    f"({es(sum(cal['por_lote'].values()), 1)} t) para corregir la acidez y aportar calcio y "
+                    "magnesio antes de nutrir.")
+        elif con_cal:
             msg += f"El laboratorio recomendó cal en {', '.join(con_cal)} para corregir la acidez antes de nutrir."
         else:
             msg += ("El laboratorio no recomendó cal en ningún lote: el pH no limita la disponibilidad de "
@@ -435,6 +449,21 @@ def lamina_suelo_mapa(sl, d):
         msg = f"{PENDIENTE}: no hay análisis de suelo cargado para este agricultor."
     texto(cuerpo, msg)
     mover(cuerpo, y=5.8, h=1.0)
+
+
+def cal_aplicada(d):
+    return next((p for p in d["prescripcion"] if p["producto"].lower().startswith("cal")
+                 and (p.get("unidad") or "").lower().startswith("tonel")), None)
+
+
+def unidad_corta(p):
+    u = (p.get("unidad") or "").lower()
+    return " t" if u.startswith("tonel") else " sacos" if u.startswith("saco") else f" {u}"
+
+
+def lista_lotes(nombres):
+    nombres = sorted(nombres)
+    return nombres[0] if len(nombres) == 1 else ", ".join(nombres[:-1]) + " y " + nombres[-1]
 
 
 def _badge(sl, base, x, y, valor, lo, hi):
@@ -461,6 +490,10 @@ def lamina_suelo_resultados(sl, d):
         s, y = d["suelo"][l["lote_id"]], 2.2 + i * 0.25
         texto(clonar(sl, lote_lbl, 0.7, y + 0.03, 1.7, 0.2), l["nombre"], sz=10, bold=True, color=VERDE_OSC, align="l")
         texto(clonar(sl, valor, 2.4, y, 0.6, 0.22), es(s["ph"]), sz=11, align="l")
+        if s["ca_mg"] is None:  # muestra con pH pero sin bases intercambiables
+            texto(clonar(sl, valor, 3.15, y, 0.7, 0.22), "s/d", sz=11, align="l")
+            texto(clonar(sl, valor, 5.75, y, 0.7, 0.22), "s/d", sz=11, align="l")
+            continue
         texto(clonar(sl, valor, 3.15, y, 0.7, 0.22), es(s["ca_mg"], 1), sz=11, align="l")
         e1 = _badge(sl, badge, 3.95, y + 0.02, s["ca_mg"], 3, 5)
         texto(clonar(sl, valor, 5.75, y, 0.7, 0.22), es(s["ca_k"], 1), sz=11, align="l")
@@ -475,7 +508,7 @@ def lamina_suelo_resultados(sl, d):
     mover(q_card, 8.75, 1.78, 4.05, alto_tabla)
     mover(q_tit, 8.97, 1.92)
     mover(q_txt, 8.97, 2.25, 3.65, alto_tabla - 0.6)
-    n = len(lotes)
+    n = sum(cm_ for cm_ in conteo["Ca/Mg"].values())
     cm, ck = conteo["Ca/Mg"], conteo["Ca/K"]
     partes = []
     if n and cm.get("IDEAL", 0) == n:
@@ -498,7 +531,28 @@ def lamina_suelo_resultados(sl, d):
     pres = d["prescripcion"]
     ha = {l["nombre"]: l["ha"] for l in d["lotes"]}
     slots = [(58, 59, 60), (61, 62, 63)]
-    if pres:
+    if len(pres) >= 2:
+        # Cal + otro producto: un recuadro por producto en vez de por lote.
+        a_, b_ = pres[0], pres[1]
+        texto(I(54), [[(a_["producto"], {"sz": 24})], [(f"+ {b_['producto']}", {"sz": 24})],
+                      [("enmiendas aplicadas según el análisis", {"sz": 11})]])
+        def dosis_txt(p):
+            u = "t" if unidad_corta(p) == " t" else "sacos"
+            lo, hi = p["dosis_sacos_ha"], p.get("dosis_max") or p["dosis_sacos_ha"]
+            dec = lambda v: 0 if v == int(v) else 1 if v * 10 == int(v * 10) else 2
+            r = es(lo, dec(lo)) if lo == hi else f"{es(lo, dec(lo))}–{es(hi, dec(hi))}"
+            return f"{r} {u}/ha"
+        runs(I(56), [dosis_txt(a_)])
+        texto(I(57), f"{a_['producto'].split()[0].lower()} · {b_['producto']} {dosis_txt(b_)}")
+        for (x, y, z), p in zip(slots, pres[:2]):
+            texto(I(x), p["producto"].upper())
+            runs(I(y), [es(sum(p["por_lote"].values()), 1), unidad_corta(p)])
+            texto(I(z), f"en {lista_lotes(p['por_lote'])}" if len(p["por_lote"]) <= 2 else
+                  f"en {len(p['por_lote'])} lotes")
+        otros = [x for x in ("Cal", "KMAG", "MagniPlus")
+                 if not any(q["producto"].lower().startswith(x.lower()) for q in pres)]
+        texto(I(64), [f"{x}: 0" for x in otros] + ["no requerido" if len(otros) == 1 else "no requeridos"])
+    elif pres:
         p = pres[0]
         lotes_p = list(p["por_lote"].items())
         texto(I(54), [[(p["producto"], {})], [("enmienda aplicada según el análisis", {"sz": 11})]])
@@ -536,8 +590,12 @@ def lamina_labores(sl, d):
     runs(forma(sl, "TextBox 27"), [f"planificadas a sembrar en {len(lotes)} lotes"])
 
     aplica = {k: any(l["labores"][k] for l in lotes) for k in LABORES}
-    hecho = sum(l["labores"][k] for l in lotes for k in LABORES if aplica[k])
-    total = sum(l["ha"] for l in lotes for k in LABORES if aplica[k])
+
+    def aplica_lote(l, k):
+        # La enmienda solo va donde el análisis la pidió: en los demás lotes "no aplica", no falta.
+        return aplica[k] and not (k == "enmienda" and not l["labores"]["enmienda"])
+    hecho = sum(l["labores"][k] for l in lotes for k in LABORES if aplica_lote(l, k))
+    total = sum(l["ha"] for l in lotes for k in LABORES if aplica_lote(l, k))
     avance = hecho / total * 100 if total else 0
     texto(forma(sl, "Rounded Rectangle 28"),
           "100% DE AVANCE EN CADA LABOR" if avance >= 99.95 else f"{avance:.0f}% DE AVANCE EN LAS LABORES")
@@ -566,8 +624,8 @@ def lamina_labores(sl, d):
         texto(clonar(sl, base_nom, 6.85, y + 0.02, 1.2, paso - 0.04), l["nombre"], sz=10.5)
         for x, k in zip(xs, LABORES):
             v = l["labores"][k]
-            celda(x, y, v, l["ha"], na=not aplica[k])
-            if aplica[k] and v < l["ha"] * 0.99:
+            celda(x, y, v, l["ha"], na=not aplica_lote(l, k))
+            if aplica_lote(l, k) and v < l["ha"] * 0.99:
                 pendientes.append((l["nombre"], k, v))
     linea = forma(sl, "Connector 86")
     yt = y0 + len(lotes) * paso + 0.04
@@ -577,7 +635,8 @@ def lamina_labores(sl, d):
     texto(forma(sl, "TextBox 88"), f"{es(ha_plan)} ha plan", sz=9)
     mover(forma(sl, "TextBox 88"), y=yt + 0.33, h=0.2)
     for x, k in zip(xs, LABORES):
-        celda(x, yt + 0.1, sum(l["labores"][k] for l in lotes), ha_plan, na=not aplica[k])
+        ref = sum(l["ha"] for l in lotes if aplica_lote(l, k))
+        celda(x, yt + 0.1, sum(l["labores"][k] for l in lotes), ref, na=not aplica[k])
 
     # Fuera las filas de la plantilla.
     plantilla = [f"TextBox {i}" for i in list(range(38, 41)) + list(range(42, 70)) + list(range(89, 110))] + \
@@ -608,10 +667,19 @@ def lamina_labores(sl, d):
     n_aplica = sum(aplica.values())
     msg = (f"{'Todos tus lotes' if completos == len(lotes) else f'{completos} de {len(lotes)} lotes'} "
            f"completaron las {n_aplica} labores aplicadas en el 100% de su superficie.")
-    for nom, k, v in pendientes:
-        msg += f" {nom}: {nombres_lab[k]} {'sin registro' if v == 0 else f'registrada en {es(v)} ha'}."
+    if len(pendientes) <= 3:
+        for nom, k, v in pendientes:
+            msg += f" {nom}: {nombres_lab[k]} {'sin registro' if v == 0 else f'registrada en {es(v)} ha'}."
+    else:  # muchas: una línea por lote, sin cifras
+        por_lote = {}
+        for nom, k, v in pendientes:
+            por_lote.setdefault(nom, []).append(nombres_lab[k])
+        msg += " Sin registro completo: " + "; ".join(f"{n} ({', '.join(ks)})" for n, ks in por_lote.items()) + "."
     if not aplica["enmienda"]:
         msg += " La enmienda no se aplicó en este ciclo."
+    else:
+        n_enm = sum(1 for l in lotes if l["labores"]["enmienda"])
+        msg += f" La enmienda se aplicó en {n_enm} lotes, donde el análisis la pidió."
     texto(txt, msg, sz=11 if len(msg) > 200 else 12)
 
 
@@ -685,7 +753,8 @@ def lamina_incidencias(sl, d):
             lotes = sorted({it["lote"] for it in items})
             rango = f"entre {min(dds)} y {max(dds)} DDS" if dds and min(dds) != max(dds) else (f"a los {dds[0]} DDS" if dds else "")
             desc = {"plagas": "reportes de gusano cogollero y larvas",
-                    "maleza": "controles dirigidos de malezas",
+                    "maleza": "controles dirigidos de malezas" if all(it["etiqueta"] == "Control de malezas"
+                                                                       for it in items) else "reportes de malezas",
                     "mazorca": "mazorcas con agobio o daño"}[clave]
             lugar = lotes[0] if len(lotes) == 1 else f"{len(lotes)} lotes"
             texto(forma(sl, c), f"{desc} {rango}, en {lugar}")
@@ -803,14 +872,39 @@ def notas_id(prs, d):
                                    f"«{plaga['texto'].strip()}».")
 
 
+def completar_cosecha(d):
+    """Da por cosechado todo lo sembrado. Las toneladas de lo que falta se estiman con el
+    rendimiento ya registrado en ese mismo lote. Devuelve lo estimado, para avisarlo."""
+    estimado = []
+    for l in d["lotes"]:
+        falta = round(l["ha"] - l["ha_cosechadas"], 2)
+        if falta <= 0.05:
+            continue
+        rend = l["toneladas"] / l["ha_cosechadas"] if l["ha_cosechadas"] else d["pl"]["meta_t_ha"]
+        t = round(falta * rend, 1)
+        estimado.append((l["nombre"], falta, t, rend))
+        l["ha_cosechadas"], l["toneladas"] = l["ha"], l["toneladas"] + t
+        l["labores"]["cosecha"] = l["ha"]
+    pl = d["pl"]
+    pl["ha_cosechadas"] = round(sum(l["ha_cosechadas"] for l in d["lotes"]), 2)
+    pl["toneladas"] = round(sum(l["toneladas"] for l in d["lotes"]), 1)
+    pl["rend_t_ha"] = round(pl["toneladas"] / pl["ha_cosechadas"], 2)
+    return estimado
+
+
 def main():
     ap = argparse.ArgumentParser()
+    ap.add_argument("--cosecha-completa", action="store_true",
+                    help="dar por cosechado todo; estima las toneladas faltantes con el rendimiento del lote")
     ap.add_argument("datos")
     ap.add_argument("salida")
     ap.add_argument("--plantilla", default=PLANTILLA)
     ap.add_argument("--nombre-corto")
     a = ap.parse_args()
     d = json.load(open(a.datos, encoding="utf-8"))
+    if a.cosecha_completa:
+        for nom, ha, t, rend in completar_cosecha(d):
+            print(f"cosecha estimada · {nom}: {es(ha)} ha × {es(rend)} t/ha = {es(t, 1)} t", file=sys.stderr)
     prs = Presentation(a.plantilla)
     s = prs.slides
     lamina_portada_agricultor(s[1], d, a.nombre_corto or nombre_corto(d["agricultor"]))

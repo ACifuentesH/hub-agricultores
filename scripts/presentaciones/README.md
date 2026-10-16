@@ -9,6 +9,16 @@ python scripts/presentaciones/extraer_datos.py B01 > datos_B01.json    # código
 python scripts/presentaciones/generar_presentacion.py datos_B01.json Julio_Colmenarez.pptx
 ```
 
+Opciones del generador:
+
+- `--cosecha-completa`: da todos los lotes por cosechados. Las toneladas que faltan se estiman con el
+  rendimiento ya registrado en cada lote, y el script imprime cada estimación para revisarla.
+- `--nombre-corto "ANGELA GUEDEZ"`: nombre de la portada si el automático (nombre + primer apellido) no sirve.
+
+Incidencias: la línea de tiempo admite 14. Si hay más, se priorizan las observaciones de campo sobre
+los registros de aplicación rutinarios, se reparten entre los meses del ciclo y las iguales del mismo
+día en varios lotes se juntan en un punto ("9 lotes").
+
 Necesita `SUPABASE_URL` y `SUPABASE_SERVICE_ROLE_KEY` en el entorno, y salida a internet
 para la imagen satelital (Esri World Imagery).
 

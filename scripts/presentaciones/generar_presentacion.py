@@ -837,23 +837,74 @@ def lamina_pl(sl, d):
     texto(forma(sl, "TextBox 19"), f"de {es(pl['ton_plan'], 0)} ton planificadas")
 
 
+FINANZAS = os.path.join(AQUI, "..", "..", "docs", "presentaciones", "finanzas")
+
+
+def flujo_caja(d):
+    """Filas del cierre financiero (docs/presentaciones/finanzas/<UP>.json): no está en la base."""
+    ruta = os.path.join(FINANZAS, f"{d['codigo_up']}.json")
+    if d.get("flujo_caja"):
+        return d["flujo_caja"]
+    return json.load(open(ruta, encoding="utf-8"))["flujo_caja"] if os.path.exists(ruta) else None
+
+
+def _poner(cel, txt, bold=None, sz=None):
+    p0 = cel.text_frame.paragraphs[0]
+    rs = p0.runs
+    r = rs[0] if rs else p0.add_run()
+    r.text = txt
+    for extra in rs[1:]:
+        extra.text = ""
+    for extra in cel.text_frame.paragraphs[1:]:  # "60% Cal\n" traía un párrafo vacío de más
+        extra._p.getparent().remove(extra._p)
+    if bold is not None:
+        r.font.bold = bold
+    if sz is not None:
+        r.font.size = Pt(sz)
+
+
 def lamina_flujo(sl, d):
-    fc = d.get("flujo_caja") or {}
-    aviso = "" if fc else f"  ·  {PENDIENTE}: cargar el flujo de caja"
-    texto(forma(sl, "TextBox 104"), f"{d['agricultor']} · montos en USD{aviso}")
+    filas = flujo_caja(d)
+    aviso = "" if filas else f"  ·  {PENDIENTE}: cargar el flujo de caja"
+    sub = forma(sl, "TextBox 104")
+    texto(sub, f"{d['agricultor']} · cierre financiero" if filas else f"{d['agricultor']} · montos en USD{aviso}")
+    mover(sub, x=2.2, y=1.24)  # en la plantilla quedaba encima de "Preliminar"
     tabla = forma(sl, "Tabla 8").table
-    for fila in tabla.rows:
-        concepto = fila.cells[0].text.strip()
-        if not concepto:
+    if not filas:
+        for fila in tabla.rows:
+            if fila.cells[0].text.strip():
+                for cel in list(fila.cells)[1:3]:
+                    _poner(cel, "—")
+        return
+
+    # Se rehace la tabla con las filas del cierre, copiando una fila normal y una en negrita.
+    tbl = tabla._tbl
+    trs = tbl.tr_lst
+    modelo, modelo_neg, modelo_sep = trs[2], trs[9], trs[3]
+    for tr in trs[1:]:
+        tbl.remove(tr)
+    alto = {"sep": Inches(0.1), "fila": Inches(0.33), "detalle": Inches(0.26)}
+    for f in filas:
+        base = modelo_sep if f.get("separador") else modelo_neg if f.get("negrita") else modelo
+        tr = copy.deepcopy(base)
+        tbl.append(tr)
+        tr.h = alto["sep"] if f.get("separador") else alto["detalle"] if f.get("detalle") else alto["fila"]
+        if f.get("separador"):
             continue
-        for j, cel in enumerate(list(fila.cells)[1:3]):
-            v = (fc.get(concepto) or [None, None])[j]
-            tf = cel.text_frame
-            r = tf.paragraphs[0].runs
-            if r:
-                r[0].text = es(v) if v is not None else "—"
-                for extra in r[1:]:
-                    extra.text = ""
+        cels = tabla.rows[len(tabla.rows) - 1].cells
+        sz = 11 if f.get("detalle") else 14
+        _poner(cels[0], f["concepto"], sz=sz)
+        _poner(cels[1], es(f["bs"]) if f.get("bs") is not None else "—", sz=sz)
+        _poner(cels[2], es(f["usd"]) if f.get("usd") is not None else "—", sz=sz)
+    trs[0].h = Inches(0.2)
+    # El recuadro crema crece o encoge con la tabla.
+    alto_tabla = sum(tr.h for tr in tbl.tr_lst)
+    caja = forma(sl, "Rounded Rectangle 16")
+    t = forma(sl, "Tabla 8")
+    t.height = alto_tabla
+    caja.top = t.top + Inches(0.15)
+    # Holgura: el visor suma el margen interno de cada celda a la altura de la fila.
+    caja.height = alto_tabla + Inches(0.04) * len(tbl.tr_lst)
 
 
 def notas_id(prs, d):

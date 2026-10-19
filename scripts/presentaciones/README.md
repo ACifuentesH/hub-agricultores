@@ -42,6 +42,8 @@ Sale como `—` y con el aviso `PENDIENTE` en el subtítulo (`markitdown salida.
 
 - **Lámina 14 · Mecanización, pago por pago** (pagos 1–3, tasa, comisiones, ajustes): liquidación de APC/banco.
 - **Lámina 16 · Flujo de caja** (facturación Polar, notas de crédito, reconocimiento): liquidación.
+  Cuando llega el cierre financiero se carga en `docs/presentaciones/finanzas/<UP>.json` (ver `B01.json`):
+  la tabla se rehace con esas filas, en ese orden, y el recuadro se ajusta a su altura.
 - **Mapa con los lotes delimitados**: `saturno.lotes.poligonos_wkt` está vacío. El mapa sale del
   **Anexo B del convenio firmado** (módulo Documentos, categoría `convenios`, bucket `documentos`),
   que es un escaneo: hay que recortarlo una vez por agricultor y guardarlo como

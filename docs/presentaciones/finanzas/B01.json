@@ -1,17 +1,84 @@
 {
   "fuente": "SATURNO – Cierre financiero Julio Colmenarez (captura enviada por el equipo, 19-oct-2026)",
   "flujo_caja": [
-    {"concepto": "Ingresos de Terceros (Gandolas Rechazadas)", "bs": 6270, "usd": 6270},
-    {"concepto": "Facturación Polar", "bs": 788246.52, "usd": 780688.77},
-    {"separador": true},
-    {"concepto": "Nota de Crédito: Convenio para la Producción de Maíz", "bs": -59633.53, "usd": -59633.53},
-    {"concepto": "Nota de Crédito: Compra Propia", "bs": -843.83, "usd": -843.83},
-    {"concepto": "60% Cal", "bs": -889.63, "usd": -889.63},
-    {"concepto": "Costos Totales", "bs": -639162.69, "usd": -639162.69},
-    {"concepto": "Reconocimiento de Mecanización", "bs": 146352.81, "usd": 146352.81},
-    {"concepto": "Neto a Recibir", "bs": 240339.65, "usd": 232781.90, "negrita": true},
-    {"concepto": "Flujo de Caja Final", "bs": 240339.65, "usd": 232781.90, "negrita": true},
-    {"concepto": "Desembolso Final Polar", "bs": 234069.65, "usd": 226511.90, "detalle": true},
-    {"concepto": "Ingresos Netos de Terceros", "bs": 6270, "usd": 6270, "detalle": true}
-  ]
+    {
+      "concepto": "Ingresos de Terceros (Gandolas Rechazadas)",
+      "bs": 6270,
+      "usd": 6270
+    },
+    {
+      "concepto": "Facturación Polar",
+      "bs": 788246.52,
+      "usd": 780688.77
+    },
+    {
+      "separador": true
+    },
+    {
+      "concepto": "Nota de Crédito: Convenio para la Producción de Maíz",
+      "bs": -59633.53,
+      "usd": -59633.53
+    },
+    {
+      "concepto": "Nota de Crédito: Compra Propia",
+      "bs": -843.83,
+      "usd": -843.83
+    },
+    {
+      "concepto": "60% Cal",
+      "bs": -889.63,
+      "usd": -889.63
+    },
+    {
+      "concepto": "Costos Totales",
+      "bs": -639162.69,
+      "usd": -639162.69
+    },
+    {
+      "concepto": "Reconocimiento de Mecanización",
+      "bs": 146352.81,
+      "usd": 146352.81
+    },
+    {
+      "concepto": "Neto a Recibir",
+      "bs": 240339.65,
+      "usd": 232781.9,
+      "negrita": true
+    },
+    {
+      "concepto": "Flujo de Caja Final",
+      "bs": 240339.65,
+      "usd": 232781.9,
+      "negrita": true
+    },
+    {
+      "concepto": "Desembolso Final Polar",
+      "bs": 234069.65,
+      "usd": 226511.9,
+      "detalle": true
+    },
+    {
+      "concepto": "Ingresos Netos de Terceros",
+      "bs": 6270,
+      "usd": 6270,
+      "detalle": true
+    }
+  ],
+  "mecanizacion_pagos": {
+    "_fuente": "Desglose de pagos de mecanización de Julio Colmenarez (captura enviada por el equipo, 19-oct-2026)",
+    "plan": 61646.48,
+    "aj_encaladora": -926.7,
+    "real_inicial": 60719.78,
+    "pago1": 36680.0,
+    "pago2": 10977.46,
+    "restante": 13062.32,
+    "aj_dron": 0.0,
+    "aj_compras": 0.0,
+    "ajustes": 0.0,
+    "neto": 13062.32,
+    "indexado": 15414.0,
+    "comisiones": 420.0,
+    "total": 15834.0,
+    "pago3": 15834.0
+  }
 }

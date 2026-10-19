@@ -41,6 +41,7 @@ Se quedan igual: portada, plan agronómico (5), formaciones (9), I+D (10–13).
 Sale como `—` y con el aviso `PENDIENTE` en el subtítulo (`markitdown salida.pptx | grep PENDIENTE`):
 
 - **Lámina 14 · Mecanización, pago por pago** (pagos 1–3, tasa, comisiones, ajustes): liquidación de APC/banco.
+  Se carga en `mecanizacion_pagos` del mismo `finanzas/<UP>.json` (ver `B01.json`).
 - **Lámina 16 · Flujo de caja** (facturación Polar, notas de crédito, reconocimiento): liquidación.
   Cuando llega el cierre financiero se carga en `docs/presentaciones/finanzas/<UP>.json` (ver `B01.json`):
   la tabla se rehace con esas filas, en ese orden, y el recuadro se ajusta a su altura.

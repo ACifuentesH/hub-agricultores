@@ -329,6 +329,7 @@ def lamina_portada_agricultor(sl, d, corto):
 
 
 MAPAS = os.path.join(AQUI, "..", "..", "docs", "presentaciones", "mapas")
+FINANZAS = os.path.join(AQUI, "..", "..", "docs", "presentaciones", "finanzas")
 
 
 def mapa_convenio(codigo_up):
@@ -804,10 +805,25 @@ def lamina_clima(sl, d):
         r.font.color.rgb = RGBColor.from_string(GRIS)
 
 
+def finanzas(d, clave):
+    """Datos de liquidación (docs/presentaciones/finanzas/<UP>.json): no están en la base."""
+    if d.get(clave):
+        return d[clave]
+    ruta = os.path.join(FINANZAS, f"{d['codigo_up']}.json")
+    return json.load(open(ruta, encoding="utf-8")).get(clave) if os.path.exists(ruta) else None
+
+
 def lamina_mecanizacion(sl, d):
-    pagos = d.get("mecanizacion_pagos") or {}
+    pagos = finanzas(d, "mecanizacion_pagos") or {}
     aviso = "" if pagos else f"  ·  {PENDIENTE}: cargar la liquidación de APC"
     texto(forma(sl, "TextBox 104"), f"{d['agricultor']} · montos en USD{aviso}")
+    if pagos.get("plan") is not None:
+        # La primera tarjeta es el plan ya ajustado: se dice de dónde sale.
+        texto(forma(sl, "TextBox 106"), "MECANIZACIÓN TOTAL AJUSTADA")
+        texto(forma(sl, "TextBox 108"), [f"plan {es(pagos['plan'])} menos el",
+                                         f"60% de la encaladora ({es(abs(pagos.get('aj_encaladora') or 0))})"])
+    if (pagos.get("aj_encaladora") or 0) < 0:
+        _estilo_run(forma(sl, "TextBox 151").text_frame._txBody.xpath(".//a:r/a:rPr")[0], color=OXIDO)
     campos = {"TextBox 107": "real_inicial", "TextBox 111": "pago1", "TextBox 115": "pago2",
               "TextBox 119": "pago3", "TextBox 127": "restante", "TextBox 131": "ajustes",
               "TextBox 135": "neto", "TextBox 139": "indexado", "TextBox 143": "comisiones",
@@ -816,6 +832,27 @@ def lamina_mecanizacion(sl, d):
     for nombre, k in campos.items():
         v = pagos.get(k)
         runs(forma(sl, nombre), [es(v) if v is not None else "—"])
+
+    # Las cifras de 5 dígitos no caben al tamaño de la plantilla (pensada para "9.751,04"):
+    # un solo tamaño por fila de tarjetas, el que permita la cifra más larga.
+    def ajustar(nombres, ancho_in, tope):
+        largo = max(len(forma(sl, n).text_frame.text) for n in nombres)
+        sz = min(tope, ancho_in * 72 / (0.6 * largo))
+        for n in nombres:
+            for r in forma(sl, n).text_frame.paragraphs[0].runs:
+                r.font.size = Pt(sz)
+    ajustar(["TextBox 107", "TextBox 111", "TextBox 115", "TextBox 119"], 2.45, 38)
+    ajustar(["TextBox 127", "TextBox 131", "TextBox 135", "TextBox 139", "TextBox 143", "TextBox 147"], 1.6, 17)
+    ajustar(["TextBox 151", "TextBox 155", "TextBox 159"], 0.95, 22)
+    # Notas de las tarjetas pequeñas: a lo ancho de su tarjeta y una línea.
+    for n in ["TextBox 128", "TextBox 132", "TextBox 136", "TextBox 140", "TextBox 144", "TextBox 148"]:
+        t = forma(sl, n)
+        mover(t, x=Emu(forma(sl, n.replace(n.split()[-1], str(int(n.split()[-1]) - 1))).left).inches, w=1.63)
+        for r in t.text_frame.paragraphs[0].runs:
+            r.font.size = Pt(7.5)
+    if pagos:
+        texto(forma(sl, "TextBox 132"), f"dron {es(pagos.get('aj_dron') or 0)} · compras {es(pagos.get('aj_compras') or 0)}")
+        texto(forma(sl, "TextBox 136"), "saldo pendiente")
 
 
 def lamina_pl(sl, d):
@@ -835,9 +872,6 @@ def lamina_pl(sl, d):
     if len(cifra.text) > 5 and cifra.font.size:  # "2.269,2" no cabe al tamaño de "322,7"
         cifra.font.size = Pt(cifra.font.size.pt * 5.5 / len(cifra.text))
     texto(forma(sl, "TextBox 19"), f"de {es(pl['ton_plan'], 0)} ton planificadas")
-
-
-FINANZAS = os.path.join(AQUI, "..", "..", "docs", "presentaciones", "finanzas")
 
 
 def flujo_caja(d):
